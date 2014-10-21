@@ -1,12 +1,83 @@
+# Build #
+#########
+MANIFEST.MF
+dependency-reduced-pom.xml
+
+# Compiled #
+############
+bin
+build
+dist
+lib
+out
+target
+*.com
 *.class
+*.dll
+*.exe
+*.o
+*.so
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Databases #
+#############
+*.db
+*.sql
+*.sqlite
 
-# Package Files #
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
 *.jar
-*.war
-*.ear
+*.rar
+*.tar
+*.zip
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Repository #
+##############
+.git
+
+# Logging #
+###########
+/logs
+*.log
+
+# Misc #
+########
+*.bak
+
+# System #
+##########
+.DS_Store
+ehthumbs.db
+Thumbs.db
+
+# Project #
+###########
+.classpath
+.externalToolBuilders
+.idea
+.project
+.settings
+nbproject
+atlassian-ide-plugin.xml
+build.xml
+nb-configuration.xml
+*.iml
+*.ipr
+*.iws
+
+# Runtime #
+###########
+/cache
+/config
+/data
+/natives
+/plugins
+/resources
+/update
+/updates
+/worlds
+config.yml
