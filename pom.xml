@@ -3,7 +3,7 @@
 
 	<!-- Project information -->
 	<name>Bomberman</name>
-	<groupId>ecse321.fall2014</groupId>
+	<groupId>ecse321.fall2014.group3</groupId>
 	<artifactId>bomberman</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -18,13 +18,6 @@
 		<commit>unknown</commit>
 		<mainClass>${project.groupId}.${project.artifactId}.App</mainClass>
 	</properties>
-
-	<!-- Source code access -->
-	<scm>
-		<connection>scm:git:git://github.com/DDoS/Bomberman.git</connection>
-		<developerConnection>scm:git:git@github.com:DDoS/Bomberman.git</developerConnection>
-		<url>https://github.com/DDoS/Bomberman</url>
-	</scm>
 
 	<!-- Dependency repositories -->
 	<repositories>
