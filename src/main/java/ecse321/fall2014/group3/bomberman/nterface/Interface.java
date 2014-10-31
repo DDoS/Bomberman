@@ -48,18 +48,14 @@ public class Interface extends TickingElement {
 
     private static GLImplementation getBestImpl() {
         try {
-            // Create a temporary OpenGL context
+            // Create a temporary OpenGL context using an empty pixel buffer
             Pbuffer tempContext = new Pbuffer(0, 0, new PixelFormat(), null);
             tempContext.makeCurrent();
             // Get the capabilities for the context
             ContextCapabilities capabilities = GLContext.getCapabilities();
             tempContext.destroy();
             // Return the proper context implementation for the highest supported version
-            if (capabilities.OpenGL32) {
-                return LWJGLUtil.GL32_IMPL;
-            } else if (capabilities.OpenGL30) {
-                return LWJGLUtil.GL30_IMPL;
-            } else if (capabilities.OpenGL21) {
+            if (capabilities.OpenGL21) {
                 return LWJGLUtil.GL20_IMPL;
             } else if (capabilities.OpenGL20) {
                 return LWJGLUtil.GL20_IMPL;
