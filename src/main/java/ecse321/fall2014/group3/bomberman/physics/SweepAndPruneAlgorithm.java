@@ -1,9 +1,11 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -61,10 +63,42 @@ public class SweepAndPruneAlgorithm {
             assertSorted(xPoints);
             assertSorted(yPoints);
         }
+
+        final Set<CollidingPair> colliding = intersect(computeCollisions(xPoints), computeCollisions(yPoints));
+
+        for (CollidingPair pair : colliding) {
+            pair.getFirst().clearCollisionList();
+            pair.getSecond().clearCollisionList();
+        }
+        for (CollidingPair pair : colliding) {
+            pair.updateCollisionLists();
+        }
     }
 
     public int getCount() {
         return xPoints.size() / 2;
+    }
+
+    private static Set<CollidingPair> computeCollisions(List<EndPoint> points) {
+        final Set<CollidingPair> collidingPairs = new HashSet<>();
+
+        final Set<Collidable> openSet = new HashSet<>();
+        for (EndPoint point : points) {
+            final Collidable current = point.getOwner();
+            if (point.isMin()) {
+                // minimum points are first, so add box to open set
+                openSet.add(current);
+            } else {
+                // max points are last, so remove box from open set
+                openSet.remove(current);
+                // collide with all the remaining objects in open set
+                for (Collidable collidable : openSet) {
+                    collidingPairs.add(new CollidingPair(current, collidable));
+                }
+            }
+        }
+
+        return  collidingPairs;
     }
 
     private static void sortEndPoints(List<EndPoint> points) {
@@ -116,6 +150,15 @@ public class SweepAndPruneAlgorithm {
         list.add(i, element);
     }
 
+    private static Set<CollidingPair> intersect(Set<CollidingPair> xCollisions, Set<CollidingPair> yCollisions) {
+        for (Iterator<CollidingPair> iterator = xCollisions.iterator(); iterator.hasNext(); ) {
+            if (!yCollisions.contains(iterator.next())) {
+                iterator.remove();
+            }
+        }
+        return xCollisions;
+    }
+
     private static void assertSorted(List<EndPoint> points) {
         if (points.size() <= 1) {
             return;
@@ -123,7 +166,7 @@ public class SweepAndPruneAlgorithm {
         final Iterator<EndPoint> iterator = points.iterator();
         EndPoint previous = iterator.next();
         while (iterator.hasNext()) {
-            EndPoint current = iterator.next();
+            final EndPoint current = iterator.next();
             if (current.compareTo(previous) < 0) {
                 throw new AssertionError("End points are not sorted");
             }
@@ -160,7 +203,15 @@ public class SweepAndPruneAlgorithm {
 
         private boolean hasOwner(Collidable collidable) {
             // we need to check references here, not values
-            return owner == collidable;
+            return owner.equals(collidable);
+        }
+
+        private Collidable getOwner() {
+            return owner;
+        }
+
+        private boolean isMin() {
+            return !isMax;
         }
 
         @Override
@@ -170,7 +221,60 @@ public class SweepAndPruneAlgorithm {
 
         @Override
         public String toString() {
-            return Float.toString(point);
+            return owner + (isMax ? " max :" : " min :") + point;
+        }
+    }
+
+    private static class CollidingPair {
+        private final Collidable first, second;
+
+        private CollidingPair(Collidable first, Collidable second) {
+            if (first.getID() == second.getID()) {
+                throw new IllegalArgumentException("A box cannot collide with itself");
+            }
+            // Sort so pairs of the same objects are guaranteed to be equal
+            if (first.getID() > second.getID()) {
+                this.first = second;
+                this.second = first;
+            } else {
+                this.first = first;
+                this.second = second;
+            }
+        }
+
+        private Collidable getFirst() {
+            return first;
+        }
+
+        private Collidable getSecond() {
+            return second;
+        }
+
+        private void updateCollisionLists() {
+            getFirst().addColliding(getSecond());
+            getSecond().addColliding(getFirst());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof CollidingPair)) {
+                return false;
+            }
+            final CollidingPair that = (CollidingPair) o;
+            return first.equals(that.first) && second.equals(that.second);
+        }
+
+        @Override
+        public int hashCode() {
+            return first.hashCode() ^ second.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "(" + first.getID() + ", " + second.getID() + ")";
         }
     }
 }
