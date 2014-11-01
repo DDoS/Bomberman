@@ -5,62 +5,47 @@
  * 3. did not include class inheritances because collidable and snapshottable have not been implemented
  * 
  */
-
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
-import ecse321.fall2014.group3.bomberman.physics.Collidable;
-import ecse321.fall2014.group3.bomberman.world.tile.*;
+import java.util.Collections;
+import java.util.List;
 
-import java.util.LinkedList;
+import com.flowpowered.math.vector.Vector2f;
+
+import ecse321.fall2014.group3.bomberman.physics.Collidable;
+import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public abstract class Entity extends Collidable {
+    protected Vector2f velocity = Vector2f.ZERO;
+    protected Direction direction = Direction.UP;
 
-	protected double velocity;
+    public Vector2f getVelocity() {
+        return velocity;
+    }
 
-	protected enum Direction {
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT;
-	}
+    public Direction getDirection() {
+        return direction;
+    }
 
-	Direction entityDirection;
-	protected boolean collidingWith;
-	LinkedList entityCollisionList = new LinkedList();
-	LinkedList tileCollisionList = new LinkedList();
+    public List<Entity> getEntityCollisionList() {
+        // TODO: implement me
+        return Collections.EMPTY_LIST;
+    }
 
-	public Entity() {
+    public List<Tile> getTileCollisionList() {
+        // TODO: implement me
+        return Collections.EMPTY_LIST;
+    }
 
-		velocity = 0;
-		entityDirection = Direction.UP;
-		collidingWith = false;
-	}
+    public boolean isCollidingWith(Tile tile) {
+        // TODO: implement me
+        return false;
+    }
 
-	public double getVelocity() {
-		return velocity;
-	}
+    public boolean isCollidingWith(Entity entity) {
+        // TODO: implement me
+        return false;
+    }
 
-	public Direction getDirection() {
-		return entityDirection;
-	}
-
-	public LinkedList getEntityCollisionList() {
-		return entityCollisionList;
-	}
-
-	public LinkedList getTileCollisionList() {
-		return tileCollisionList;
-
-	}
-
-	public boolean isCollidingWith(Tile t) {
-		return collidingWith;
-	}
-
-	public boolean isCollidingWith(Entity e) {
-		return collidingWith;
-	}
-
-	//	public abstract getTextureInfo();
-
+    //	public abstract getTextureInfo();
 }
