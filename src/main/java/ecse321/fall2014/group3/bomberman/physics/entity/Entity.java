@@ -6,58 +6,61 @@
  * 
  */
 
-
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
+import ecse321.fall2014.group3.bomberman.physics.Collidable;
 import ecse321.fall2014.group3.bomberman.world.tile.*;
+
 import java.util.LinkedList;
 
-public abstract class Entity {
-	
+public abstract class Entity extends Collidable {
+
 	protected double velocity;
-	protected String direction;
+
+	protected enum Direction {
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT;
+	}
+
+	Direction entityDirection;
 	protected boolean collidingWith;
 	LinkedList entityCollisionList = new LinkedList();
 	LinkedList tileCollisionList = new LinkedList();
-	
-	public Entity(){
-		
+
+	public Entity() {
+
 		velocity = 0;
-		direction = "North";
+		entityDirection = Direction.UP;
 		collidingWith = false;
 	}
-	
-	public double getVelocity(){
-		
+
+	public double getVelocity() {
 		return velocity;
 	}
-	
-	public String getDirection(){
-		
-		return direction;
+
+	public Direction getDirection() {
+		return entityDirection;
 	}
 
-	public LinkedList getEntityCollisionList(){
-		
+	public LinkedList getEntityCollisionList() {
 		return entityCollisionList;
 	}
-	
-	public LinkedList getTileCollisionList(){
-		
+
+	public LinkedList getTileCollisionList() {
 		return tileCollisionList;
-		
+
 	}
-	
-	public boolean isCollidingWith(Tile t){
-		
+
+	public boolean isCollidingWith(Tile t) {
 		return collidingWith;
 	}
-	
-	public boolean isCollidingWith(Entity e){
-		
+
+	public boolean isCollidingWith(Entity e) {
 		return collidingWith;
 	}
-	
-//	public abstract getTextureInfo();
-	
+
+	//	public abstract getTextureInfo();
+
 }
