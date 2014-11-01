@@ -9,12 +9,21 @@ attribute vec2 textureCoords;
 
 varying vec2 spriteCoords;
 
+uniform int spriteSheetSize;
+uniform int spriteSize;
+uniform int spriteNumber;
+
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 void main() {
-    spriteCoords = textureCoords;
+    float spritesPerLine = spriteSheetSize / spriteSize;
+
+    float spriteX = mod(spriteNumber, spritesPerLine);
+    float spriteY = spritesPerLine - 1 - floor(spriteNumber / spritesPerLine);
+
+    spriteCoords = (vec2(spriteX, spriteY) + textureCoords) / spritesPerLine;
 
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
 }

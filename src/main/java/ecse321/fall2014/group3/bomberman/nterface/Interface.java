@@ -21,6 +21,7 @@ import org.spout.renderer.api.Material;
 import org.spout.renderer.api.Pipeline;
 import org.spout.renderer.api.Pipeline.PipelineBuilder;
 import org.spout.renderer.api.data.ShaderSource;
+import org.spout.renderer.api.data.Uniform.IntUniform;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.gl.Program;
@@ -42,6 +43,7 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  */
 public class Interface extends TickingElement {
     private static final int WIDTH = 640, HEIGHT = 480;
+    private static final int SPRITE_SIZE = 64;
     private final Game game;
     private final Camera orthoCamera;
     private final Context context = GLImplementation.get(getBestImpl());
@@ -60,7 +62,7 @@ public class Interface extends TickingElement {
     @Override
     public void onStart() {
         context.setWindowTitle("Bomberman");
-        context.setWindowSize(WIDTH, 480);
+        context.setWindowSize(WIDTH, HEIGHT);
         context.create();
         context.enableCapability(Capability.CULL_FACE);
         context.enableCapability(Capability.DEPTH_TEST);
@@ -91,6 +93,8 @@ public class Interface extends TickingElement {
 
         final Material spriteMaterial = new Material(spriteProgram);
         spriteMaterial.addTexture(0, spriteSheetTexture);
+        spriteMaterial.getUniforms().add(new IntUniform("spriteSheetSize", size.getWidth()));
+        spriteMaterial.getUniforms().add(new IntUniform("spriteSize", SPRITE_SIZE));
 
         final VertexArray spriteVertexArray = context.newVertexArray();
         spriteVertexArray.create();
@@ -105,10 +109,12 @@ public class Interface extends TickingElement {
         Model testModel1 = spriteModel.getInstance();
         testModel1.setScale(new Vector3f(0.5f, 0.5f, 1));
         testModel1.setPosition(new Vector3f(0.5f, 0.5f, -1));
+        testModel1.getUniforms().add(new IntUniform("spriteNumber", 27));
 
         Model testModel2 = spriteModel.getInstance();
         testModel2.setScale(new Vector3f(0.3f, 0.3f, 1));
-        testModel2.setPosition(new Vector3f(0.7f, 0.7f, -2));
+        testModel2.setPosition(new Vector3f(0.8f, 0.8f, -2));
+        testModel2.getUniforms().add(new IntUniform("spriteNumber", 138));
 
         renderedModels.add(testModel1);
         renderedModels.add(testModel2);
