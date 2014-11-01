@@ -1,23 +1,27 @@
-package game.world;
+package ecse321.fall2014.group3.bomberman.world;
 
-import game.world.tile.*;
+import ecse321.fall2014.group3.bomberman.world.tile.*;
+
+
 
 class Map {
 	
-	int columns = 13;
-	int rows = 31; 
-	Tile tiles [][] = new Tile [columns] [rows];
+	int columns;
+	int rows;
+	Tile tiles [][];
 	
 	public Map (){ 
-		for (int i = 0; i < rows; i++){
-			for (int j =0; j< columns; j++){
-				//place wall every 2 spots in x
-				//ignore 0,0
-				if (j % 2 == 1){
-					tiles [i][j]= new Tile ("wall", i, j);
+		columns = 13;
+		rows = 31;
+		tiles = new Tile [columns] [rows];
+		for (int y = 0; y < rows; y++){
+			for (int x =0; x< columns; x++){
+				//place wall every 2 spots in x and y
+				if ((x % 2 == 1) && (y % 2 == 1)){
+					tiles [x][y]= new Air();
 					
 				}else 
-					tiles [i][j]= new Tile("air", i, j);
+					tiles [x][y]= new Wall();
 			}
 		}
 		
