@@ -1,7 +1,7 @@
 package ecse321.fall2014.group3.bomberman.nterface;
 
 import java.nio.ByteBuffer;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.flowpowered.commons.ticking.TickingElement;
@@ -43,20 +43,20 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  */
 public class Interface extends TickingElement {
     private static final int WIDTH = 640, HEIGHT = 480;
+    private static final float ASPECT_RATIO = WIDTH / (float) HEIGHT;
     private static final int SPRITE_SIZE = 64;
     private final Game game;
     private final Camera orthoCamera;
     private final Context context = GLImplementation.get(getBestImpl());
     private Model spriteModel;
     private Pipeline pipeline;
-    private final Set<Model> renderedModels = new HashSet<>();
+    private final Set<Model> renderedModels = new LinkedHashSet<>();
 
     public Interface(Game game) {
         super("Interface", 60);
         this.game = game;
 
-        final float aspectRatio = WIDTH / (float) HEIGHT;
-        orthoCamera = Camera.createOrthographic(aspectRatio, 0, 1, 0, 0, 10);
+        orthoCamera = Camera.createOrthographic(ASPECT_RATIO, 0, 1, 0, 0, 10);
     }
 
     @Override
@@ -107,25 +107,35 @@ public class Interface extends TickingElement {
         // TEST CODE
 
         Model testModel1 = spriteModel.getInstance();
-        testModel1.setScale(new Vector3f(0.5f, 0.5f, 1));
-        testModel1.setPosition(new Vector3f(0.5f, 0.5f, -1));
+        testModel1.setScale(new Vector3f(0.3f, 0.3f, 1));
         testModel1.getUniforms().add(new IntUniform("spriteNumber", 27));
 
         Model testModel2 = spriteModel.getInstance();
-        testModel2.setScale(new Vector3f(0.3f, 0.3f, 1));
-        testModel2.setPosition(new Vector3f(0.8f, 0.8f, -2));
+        testModel2.setScale(new Vector3f(0.5f, 0.5f, 1));
         testModel2.getUniforms().add(new IntUniform("spriteNumber", 138));
+
+        Model testModel3 = spriteModel.getInstance();
+        testModel3.setScale(new Vector3f(0.7f, 0.7f, 1));
+        testModel3.getUniforms().add(new IntUniform("spriteNumber", 92));
 
         renderedModels.add(testModel1);
         renderedModels.add(testModel2);
+        renderedModels.add(testModel3);
     }
 
     @Override
-    public void onTick(long l) {
+    public void onTick(long dt) {
         if (context.isWindowCloseRequested()) {
             game.close();
         }
+
         pipeline.run(context);
+
+        int i = 0;
+        for (Model model : renderedModels) {
+            model.setPosition(Vector3f.createDirectionDeg(System.currentTimeMillis() % 1000d / 1000 * 360 + i * 120, 90).div(5).add(ASPECT_RATIO / 2, 0.5f, -i));
+            i++;
+        }
     }
 
     @Override
