@@ -43,6 +43,8 @@ On Windows, please change your git config using
 
 to enable normalized line endings.
 
+Use 4 spaces, not tabs.
+
 We'll borrow (with permission) the formatting settings from another project
 - IDEA [formatter](doc/spout_formatting/IntelliJ/Spout.xml)
 - Eclipse [formatter](doc/spout_formatting/Eclipse/formatter.xml) and [cleanup](doc/spout_formatting/Eclipse/cleanup.xml)
