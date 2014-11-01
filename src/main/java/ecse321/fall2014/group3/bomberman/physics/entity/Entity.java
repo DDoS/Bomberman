@@ -3,7 +3,7 @@
  * 1. Unsure about type of textureInfo variable
  * 2. Unsure about collidingWith method algorithms
  * 3. did not include class inheritances because collidable and snapshottable have not been implemented
- * 
+ * 4. 
  */
 
 
