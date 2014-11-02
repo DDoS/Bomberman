@@ -6,70 +6,69 @@
  * 3. Powerup Class not implemented so powerup list is commented
  * 
  */
-
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.flowpowered.math.vector.Vector2f;
 
-import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
 
 public class Player extends Entity {
+    //protected ... blastRadius
+    protected int placementBombCount;
+    protected double speed = 0;
+    protected boolean wallPass;
+    protected boolean bombPass;
+    protected boolean flamePass;
+    protected boolean invisibility;
+    //protected List<Powerup> powerups;
 
-	//protected ... blastRadius
-	protected int placementBombCount;
-	protected double speed = 0;
-	protected boolean wallPass;
-	protected boolean bombPass;
-	protected boolean flamePass;
-	protected boolean invisibility;
-	//protected List<Powerup> powerups;
+    public Player(Vector2f position, CollisionBox collisionBox) {
+        super(position, collisionBox);
+    }
 
-	public int getPlacementBombCount() {
-		return placementBombCount;
-	}
+    public int getPlacementBombCount() {
+        return placementBombCount;
+    }
 
-	public double getSpeed() {
-		return speed;
-	}
-/*	
-	public Set<Powerup> getPowerups() {
-		// TODO: implement me
-		return Collections.EMPTY_SET;
-	}
-*/
-	public boolean isWallPass() {
-		return wallPass;
-	}
+    public double getSpeed() {
+        return speed;
+    }
 
-	public void setWallPass(boolean wallPass) {
-		this.wallPass = wallPass;
-	}
+    /*
+    public Set<Powerup> getPowerups() {
+        // TODO: implement me
+        return Collections.EMPTY_SET;
+    }
+    */
+    public boolean isWallPass() {
+        return wallPass;
+    }
 
-	public boolean isBombPass() {
-		return bombPass;
-	}
+    public void setWallPass(boolean wallPass) {
+        this.wallPass = wallPass;
+    }
 
-	public void setBombPass(boolean bombPass) {
-		this.bombPass = bombPass;
-	}
+    public boolean isBombPass() {
+        return bombPass;
+    }
 
-	public boolean isFlamePass() {
-		return flamePass;
+    public void setBombPass(boolean bombPass) {
+        this.bombPass = bombPass;
+    }
 
-	}
+    public boolean isFlamePass() {
+        return flamePass;
+    }
 
-	public void setFlamePass(boolean flamePass) {
-		this.flamePass = flamePass;
-	}
+    public void setFlamePass(boolean flamePass) {
+        this.flamePass = flamePass;
+    }
 
-	public boolean isInvisibility() {
-		return invisibility;
-	}
-	
-	public void setInvisibility(boolean invisibility){
-		this.invisibility = invisibility;
-	}
+    public boolean isInvisibility() {
+        return invisibility;
+    }
 
+    public void setInvisibility(boolean invisibility) {
+        this.invisibility = invisibility;
+    }
 }
