@@ -23,13 +23,14 @@ public class World extends TickingElement {
         for (int y = 0; y < Map.HEIGHT; y++) {
             for (int x = 0; x < Map.WIDTH; x++) {
                 if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
-                        || y % 2 == 0 || x % 2 == 0) {
+                        || y % 2 == 0 && x % 2 == 0) {
                     map.setTile(x, y, Wall.class);
                 } else {
                     map.setTile(x, y, Air.class);
                 }
             }
         }
+        map.incrementVersion();
     }
 
     @Override
