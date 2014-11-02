@@ -6,7 +6,6 @@ import com.flowpowered.math.vector.Vector2f;
  *
  */
 public class CollisionBox {
-    static final CollisionBox NULL_BOX = new CollisionBox(new Vector2f(Float.MIN_VALUE, Float.MIN_VALUE));
     private final Vector2f size;
     private final Vector2f halfSize;
 

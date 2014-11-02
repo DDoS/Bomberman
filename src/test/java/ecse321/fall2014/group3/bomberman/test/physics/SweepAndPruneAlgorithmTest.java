@@ -57,12 +57,7 @@ public class SweepAndPruneAlgorithmTest {
         private final List<Collidable> expectedCollisions = new ArrayList<>();
 
         private TestCollidable() {
-            randomize();
-        }
-
-        private void randomize() {
-            position = randomVector2f(50);
-            collisionBox = new CollisionBox(randomVector2f(4).abs());
+            super(randomVector2f(50), new CollisionBox(randomVector2f(4).abs()));
         }
 
         // Moves this box and changes the box shape to guarantee a collision

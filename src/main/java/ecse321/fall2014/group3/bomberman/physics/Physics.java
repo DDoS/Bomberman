@@ -21,7 +21,7 @@ public class Physics extends TickingElement {
     }
 
     @Override
-    public void onTick(long l) {
+    public void onTick(long dt) {
 
     }
 

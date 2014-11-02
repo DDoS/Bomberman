@@ -12,10 +12,15 @@ import com.flowpowered.math.vector.Vector2f;
 public abstract class Collidable {
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
     protected Vector2f position = Vector2f.ZERO;
-    protected CollisionBox collisionBox = CollisionBox.NULL_BOX;
+    protected CollisionBox collisionBox;
     protected boolean ghost = false;
     private final Set<Collidable> collisionList = new HashSet<>();
     private final int id = ID_COUNTER.getAndIncrement();
+
+    protected Collidable(Vector2f position, CollisionBox collisionBox) {
+        this.position = position;
+        this.collisionBox = collisionBox;
+    }
 
     public Vector2f getPosition() {
         return position;
