@@ -22,8 +22,8 @@ public class Player extends Entity {
     protected boolean invisibility;
     //protected List<Powerup> powerups;
 
-    public Player(Vector2f position, CollisionBox collisionBox) {
-        super(position, collisionBox);
+    public Player(Vector2f position) {
+        super(position, COLLISION_BOX);
     }
 
     public int getPlacementBombCount() {

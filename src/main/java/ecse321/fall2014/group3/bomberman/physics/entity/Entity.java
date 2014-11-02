@@ -17,6 +17,7 @@ import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public abstract class Entity extends Collidable {
+    static final CollisionBox COLLISION_BOX = new CollisionBox(Vector2f.ONE.mul(0.8));
     protected Vector2f velocity = Vector2f.ZERO;
     protected Direction direction = Direction.UP;
 
