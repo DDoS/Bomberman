@@ -9,12 +9,17 @@
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
 import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2i;
+
+import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Player extends Entity {
-    //protected ... blastRadius
-    protected int placementBombCount;
-    protected double speed = 0;
-    //protected List<Powerup> powerups;
+    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 16, Vector2i.ONE);
+    //private ... blastRadius
+    private int placementBombCount;
+    private double speed = 0;
+    //private List<Powerup> powerups;
+    private SpriteInfo currentSprite = STILL_SPRITE;
 
     public Player(Vector2f position) {
         super(position, COLLISION_BOX);
@@ -52,5 +57,10 @@ public class Player extends Entity {
     public boolean isInvisibility() {
         // TODO: implement me
         return false;
+    }
+
+    @Override
+    public SpriteInfo getSpriteInfo() {
+        return currentSprite;
     }
 }
