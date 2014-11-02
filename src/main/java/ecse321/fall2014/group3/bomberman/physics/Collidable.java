@@ -1,7 +1,7 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -14,7 +14,7 @@ public abstract class Collidable {
     protected Vector2f position = Vector2f.ZERO;
     protected CollisionBox collisionBox = CollisionBox.NULL_BOX;
     protected boolean ghost = false;
-    private final List<Collidable> collisionList = new ArrayList<>();
+    private final Set<Collidable> collisionList = new HashSet<>();
     private final int id = ID_COUNTER.getAndIncrement();
 
     public Vector2f getPosition() {
@@ -29,7 +29,7 @@ public abstract class Collidable {
         return ghost;
     }
 
-    public List<Collidable> getCollisionList() {
+    public Set<Collidable> getCollisionList() {
         return collisionList;
     }
 

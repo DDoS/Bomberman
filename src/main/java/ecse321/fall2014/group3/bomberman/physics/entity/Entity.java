@@ -8,7 +8,7 @@
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -27,14 +27,14 @@ public abstract class Entity extends Collidable {
         return direction;
     }
 
-    public List<Entity> getEntityCollisionList() {
+    public Set<Entity> getEntityCollisionList() {
         // TODO: implement me
-        return Collections.EMPTY_LIST;
+        return Collections.EMPTY_SET;
     }
 
-    public List<Tile> getTileCollisionList() {
+    public Set<Tile> getTileCollisionList() {
         // TODO: implement me
-        return Collections.EMPTY_LIST;
+        return Collections.EMPTY_SET;
     }
 
     public boolean isCollidingWith(Tile tile) {

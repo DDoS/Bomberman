@@ -3,6 +3,7 @@ package ecse321.fall2014.group3.bomberman.test.physics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -75,7 +76,7 @@ public class SweepAndPruneAlgorithmTest {
 
         private void verifyCollisions() {
             // Check if all expected collisions are in the actual list
-            final List<Collidable> actualCollisions = getCollisionList();
+            final Set<Collidable> actualCollisions = getCollisionList();
             int failCount = 0;
             for (Collidable expectedCollision : expectedCollisions) {
                 if (!actualCollisions.contains(expectedCollision)) {
