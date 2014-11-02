@@ -14,12 +14,12 @@ import com.flowpowered.math.vector.Vector2i;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Player extends Entity {
-    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 16, Vector2i.ONE);
-    //private ... blastRadius
-    private int placementBombCount;
-    private double speed = 0;
-    //private List<Powerup> powerups;
-    private SpriteInfo currentSprite = STILL_SPRITE;
+    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 0, Vector2i.ONE);
+    private volatile int blastRadius = 1;
+    private volatile int placementBombCount = 1;
+    private volatile float speed = 1;
+    //private List<Powerup> powerups = Collections.synchronizedList(new ArrayList<Powerup>());
+    private volatile SpriteInfo currentSprite = STILL_SPRITE;
 
     public Player(Vector2f position) {
         super(position, COLLISION_BOX);
