@@ -10,6 +10,30 @@
 	<inceptionYear>2014</inceptionYear>
 	<description>A Bomberman implementation for the ECSE 321 Fall 2014 group project.</description>
 
+	<!-- Project developers -->
+	<developers>
+		<developer>
+			<id>DDoS</id>
+			<name>Aleksi Sapon</name>
+			<email>alek42008@yahoo.com</email>
+		</developer>
+		<developer>
+			<id>philippe-d</id>
+			<name>Philippe Douyon</name>
+			<email>fill@this.here</email>
+		</developer>
+		<developer>
+			<id>marcomang</id>
+			<name>Marco</name>
+			<email>fill@this.here</email>
+		</developer>
+		<developer>
+			<id>liannayang</id>
+			<name>Lianna Yang</name>
+			<email>fill@this.here</email>
+		</developer>
+	</developers>
+
 	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
