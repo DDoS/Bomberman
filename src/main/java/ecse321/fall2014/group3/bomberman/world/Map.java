@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -16,10 +17,7 @@ public class Map {
     public static final int HEIGHT = 13, WIDTH = 31;
     private final Tile tiles[][] = new Tile[HEIGHT][WIDTH];
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    public Map() {
-
-    }
+    private final AtomicLong version = new AtomicLong(0);
 
     public Tile getTile(int x, int y) {
         return getTile(new Vector2i(x, y));
@@ -78,6 +76,14 @@ public class Map {
         } finally {
             write.unlock();
         }
+    }
+
+    void incrementVersion() {
+        version.incrementAndGet();
+    }
+
+    public long getVersion() {
+        return version.get();
     }
 
     private void checkInBounds(Vector2i pos) {

@@ -1,14 +1,15 @@
 package ecse321.fall2014.group3.bomberman.nterface;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
-import com.flowpowered.math.vector.Vector3f;
 
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.world.Map;
+import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GLContext;
@@ -50,13 +51,14 @@ public class Interface extends TickingElement {
     private final Context context = GLImplementation.get(getBestImpl());
     private Model spriteModel;
     private Pipeline pipeline;
-    private final Set<Model> renderedModels = new LinkedHashSet<>();
+    private long mapVersion = 0;
+    private final Set<Model> tileModels = new HashSet<>();
 
     public Interface(Game game) {
         super("Interface", 60);
         this.game = game;
 
-        orthoCamera = Camera.createOrthographic(ASPECT_RATIO, 0, 1, 0, 0, 10);
+        orthoCamera = Camera.createOrthographic(ASPECT_RATIO * 10, 0, 10, 0, 0, 10);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class Interface extends TickingElement {
 
         final Texture spriteSheetTexture = context.newTexture();
         spriteSheetTexture.create();
-        spriteSheetTexture.setFilters(FilterMode.NEAREST, FilterMode.NEAREST);
+        spriteSheetTexture.setFilters(FilterMode.LINEAR, FilterMode.LINEAR);
         spriteSheetTexture.setFormat(Format.RGB);
 
         final Rectangle size = new Rectangle();
@@ -104,25 +106,7 @@ public class Interface extends TickingElement {
 
         spriteModel = new Model(spriteVertexArray, spriteMaterial);
 
-        pipeline = new PipelineBuilder().clearBuffer().useCamera(orthoCamera).renderModels(renderedModels).updateDisplay().build();
-
-        // TEST CODE
-
-        Model testModel1 = spriteModel.getInstance();
-        testModel1.setScale(new Vector3f(0.3f, 0.3f, 1));
-        testModel1.getUniforms().add(new IntUniform("spriteNumber", 27));
-
-        Model testModel2 = spriteModel.getInstance();
-        testModel2.setScale(new Vector3f(0.5f, 0.5f, 1));
-        testModel2.getUniforms().add(new IntUniform("spriteNumber", 138));
-
-        Model testModel3 = spriteModel.getInstance();
-        testModel3.setScale(new Vector3f(0.7f, 0.7f, 1));
-        testModel3.getUniforms().add(new IntUniform("spriteNumber", 92));
-
-        renderedModels.add(testModel1);
-        renderedModels.add(testModel2);
-        renderedModels.add(testModel3);
+        pipeline = new PipelineBuilder().clearBuffer().useCamera(orthoCamera).renderModels(tileModels).updateDisplay().build();
     }
 
     @Override
@@ -131,13 +115,24 @@ public class Interface extends TickingElement {
             game.close();
         }
 
-        pipeline.run(context);
+        final Map map = game.getWorld().getMap();
+        long newVersion = map.getVersion();
 
-        int i = 0;
-        for (Model model : renderedModels) {
-            model.setPosition(Vector3f.createDirectionDeg(System.currentTimeMillis() % 1000d / 1000 * 360 + i * 120, 90).div(5).add(ASPECT_RATIO / 2, 0.5f, -i));
-            i++;
+        if (mapVersion < newVersion) {
+            tileModels.clear();
+            for (int y = 0; y < Map.HEIGHT; y++) {
+                for (int x = 0; x < Map.WIDTH; x++) {
+                    final Tile tile = map.getTile(x, y);
+                    final Model model = spriteModel.getInstance();
+                    model.setPosition(tile.getPosition().toVector3(-1));
+                    model.getUniforms().add(new IntUniform("spriteNumber", tile.getSpriteInfo().getSpriteNumber()));
+                    tileModels.add(model);
+                }
+            }
+            mapVersion = newVersion;
         }
+
+        pipeline.run(context);
     }
 
     @Override
