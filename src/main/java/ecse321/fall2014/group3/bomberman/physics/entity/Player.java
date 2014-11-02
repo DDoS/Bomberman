@@ -24,7 +24,6 @@ public class Player extends Entity {
 	protected boolean bombPass;
 	protected boolean flamePass;
 	protected boolean invisibility;
-
 	//protected List<Powerup> powerups;
 
 	public int getPlacementBombCount() {
@@ -34,13 +33,12 @@ public class Player extends Entity {
 	public double getSpeed() {
 		return speed;
 	}
-
-	/*	
-		public Set<Powerup> getPowerups() {
-			// TODO: implement me
-			return Collections.EMPTY_SET;
-		}
-	*/
+/*	
+	public Set<Powerup> getPowerups() {
+		// TODO: implement me
+		return Collections.EMPTY_SET;
+	}
+*/
 	public boolean isWallPass() {
 		return wallPass;
 	}
@@ -69,8 +67,8 @@ public class Player extends Entity {
 	public boolean isInvisibility() {
 		return invisibility;
 	}
-
-	public void setInvisibility(boolean invisibility) {
+	
+	public void setInvisibility(boolean invisibility){
 		this.invisibility = invisibility;
 	}
 
