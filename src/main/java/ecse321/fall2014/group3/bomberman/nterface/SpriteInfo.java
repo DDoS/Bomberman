@@ -1,6 +1,6 @@
 package ecse321.fall2014.group3.bomberman.nterface;
 
-import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector2f;
 
 /**
  *
@@ -8,9 +8,9 @@ import com.flowpowered.math.vector.Vector2i;
 public class SpriteInfo {
     private final String sheetID;
     private final int spriteNumber;
-    private final Vector2i spriteSize;
+    private final Vector2f spriteSize;
 
-    public SpriteInfo(String sheetID, int spriteNumber, Vector2i spriteSize) {
+    public SpriteInfo(String sheetID, int spriteNumber, Vector2f spriteSize) {
         this.sheetID = sheetID;
         this.spriteNumber = spriteNumber;
         this.spriteSize = spriteSize;
@@ -24,7 +24,7 @@ public class SpriteInfo {
         return spriteNumber;
     }
 
-    public Vector2i getSpriteSize() {
+    public Vector2f getSpriteSize() {
         return spriteSize;
     }
 }

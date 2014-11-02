@@ -26,6 +26,7 @@ import org.spout.renderer.api.Pipeline;
 import org.spout.renderer.api.Pipeline.PipelineBuilder;
 import org.spout.renderer.api.data.ShaderSource;
 import org.spout.renderer.api.data.Uniform.IntUniform;
+import org.spout.renderer.api.data.Uniform.Vector2Uniform;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.gl.Program;
@@ -103,8 +104,7 @@ public class Interface extends TickingElement {
 
         final Material spriteMaterial = new Material(spriteProgram);
         spriteMaterial.addTexture(0, spriteSheetTexture);
-        spriteMaterial.getUniforms().add(new IntUniform("spriteSheetSize", size.getWidth()));
-        spriteMaterial.getUniforms().add(new IntUniform("spriteSize", SPRITE_SIZE));
+        spriteMaterial.getUniforms().add(new IntUniform("spritesPerLine", size.getWidth() / SPRITE_SIZE));
 
         final VertexArray spriteVertexArray = context.newVertexArray();
         spriteVertexArray.create();
@@ -131,6 +131,7 @@ public class Interface extends TickingElement {
                     model.setPosition(tile.getPosition().toVector3(-1));
                     model.setScale(tile.getModelSize().toVector3(1));
                     model.getUniforms().add(new IntUniform("spriteNumber", tile.getSpriteInfo().getSpriteNumber()));
+                    model.getUniforms().add(new Vector2Uniform("spriteSize", tile.getSpriteInfo().getSpriteSize()));
                     tileModels.add(model);
                 }
             }
@@ -149,10 +150,12 @@ public class Interface extends TickingElement {
                 model = spriteModel.getInstance();
                 model.setScale(entity.getModelSize().toVector3(1));
                 model.getUniforms().add(new IntUniform("spriteNumber", 0));
+                model.getUniforms().add(new Vector2Uniform("spriteSize", Vector2f.ZERO));
                 entityModels.put(entity, model);
             }
             model.setPosition(entity.getPosition().toVector3(0));
             model.getUniforms().<IntUniform>get("spriteNumber").set(entity.getSpriteInfo().getSpriteNumber());
+            model.getUniforms().<Vector2Uniform>get("spriteSize").set(entity.getSpriteInfo().getSpriteSize());
         }
 
         orthoCamera.setPosition(game.getPhysics().getPlayer().getPosition().toVector3().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2, 0));
