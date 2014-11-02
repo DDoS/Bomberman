@@ -55,5 +55,8 @@ public abstract class Entity extends Collidable implements SpriteTextured {
         return false;
     }
 
-    //	public abstract getTextureInfo();
+    @Override
+    public Vector2f getModelSize() {
+        return SIZE;
+    }
 }

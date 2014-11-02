@@ -12,4 +12,9 @@ public abstract class Tile extends Collidable implements SpriteTextured {
     protected Tile(Vector2f position, CollisionBox collisionBox) {
         super(position, collisionBox);
     }
+
+    @Override
+    public Vector2f getModelSize() {
+        return Vector2f.ONE;
+    }
 }
