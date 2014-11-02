@@ -8,7 +8,7 @@ import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 public class Wall extends Tile {
     private static final SpriteInfo WALL_SPRITE = new SpriteInfo("main", 192, Vector2i.ONE);
 
-    Wall(Vector2f position) {
+    public Wall(Vector2f position) {
         super(position, Tile.COLLISION_BOX);
     }
 

@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector2i;
 
+import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public class Map {
@@ -18,6 +19,20 @@ public class Map {
     private final Tile tiles[][] = new Tile[HEIGHT][WIDTH];
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final AtomicLong version = new AtomicLong(0);
+
+    public Map() {
+        final Lock write = lock.writeLock();
+        write.lock();
+        try {
+            for (int y = 0; y < HEIGHT; y++) {
+                for (int x = 0; x < WIDTH; x++) {
+                    tiles[y][x] = new Air(new Vector2f(x, y));
+                }
+            }
+        } finally {
+            write.unlock();
+        }
+    }
 
     public Tile getTile(int x, int y) {
         return getTile(new Vector2i(x, y));

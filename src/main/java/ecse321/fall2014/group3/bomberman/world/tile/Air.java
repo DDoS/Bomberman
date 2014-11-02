@@ -8,7 +8,7 @@ import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 public class Air extends Tile {
     private static final SpriteInfo AIR_SPRITE = new SpriteInfo("main", 64, Vector2i.ONE);
 
-    Air(Vector2f position) {
+    public Air(Vector2f position) {
         super(position, null);
     }
 
