@@ -129,6 +129,7 @@ public class Interface extends TickingElement {
                     final Tile tile = map.getTile(x, y);
                     final Model model = spriteModel.getInstance();
                     model.setPosition(tile.getPosition().toVector3(-1));
+                    model.setScale(tile.getModelSize().toVector3(1));
                     model.getUniforms().add(new IntUniform("spriteNumber", tile.getSpriteInfo().getSpriteNumber()));
                     tileModels.add(model);
                 }
@@ -146,6 +147,7 @@ public class Interface extends TickingElement {
             Model model = entityModels.get(entity);
             if (model == null) {
                 model = spriteModel.getInstance();
+                model.setScale(entity.getModelSize().toVector3(1));
                 model.getUniforms().add(new IntUniform("spriteNumber", 0));
                 entityModels.put(entity, model);
             }

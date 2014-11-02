@@ -91,7 +91,6 @@ public class Physics extends TickingElement {
     }
 
     private static Vector2f blockDirection(Vector2f movement, Direction direction) {
-        System.out.println(direction);
         switch (direction) {
             case RIGHT:
                 return movement.min(0, Float.MAX_VALUE);
