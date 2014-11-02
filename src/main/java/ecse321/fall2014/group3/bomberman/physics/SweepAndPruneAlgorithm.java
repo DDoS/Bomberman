@@ -79,6 +79,11 @@ public class SweepAndPruneAlgorithm {
         return xPoints.size() / 2;
     }
 
+    public void clear() {
+        xPoints.clear();
+        yPoints.clear();
+    }
+
     private static Set<CollidingPair> computeCollisions(List<EndPoint> points) {
         final Set<CollidingPair> collidingPairs = new HashSet<>();
 

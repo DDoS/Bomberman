@@ -25,20 +25,23 @@ public class Player extends Entity {
         super(position, COLLISION_BOX);
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    public int getBlastRadius() {
+        return blastRadius;
+    }
+
     public int getPlacementBombCount() {
         return placementBombCount;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    /*
-    public Set<Powerup> getPowerups() {
+    /*public Set<Powerup> getPowerups() {
         // TODO: implement me
         return Collections.EMPTY_SET;
-    }
-    */
+    }*/
+
     public boolean isWallPass() {
         // TODO: implement me
         return false;

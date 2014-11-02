@@ -27,6 +27,14 @@ public abstract class Collidable {
         return position;
     }
 
+    protected void setPosition(Vector2f position) {
+        this.position = position;
+    }
+
+    public boolean isCollisionEnabled() {
+        return collisionBox != null;
+    }
+
     public CollisionBox getCollisionBox() {
         return collisionBox;
     }
