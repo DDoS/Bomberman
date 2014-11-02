@@ -7,23 +7,41 @@ import com.flowpowered.math.vector.Vector2f;
  *
  */
 public enum Direction {
-    RIGHT(Vector2f.UNIT_X, Complexf.fromAngleDeg(0)),
-    UP(Vector2f.UNIT_Y, Complexf.fromAngleDeg(90)),
-    LEFT(Vector2f.UNIT_X.negate(), Complexf.fromAngleDeg(180)),
-    DOWN(Vector2f.UNIT_Y.negate(), Complexf.fromAngleDeg(270));
+    RIGHT(0),
+    UP(90),
+    LEFT(180),
+    DOWN(270);
+    private final float angleDeg;
     private final Vector2f unit;
     private final Complexf rotation;
 
-    private Direction(Vector2f unit, Complexf rotation) {
-        this.unit = unit;
-        this.rotation = rotation;
+    private Direction(float angleDeg) {
+        this.angleDeg = angleDeg;
+        rotation = Complexf.fromAngleDeg(angleDeg);
+        unit = rotation.getDirection();
+    }
+
+    public float getAngleDeg() {
+        return angleDeg;
+    }
+
+    public Complexf getRotation() {
+        return rotation;
     }
 
     public Vector2f getUnit() {
         return unit;
     }
 
-    public Complexf getRotation() {
-        return rotation;
+    public static Direction fromUnit(Vector2f unit) {
+        return fromRotation(Complexf.fromRotationTo(Vector2f.UNIT_X, unit));
+    }
+
+    public static Direction fromRotation(Complexf rotation) {
+        return fromAngleDeg(rotation.getAngleDeg());
+    }
+
+    public static Direction fromAngleDeg(float angle) {
+        return values()[Math.round((angle % 360 + 360) % 360 / 90) % 4];
     }
 }
