@@ -77,7 +77,7 @@ public class Map {
         final Tile tile;
         try {
             // The use of reflection to init the tile ourselves guarantees that its position will be correct
-            // This has the disadvantage of no compile time type checks
+            // This has the disadvantage of no compile time type checks and being a bit slower
             final Constructor<? extends Tile> constructor = type.getDeclaredConstructor(Vector2f.class);
             constructor.setAccessible(true);
             tile = constructor.newInstance(pos.toFloat());

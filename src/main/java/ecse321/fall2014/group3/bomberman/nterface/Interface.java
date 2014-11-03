@@ -158,7 +158,7 @@ public class Interface extends TickingElement {
             model.getUniforms().<Vector2Uniform>get("spriteSize").set(entity.getSpriteInfo().getSpriteSize());
         }
 
-        orthoCamera.setPosition(game.getPhysics().getPlayer().getPosition().toVector3().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2, 0));
+        orthoCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2).toVector3());
 
         pipeline.run(context);
     }
