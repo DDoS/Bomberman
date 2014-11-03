@@ -64,7 +64,7 @@ public class Physics extends TickingElement {
 
         collisionDetection.update();
 
-        Vector2f movement = getInputVector().mul(player.getSpeed());
+        Vector2f movement = getInputVector().mul(player.getSpeed() * dt / 1e9f);
         for (Collidable collidable : player.getCollisionList()) {
             movement = blockDirection(movement, getCollisionDirection(player, collidable));
         }
@@ -81,6 +81,10 @@ public class Physics extends TickingElement {
                 final Key key = direction.getKey();
                 input = input.add(direction.getUnit().mul(keyboardState.getPressTime(key) / 1e9f));
                 keyboardState.reset(key);
+            }
+            // Make sure we're not trying to normalize the zero vector
+            if (input.lengthSquared() > 0) {
+                input = input.normalize();
             }
             return input;
         } finally {
