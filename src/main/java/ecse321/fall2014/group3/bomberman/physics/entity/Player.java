@@ -16,7 +16,7 @@ public class Player extends Entity {
     private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 0, Vector2f.ONE);
     private volatile int blastRadius = 1;
     private volatile int placementBombCount = 1;
-    private volatile float speed = 1;
+    private volatile float speed = 3;
     //private List<Powerup> powerups = Collections.synchronizedList(new ArrayList<Powerup>());
     private volatile SpriteInfo currentSprite = STILL_SPRITE;
 

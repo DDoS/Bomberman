@@ -26,7 +26,7 @@ public class Physics extends TickingElement {
     private long mapVersion = 0;
 
     public Physics(Game game) {
-        super("Physics", 30);
+        super("Physics", 60);
         this.game = game;
     }
 
