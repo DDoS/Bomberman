@@ -97,9 +97,9 @@ public class Physics extends TickingElement {
             case UP:
                 return movement.min(Float.MAX_VALUE, 0);
             case LEFT:
-                return movement.max(0, Float.MIN_VALUE);
+                return movement.max(0, -Float.MAX_VALUE);
             case DOWN:
-                return movement.max(Float.MIN_VALUE, 0);
+                return movement.max(-Float.MAX_VALUE, 0);
             default:
                 return movement;
         }

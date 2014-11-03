@@ -34,7 +34,13 @@ public enum Direction {
     }
 
     public static Direction fromUnit(Vector2f unit) {
-        return fromRotation(Complexf.fromRotationTo(Vector2f.UNIT_X, unit));
+        unit = unit.normalize();
+        float cosAngle = (float) Math.toDegrees(TrigMath.acos(unit.getX()));
+        if (unit.getY() >= 0) {
+            return fromAngleDeg(cosAngle);
+        } else {
+            return fromAngleDeg(360 - cosAngle);
+        }
     }
 
     public static Direction fromRotation(Complexf rotation) {
