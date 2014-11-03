@@ -1,10 +1,10 @@
 /*
  * Stuff to fix:
- * 
+ *
  * 1. What type is blastRadius?
  * 2. What is detonator variable?
  * 3. Powerup Class not implemented so powerup list is commented
- * 
+ *
  */
 package ecse321.fall2014.group3.bomberman.physics.entity;
 

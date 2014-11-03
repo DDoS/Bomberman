@@ -23,5 +23,5 @@ void main() {
 
     spriteCoords = (vec2(spriteX, spriteY) + textureCoords) / spritesPerLine * spriteSize;
 
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position.xy * spriteSize, 0, 1);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
 }
