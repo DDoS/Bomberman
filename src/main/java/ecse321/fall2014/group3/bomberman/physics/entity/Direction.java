@@ -1,24 +1,29 @@
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
+import com.flowpowered.math.TrigMath;
 import com.flowpowered.math.imaginary.Complexf;
 import com.flowpowered.math.vector.Vector2f;
+
+import ecse321.fall2014.group3.bomberman.input.Key;
 
 /**
  *
  */
 public enum Direction {
-    RIGHT(0),
-    UP(90),
-    LEFT(180),
-    DOWN(270);
+    RIGHT(0, Key.RIGHT),
+    UP(90, Key.UP),
+    LEFT(180, Key.LEFT),
+    DOWN(270, Key.DOWN);
     private final float angleDeg;
     private final Vector2f unit;
     private final Complexf rotation;
+    private final Key key;
 
-    private Direction(float angleDeg) {
+    private Direction(float angleDeg, Key key) {
         this.angleDeg = angleDeg;
         rotation = Complexf.fromAngleDeg(angleDeg);
         unit = rotation.getDirection();
+        this.key = key;
     }
 
     public float getAngleDeg() {
@@ -31,6 +36,10 @@ public enum Direction {
 
     public Vector2f getUnit() {
         return unit;
+    }
+
+    public Key getKey() {
+        return key;
     }
 
     public static Direction fromUnit(Vector2f unit) {

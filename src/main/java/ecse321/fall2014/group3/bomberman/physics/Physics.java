@@ -8,6 +8,8 @@ import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.input.Key;
+import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Direction;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.Player;
@@ -62,7 +64,7 @@ public class Physics extends TickingElement {
 
         collisionDetection.update();
 
-        Vector2f movement = getInputVector(dt).mul(player.getSpeed());
+        Vector2f movement = getInputVector().mul(player.getSpeed());
         for (Collidable collidable : player.getCollisionList()) {
             movement = blockDirection(movement, getCollisionDirection(player, collidable));
         }
@@ -70,9 +72,20 @@ public class Physics extends TickingElement {
         // TODO: update velocity
     }
 
-    private Vector2f getInputVector(long dt) {
-        // TODO: implement me when input is done
-        return Vector2f.UNIT_X.mul(dt / 1e9f);
+    private Vector2f getInputVector() {
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        keyboardState.lock();
+        try {
+            Vector2f input = Vector2f.ZERO;
+            for (Direction direction : Direction.values()) {
+                final Key key = direction.getKey();
+                input = input.add(direction.getUnit().mul(keyboardState.getPressTime(key) / 1e9f));
+                keyboardState.reset(key);
+            }
+            return input;
+        } finally {
+            keyboardState.unlock();
+        }
     }
 
     @Override

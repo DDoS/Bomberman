@@ -115,10 +115,6 @@ public class Interface extends TickingElement {
 
     @Override
     public void onTick(long dt) {
-        if (context.isWindowCloseRequested()) {
-            game.close();
-        }
-
         final Map map = game.getWorld().getMap();
         final long newVersion = map.getVersion();
 
