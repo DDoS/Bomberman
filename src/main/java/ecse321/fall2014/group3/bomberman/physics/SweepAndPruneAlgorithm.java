@@ -13,6 +13,7 @@ import com.flowpowered.math.vector.Vector2f;
  *
  */
 public class SweepAndPruneAlgorithm {
+    private final Set<Collidable> collidables = new HashSet<>();
     private final List<EndPoint> xPoints = new LinkedList<>();
     private final List<EndPoint> yPoints = new LinkedList<>();
     private final boolean doAsserts;
@@ -26,6 +27,8 @@ public class SweepAndPruneAlgorithm {
     }
 
     public void add(Collidable collidable) {
+        collidables.add(collidable);
+
         final EndPoint xMax = new EndPoint(collidable, true, true);
         final EndPoint xMin = new EndPoint(collidable, true, false);
         insertSorted(xPoints, xMax);
@@ -43,6 +46,8 @@ public class SweepAndPruneAlgorithm {
     }
 
     public void remove(Collidable collidable) {
+        collidables.remove(collidable);
+
         removeEndPoints(xPoints, collidable);
         removeEndPoints(yPoints, collidable);
 
@@ -66,20 +71,22 @@ public class SweepAndPruneAlgorithm {
 
         final Set<CollidingPair> colliding = intersect(computeCollisions(xPoints), computeCollisions(yPoints));
 
-        for (CollidingPair pair : colliding) {
-            pair.getFirst().clearCollisionList();
-            pair.getSecond().clearCollisionList();
+        for (Collidable collidable : collidables) {
+            collidable.clearCollisionList();
+            collidable.clearCollisionList();
         }
+
         for (CollidingPair pair : colliding) {
             pair.updateCollisionLists();
         }
     }
 
     public int getCount() {
-        return xPoints.size() / 2;
+        return collidables.size();
     }
 
     public void clear() {
+        collidables.clear();
         xPoints.clear();
         yPoints.clear();
     }
@@ -103,7 +110,7 @@ public class SweepAndPruneAlgorithm {
             }
         }
 
-        return  collidingPairs;
+        return collidingPairs;
     }
 
     private static void sortEndPoints(List<EndPoint> points) {
@@ -116,8 +123,8 @@ public class SweepAndPruneAlgorithm {
                 if (current.compareTo(previous) < 0) {
                     iterator.remove();
                     boolean wasSmaller = false;
-                    while (iterator.hasPrevious() && (wasSmaller = current.compareTo(iterator.previous()) < 0))
-                        ;
+                    while (iterator.hasPrevious() && (wasSmaller = current.compareTo(iterator.previous()) < 0)) {
+                    }
                     if (!wasSmaller) {
                         iterator.next();
                     }
