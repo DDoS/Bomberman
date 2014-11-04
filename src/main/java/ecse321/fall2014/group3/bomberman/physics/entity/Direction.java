@@ -17,12 +17,14 @@ public enum Direction {
     private final float angleDeg;
     private final Vector2f unit;
     private final Complexf rotation;
+    private final Vector2f perpendicularUnit;
     private final Key key;
 
     private Direction(float angleDeg, Key key) {
         this.angleDeg = angleDeg;
         rotation = Complexf.fromAngleDeg(angleDeg);
         unit = rotation.getDirection();
+        perpendicularUnit = new Vector2f(unit.getY(), unit.getX()).abs();
         this.key = key;
     }
 
@@ -36,6 +38,10 @@ public enum Direction {
 
     public Vector2f getUnit() {
         return unit;
+    }
+
+    public Vector2f getPerpendicularUnit() {
+        return perpendicularUnit;
     }
 
     public Key getKey() {

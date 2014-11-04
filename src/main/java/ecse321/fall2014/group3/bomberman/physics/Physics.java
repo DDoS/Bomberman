@@ -20,6 +20,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Tile;
  *
  */
 public class Physics extends TickingElement {
+    private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
     private final Game game;
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
@@ -66,7 +67,14 @@ public class Physics extends TickingElement {
 
         Vector2f movement = getInputVector().mul(player.getSpeed() * dt / 1e9f);
         for (Collidable collidable : player.getCollisionList()) {
-            movement = blockDirection(movement, getCollisionDirection(player, collidable));
+            final Intersection intersection = getIntersection(player, collidable);
+            final Direction direction = getCollisionDirection(intersection, collidable);
+
+            if (intersection.size.dot(direction.getPerpendicularUnit()) < PERPENDICULAR_CONTACT_THRESHOLD) {
+                continue;
+            }
+
+            movement = blockDirection(movement, direction);
         }
         player.setPosition(player.getPosition().add(movement));
         // TODO: update velocity
@@ -122,8 +130,25 @@ public class Physics extends TickingElement {
         }
     }
 
-    private static Direction getCollisionDirection(Collidable object, Collidable with) {
-        final Vector2f offset = with.getPosition().sub(object.getPosition());
+    private static Direction getCollisionDirection(Intersection intersection, Collidable other) {
+        final Vector2f offset = other.getPosition().sub(intersection.center);
         return Direction.fromUnit(offset);
+    }
+
+    private static Intersection getIntersection(Collidable object, Collidable other) {
+        final Vector2f intersectMax = object.getBoxMaxPoint().min(other.getBoxMaxPoint());
+        final Vector2f intersectMin = object.getBoxMinPoint().max(other.getBoxMinPoint());
+        return new Intersection(intersectMax, intersectMin);
+    }
+
+    private static class Intersection {
+        private final Vector2f max, min, size, center;
+
+        private Intersection(Vector2f max, Vector2f min) {
+            this.max = max;
+            this.min = min;
+            size = max.sub(min);
+            center = min.add(size.div(2));
+        }
     }
 }
