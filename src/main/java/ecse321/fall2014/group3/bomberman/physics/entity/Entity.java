@@ -18,8 +18,8 @@ import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public abstract class Entity extends Collidable implements SpriteTextured {
-    private static final Vector2f SIZE = Vector2f.ONE.mul(0.6);
-    static final CollisionBox COLLISION_BOX = new CollisionBox(SIZE);
+    private static final Vector2f SIZE = Vector2f.ONE;
+    static final CollisionBox COLLISION_BOX = new CollisionBox(SIZE.mul(0.99));
     protected volatile Vector2f velocity = Vector2f.ZERO;
     protected volatile Direction direction = Direction.UP;
 
