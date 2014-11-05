@@ -38,6 +38,10 @@ public class Map {
         return getTile(new Vector2i(x, y));
     }
 
+    public Tile getTile(Vector2f pos) {
+        return getTile(pos.toInt());
+    }
+
     public Tile getTile(Vector2i pos) {
         checkInBounds(pos);
         final Lock read = lock.readLock();
