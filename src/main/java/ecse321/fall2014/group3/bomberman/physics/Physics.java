@@ -14,6 +14,7 @@ import ecse321.fall2014.group3.bomberman.physics.entity.Direction;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.Player;
 import ecse321.fall2014.group3.bomberman.world.Map;
+import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 /**
@@ -21,6 +22,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Tile;
  */
 public class Physics extends TickingElement {
     private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
+    private static final float SLIDING_CONTACT_THRESHOLD = 0.85f;
     private final Game game;
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
@@ -65,16 +67,35 @@ public class Physics extends TickingElement {
 
         collisionDetection.update();
 
-        Vector2f movement = getInputVector().mul(player.getSpeed() * dt / 1e9f);
+        final float timeCoefficient = dt / 1e9f;
+        // Process player input
+        final Vector2f inputVector = getInputVector().mul(player.getSpeed() * timeCoefficient);
+        // Compute the motion for the tick
+        Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);
-
+            // Allow for a small amount of contact on the sides to prevent the player from getting stuck in adjacent tiles
             if (intersection.size.dot(direction.getPerpendicularUnit()) < PERPENDICULAR_CONTACT_THRESHOLD) {
                 continue;
             }
-
+            // Block the movement in the direction if sufficient contact
             movement = blockDirection(movement, direction);
+            // Attempt to shift the player to the nearest free tile when close to one to ease motion in tight spaces
+            if (collidable instanceof Tile) {
+                // Check if the percentage of collision is lower than a threshold, signifying that the player is colliding by a minimum amount
+                if (intersection.size.dot(direction.getPerpendicularUnit()) / player.getCollisionBox().getSize().dot(direction.getPerpendicularUnit()) < SLIDING_CONTACT_THRESHOLD) {
+                    // Get the direction in which to attempt to shift as a unit
+                    final Vector2f offset = intersection.center.sub(collidable.getPosition());
+                    final Vector2f shiftDirection = direction.getPerpendicularUnit().mul(offset).normalize();
+                    // Check if we can shift, by looking for a path around the tile in the shift direction
+                    final Vector2f adjacentPosition = collidable.getPosition().add(shiftDirection);
+                    if (map.getTile(adjacentPosition) instanceof Air && map.getTile(adjacentPosition.sub(direction.getUnit())) instanceof Air) {
+                        // Redirect the blocked motion towards the free path
+                        movement = movement.add(shiftDirection.mul(inputVector.dot(direction.getUnit())));
+                    }
+                }
+            }
         }
         player.setPosition(player.getPosition().add(movement));
         // TODO: update velocity
