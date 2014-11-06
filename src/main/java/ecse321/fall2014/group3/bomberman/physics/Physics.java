@@ -80,7 +80,7 @@ public class Physics extends TickingElement {
                 continue;
             }
             // Block the movement in the direction if sufficient contact
-            movement = blockDirection(movement, direction);
+            movement = blockDirection(movement, direction.getUnit());
             // Attempt to shift the player to the nearest free tile when close to one to ease motion in tight spaces
             if (collidable instanceof Tile) {
                 // Check if the percentage of collision is lower than a threshold, signifying that the player is colliding by a minimum amount
@@ -136,19 +136,14 @@ public class Physics extends TickingElement {
         return entities;
     }
 
-    private static Vector2f blockDirection(Vector2f movement, Direction direction) {
-        switch (direction) {
-            case RIGHT:
-                return movement.min(0, Float.MAX_VALUE);
-            case UP:
-                return movement.min(Float.MAX_VALUE, 0);
-            case LEFT:
-                return movement.max(0, -Float.MAX_VALUE);
-            case DOWN:
-                return movement.max(-Float.MAX_VALUE, 0);
-            default:
-                return movement;
+    private static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
+        // Check if we have movement in the direction
+        if (movement.dot(unitDirection) > 0) {
+            // Get motion in the direction and subtracted from total movement
+            return movement.sub(movement.mul(unitDirection.abs()));
         }
+        // If we don't have any motion, don't change anything
+        return movement;
     }
 
     private static Direction getCollisionDirection(Intersection intersection, Collidable other) {
