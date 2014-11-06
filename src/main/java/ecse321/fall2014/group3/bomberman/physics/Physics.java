@@ -7,10 +7,11 @@ import java.util.Set;
 import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
 
+import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
-import ecse321.fall2014.group3.bomberman.Direction;
+import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.Player;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
@@ -66,9 +67,9 @@ public class Physics extends TickingElement {
 
         collisionDetection.update();
 
-        final float timeCoefficient = dt / 1e9f;
+        final float timeSeconds = dt / 1e9f;
         // Process player input
-        final Vector2f inputVector = getInputVector().mul(player.getSpeed() * timeCoefficient);
+        final Vector2f inputVector = getInputVector().mul(player.getSpeed() * timeSeconds);
         // Compute the motion for the tick
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
@@ -97,7 +98,7 @@ public class Physics extends TickingElement {
             }
         }
         player.setPosition(player.getPosition().add(movement));
-        // TODO: update velocity
+        player.setVelocity(movement.div(timeSeconds));
     }
 
     private Vector2f getInputVector() {

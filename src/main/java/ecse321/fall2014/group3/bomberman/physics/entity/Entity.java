@@ -1,15 +1,9 @@
-/*Stuff to fix or change:
- * 
- * 1. Unsure about type of textureInfo variable
- * 
- *
- * 
- */
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
 import java.util.Collections;
 import java.util.Set;
 
+import com.flowpowered.math.GenericMath;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
@@ -26,6 +20,14 @@ public abstract class Entity extends Collidable implements SpriteTextured {
 
     protected Entity(Vector2f position, CollisionBox collisionBox) {
         super(position, collisionBox);
+    }
+
+    public void setVelocity(Vector2f velocity) {
+        this.velocity = velocity;
+        // Only update the direction if we're actually moving, else preserve the direction
+        if (velocity.lengthSquared() >= GenericMath.FLT_EPSILON * GenericMath.FLT_EPSILON) {
+            direction = Direction.fromUnit(velocity);
+        }
     }
 
     public Vector2f getVelocity() {
