@@ -13,7 +13,7 @@ import java.util.Set;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.SpriteTextured;
-import ecse321.fall2014.group3.bomberman.physics.entity.Direction;
+import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public abstract class Entity extends Collidable implements SpriteTextured {

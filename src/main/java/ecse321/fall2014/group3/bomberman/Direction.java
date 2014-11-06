@@ -1,4 +1,4 @@
-package ecse321.fall2014.group3.bomberman.physics.entity;
+package ecse321.fall2014.group3.bomberman;
 
 import com.flowpowered.math.TrigMath;
 import com.flowpowered.math.imaginary.Complexf;
