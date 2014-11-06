@@ -10,7 +10,7 @@ import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Game;
-import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
+import ecse321.fall2014.group3.bomberman.physics.Entity;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 import org.lwjgl.LWJGLException;
