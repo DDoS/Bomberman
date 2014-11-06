@@ -22,7 +22,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Tile;
  */
 public class Physics extends TickingElement {
     private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
-    private static final float SLIDING_CONTACT_THRESHOLD = 0.85f;
+    private static final float SLIDING_CONTACT_THRESHOLD = 1;
     private final Game game;
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
