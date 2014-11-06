@@ -11,7 +11,6 @@ package ecse321.fall2014.group3.bomberman.physics.entity;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
-import ecse321.fall2014.group3.bomberman.physics.Entity;
 
 public class Player extends Entity {
     private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 0, Vector2f.ONE);

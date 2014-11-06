@@ -5,20 +5,22 @@
  *
  * 
  */
-package ecse321.fall2014.group3.bomberman.physics;
+package ecse321.fall2014.group3.bomberman.physics.entity;
 
 import java.util.Collections;
 import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 
-import ecse321.fall2014.group3.bomberman.nterface.SpriteTextured;
 import ecse321.fall2014.group3.bomberman.Direction;
+import ecse321.fall2014.group3.bomberman.nterface.SpriteTextured;
+import ecse321.fall2014.group3.bomberman.physics.Collidable;
+import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 public abstract class Entity extends Collidable implements SpriteTextured {
     private static final Vector2f SIZE = Vector2f.ONE.mul(0.75f);
-    public static final CollisionBox COLLISION_BOX = new CollisionBox(Vector2f.ONE);
+    static final CollisionBox COLLISION_BOX = new CollisionBox(Vector2f.ONE);
     protected volatile Vector2f velocity = Vector2f.ZERO;
     protected volatile Direction direction = Direction.UP;
 
