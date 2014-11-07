@@ -5,14 +5,15 @@ Login and Create Account Scripts
 Note: Included a simple command line menu for testing purposes
 
  */
-
 package ecse321.fall2014.group3.bomberman.database;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 
 public class Login {
-
     public static void menu() {
 
         Connection c = null;
@@ -59,9 +60,7 @@ public class Login {
                 default:
                     System.out.println("Invalid Choice");
                     System.exit(0);
-
             }
-
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -98,12 +97,10 @@ public class Login {
                 if (rs.next()) {
 
                     System.out.println("Username already exists :(");
-
                 } else {
 
                     break;
                 }
-
             }
 
             System.out.println("Enter a Password");
@@ -117,16 +114,13 @@ public class Login {
             stmt.close();
             c.setAutoCommit(true);
             c.close();
-
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
-
         }
 
         System.out.println("Create Account Success");
-
     }
 
     public static void login() {
@@ -176,9 +170,7 @@ public class Login {
                     good = true;
 
                     break;
-
                 }
-
             }
 
             if (!good) {
@@ -189,14 +181,10 @@ public class Login {
             c.close();
 
             System.exit(0);
-
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
-
         }
-
     }
-
 }
