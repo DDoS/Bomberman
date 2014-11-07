@@ -150,6 +150,7 @@ public class Interface extends TickingElement {
                 entityModels.put(entity, model);
             }
             model.setPosition(entity.getPosition().toVector3(0));
+            model.setRotation(entity.getDirection().getRotation().toQuaternion());
             model.getUniforms().<IntUniform>get("spriteNumber").set(entity.getSpriteInfo().getSpriteNumber());
             model.getUniforms().<Vector2Uniform>get("spriteSize").set(entity.getSpriteInfo().getSpriteSize());
         }
