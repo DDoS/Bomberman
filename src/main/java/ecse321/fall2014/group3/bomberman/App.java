@@ -35,7 +35,7 @@ public class App {
         JLabel passwordLabel = new JLabel("Password");
         panel.add(passwordLabel);
 
-        final JTextField passwordText = new JTextField(10);
+        final JPasswordField passwordText = new JPasswordField(10);
         panel.add(passwordText);
 
         JButton loginButton = new JButton("login");
@@ -44,14 +44,14 @@ public class App {
         JButton createButton = new JButton("New");
         panel.add(createButton);
 
-        final JLabel error = new JLabel();
+        final JLabel error = new JLabel("enter a new username and password");
         error.setForeground(Color.red);
         error.setVisible(false);
         panel.add(error);
 
-        error.setText("wrong username or password");
-
+        
         loginButton.addActionListener(new ActionListener() {
+            @SuppressWarnings("deprecation")
             public void actionPerformed(ActionEvent e) {
                 if (Login.login(userText.getText(), passwordText.getText())) {
                     frame.dispose();
@@ -69,6 +69,7 @@ public class App {
         });
 
         createButton.addActionListener(new ActionListener() {
+            @SuppressWarnings("deprecation")
             public void actionPerformed(ActionEvent e) {
                 if (Login.createAccount(userText.getText(), passwordText.getText())) {
 
