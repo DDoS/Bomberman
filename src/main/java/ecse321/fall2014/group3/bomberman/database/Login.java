@@ -79,6 +79,12 @@ public class Login {
         Scanner scan = new Scanner(System.in);
         boolean success = false;
 
+        if (user.isEmpty() || password.isEmpty()){
+
+            System.out.println("Empty Fields");
+            return false;
+        }
+
 
         try {
 
@@ -189,6 +195,10 @@ public class Login {
                     break;
 
                 }
+                else {
+
+                    System.out.println("Password did not match");
+                }
 
             }
 
@@ -206,6 +216,7 @@ public class Login {
 
         }
 
+        //System.out.println("Login Successful");
         return good;
     }
     
