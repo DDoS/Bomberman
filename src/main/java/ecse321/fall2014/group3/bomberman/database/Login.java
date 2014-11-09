@@ -88,7 +88,7 @@ public class Login {
 
         try {
 
-            Class.forName("org.sqlite.JDBC");
+            //Class.forName("org.sqlite.JDBC");
           //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
             stmt = c.createStatement();
@@ -148,7 +148,7 @@ public class Login {
         try {
 
 
-            Class.forName("org.sqlite.JDBC");
+           //Class.forName("org.sqlite.JDBC");
            // c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
           //  System.out.println("Opened DataBase Successfully");
