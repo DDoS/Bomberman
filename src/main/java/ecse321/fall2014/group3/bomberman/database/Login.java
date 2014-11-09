@@ -50,11 +50,11 @@ public class Login {
             switch (choice) {
 
                 case 1:
-                    createAccount("test", "test");
+                   // createAccount("test", "test");
                     break;
 
                 case 2:
-                    login("abc", "abc");
+                    //login("abc", "abc");
                     break;
 
                 default:
@@ -71,10 +71,10 @@ public class Login {
     }
 
 
-    public static boolean createAccount(String user, String password) {
+    public static boolean createAccount(String user, String password, Connection c) {
 
-        openDB();
-        Connection c = null;
+        //openDB();
+        //Connection con = c;
         Statement stmt = null;
         Scanner scan = new Scanner(System.in);
         boolean success = false;
@@ -89,7 +89,7 @@ public class Login {
         try {
 
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
+          //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
             stmt = c.createStatement();
 
@@ -137,10 +137,10 @@ public class Login {
 
     }
 
-    public static boolean login(String user, String password) {
+    public static boolean login(String user, String password, Connection c) {
         
-        openDB();
-        Connection c = null;
+        //openDB();
+        //Connection c = null;
         Statement stmt = null;
         Scanner scan = new Scanner(System.in);
         boolean good = false;
@@ -149,9 +149,9 @@ public class Login {
 
 
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
+           // c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
-            System.out.println("Opened DataBase Successfully");
+          //  System.out.println("Opened DataBase Successfully");
 
 
 
@@ -210,7 +210,7 @@ public class Login {
         return good;
     }
     
-     public static void openDB(){
+     public static Connection openDB(){
 
         Connection c = null;
         Statement stmt = null;
@@ -231,13 +231,16 @@ public class Login {
 
             stmt.executeUpdate(tbl);
             c.commit();
-            c.close();
+          //  c.close();
+
 
         } catch (Exception e){
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
+
+         return c;
 
     }
 }

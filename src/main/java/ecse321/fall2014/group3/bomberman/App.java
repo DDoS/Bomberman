@@ -3,6 +3,7 @@ package ecse321.fall2014.group3.bomberman;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 import ecse321.fall2014.group3.bomberman.database.Login;
+import sun.rmi.runtime.Log;
 
 import javax.swing.*;
 
@@ -53,7 +54,7 @@ public class App {
         loginButton.addActionListener(new ActionListener() {
             @SuppressWarnings("deprecation")
             public void actionPerformed(ActionEvent e) {
-                if (Login.login(userText.getText(), passwordText.getText())) {
+                if (Login.login(userText.getText(), passwordText.getText(), Login.openDB())) {
                     frame.dispose();
                     new Game().open();
 
@@ -71,7 +72,7 @@ public class App {
         createButton.addActionListener(new ActionListener() {
             @SuppressWarnings("deprecation")
             public void actionPerformed(ActionEvent e) {
-                if (Login.createAccount(userText.getText(), passwordText.getText())) {
+                if (Login.createAccount(userText.getText(), passwordText.getText(),Login.openDB())) {
 
                     frame.dispose();
                     new Game().open();
