@@ -73,7 +73,7 @@ public class Login {
 
     public static boolean createAccount(String user, String password) {
 
-
+        openDB();
         Connection c = null;
         Statement stmt = null;
         Scanner scan = new Scanner(System.in);
@@ -135,7 +135,8 @@ public class Login {
     }
 
     public static boolean login(String user, String password) {
-
+        
+        openDB();
         Connection c = null;
         Statement stmt = null;
         Scanner scan = new Scanner(System.in);
@@ -208,7 +209,7 @@ public class Login {
         return good;
     }
     
-     public static void OpenDB(){
+     public static void openDB(){
 
         Connection c = null;
         Statement stmt = null;
