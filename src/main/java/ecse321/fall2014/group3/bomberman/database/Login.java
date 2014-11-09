@@ -216,7 +216,7 @@ public class Login {
 
         try {
 
-            //opening database test
+            //opening database test1
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:test.db");
             System.out.println("Opened Database Successfully");
