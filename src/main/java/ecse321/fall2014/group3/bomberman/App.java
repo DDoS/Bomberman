@@ -48,64 +48,46 @@ public class App {
         error.setForeground(Color.red);
         error.setVisible(false);
         panel.add(error);
-        
+
         error.setText("wrong username or password");
-       
-       
-        loginButton.addActionListener( new ActionListener()
-        {   @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (Login.login(userText.getText(),passwordText.getText())){
+
+        loginButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (Login.login(userText.getText(), passwordText.getText())) {
                     frame.dispose();
                     new Game().open();
-                   
-                    
-                    
-                }else{
-                    userText.setText(""); 
+
+                } else {
+                    userText.setText("");
                     passwordText.setText("");
-                   error.setText("wrong username or password");
-                   error.setVisible(true);
-                  
-                    
-                    
+                    error.setText("wrong username or password");
+                    error.setVisible(true);
+
                 }
-              
-               
-                
+
             }
         });
-         
-        createButton.addActionListener( new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                if (Login.createAccount(userText.getText(),passwordText.getText())){
-                    
+
+        createButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (Login.createAccount(userText.getText(), passwordText.getText())) {
+
                     frame.dispose();
                     new Game().open();
-                   
-                }else{
-                  userText.setText(""); 
-                  passwordText.setText("");
-                  error.setText("enter a new username and password");
-                  error.setVisible(true);
-                    
+
+                } else {
+                    userText.setText("");
+                    passwordText.setText("");
+                    error.setText("enter a new username and password");
+                    error.setVisible(true);
+
                 }
-              
-               
-                
+
             }
         });
-     
-        
-        
+
         frame.pack();
         frame.setVisible(true);
-        
-        
-      
 
     }
 }
