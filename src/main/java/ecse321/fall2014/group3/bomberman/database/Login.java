@@ -97,9 +97,6 @@ public class Login {
             String usr = null;
 
 
-
-            // System.out.println("Enter a Username");
-            //  usr = scan.nextLine();
             usr = user;
             //Check if username already exists
 
@@ -107,7 +104,7 @@ public class Login {
 
             if (rs.next()) {
 
-                System.out.println("Username already exists :(");
+                System.out.println("Username already exists");
                 success = false;
                 return success;
 
@@ -157,12 +154,6 @@ public class Login {
             System.out.println("Opened DataBase Successfully");
 
 
-            //user attempts to login
-            // System.out.println("Enter Username: ");
-            // String userName = scan.nextLine();
-
-            //  System.out.println("Enter Password: ");
-            // String userPass = scan.nextLine();
 
             stmt = c.createStatement();
 
@@ -176,7 +167,6 @@ public class Login {
             if (!rs.next()) {
 
                 System.out.println("Username does not exist");
-                // System.exit(0);
                 good = false;
             }
 
@@ -189,7 +179,7 @@ public class Login {
 
                 if (testPass.equals(password)) {
 
-                    System.out.println("Login Successful");
+                    System.out.println("Login Successful!");
                     good = true;
 
                     break;
@@ -230,7 +220,7 @@ public class Login {
             //opening database test
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:test.db");
-            System.out.println("Opened Database Successfully");
+            System.out.println("Check Database Successfully");
 
             c.setAutoCommit(false);
             stmt = c.createStatement();
