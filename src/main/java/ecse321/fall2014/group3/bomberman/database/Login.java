@@ -207,4 +207,35 @@ public class Login {
 
         return good;
     }
+    
+     public static void OpenDB(){
+
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+
+            //opening database test
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:test.db");
+            System.out.println("Opened Database Successfully");
+
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+
+            String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
+                    "(USERNAME       TEXT   NOT NULL," +
+                    " PASSWORD       TEXT   NOT NULL)";
+
+            stmt.executeUpdate(tbl);
+            c.commit();
+            c.close();
+
+        } catch (Exception e){
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+    }
 }
