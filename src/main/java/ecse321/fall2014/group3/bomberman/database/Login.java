@@ -14,7 +14,7 @@ public class Login {
 
         //openDB();
         //Connection con = c;
-        Statement stmt = null;
+        PreparedStatement stmt = null;
 
         if (user.isEmpty() || password.isEmpty()) {
 
@@ -27,14 +27,18 @@ public class Login {
             //Class.forName("org.sqlite.JDBC");
             //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
-            stmt = c.createStatement();
+
 
             String usr = null;
 
             usr = user;
             //Check if username already exists
+            String check = "SELECT USERNAME FROM USERS WHERE USERNAME= ? ;";
 
-            ResultSet rs = stmt.executeQuery("SELECT USERNAME FROM USERS WHERE USERNAME='" + usr + "';");
+            stmt = c.prepareStatement(check);
+            stmt.setString(1, user);
+           // ResultSet rs = stmt.executeQuery("SELECT USERNAME FROM USERS WHERE USERNAME='" + usr + "';");
+            ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
 
@@ -46,9 +50,15 @@ public class Login {
             // String pass = scan.nextLine();
 
             String sql = "INSERT INTO USERS (USERNAME,PASSWORD) " +
-                    " VALUES ('" + usr + "', '" + password + "' );";
+                    " VALUES (?, ? )";
 
-            stmt.executeUpdate(sql);
+            stmt = c.prepareStatement(sql);
+
+            stmt.setString(1, user);
+            stmt.setString(2, password);
+
+            stmt.executeUpdate();
+
             c.commit();
             stmt.close();
             c.setAutoCommit(true);
