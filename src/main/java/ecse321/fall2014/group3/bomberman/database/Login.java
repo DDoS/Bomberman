@@ -11,206 +11,115 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Scanner;
 
 public class Login {
-    public static void menu() {
-
-        Connection c = null;
-        Statement stmt = null;
-
-        Scanner scan = new Scanner(System.in);
-
-        try {
-
-            //opening database test
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
-            System.out.println("Opened Database Successfully");
-
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
-
-            String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
-                    "(USERNAME       TEXT   NOT NULL," +
-                    " PASSWORD       TEXT   NOT NULL)";
-
-            stmt.executeUpdate(tbl);
-            c.commit();
-            c.close();
-
-            //Menu
-
-            System.out.println("Enter an option: ");
-            System.out.println("1. Create an Account. ");
-            System.out.println("2. Login");
-
-            int choice = scan.nextInt();
-
-            switch (choice) {
-
-                case 1:
-                   // createAccount("test", "test");
-                    break;
-
-                case 2:
-                    //login("abc", "abc");
-                    break;
-
-                default:
-                    System.out.println("Invalid Choice");
-                    System.exit(0);
-            }
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        System.out.println("Process Complete");
-    }
-
-
     public static boolean createAccount(String user, String password, Connection c) {
 
         //openDB();
         //Connection con = c;
         Statement stmt = null;
-        Scanner scan = new Scanner(System.in);
-        boolean success = false;
 
-        if (user.isEmpty() || password.isEmpty()){
+        if (user.isEmpty() || password.isEmpty()) {
 
             System.out.println("Empty Fields");
             return false;
         }
 
-
         try {
 
             //Class.forName("org.sqlite.JDBC");
-          //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+            //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
             stmt = c.createStatement();
 
-            boolean goodUser = false;
             String usr = null;
-
 
             usr = user;
             //Check if username already exists
 
-            ResultSet rs = stmt.executeQuery(" SELECT username FROM USERS WHERE username='" + usr + "';");
+            ResultSet rs = stmt.executeQuery("SELECT USERNAME FROM USERS WHERE USERNAME='" + usr + "';");
 
             if (rs.next()) {
 
                 System.out.println("Username already exists");
-                success = false;
-                return success;
-
+                return false;
             }
 
             //System.out.println("Enter a Password");
             // String pass = scan.nextLine();
-            String pass = password;
 
             String sql = "INSERT INTO USERS (USERNAME,PASSWORD) " +
-                    " VALUES ('" + usr + "', '" + pass + "' );";
+                    " VALUES ('" + usr + "', '" + password + "' );";
 
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
             c.setAutoCommit(true);
-            c.close();
-            success = true;
-
-
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
-
         }
 
         System.out.println("Create Account Success");
-        return success;
-
+        return true;
     }
 
     public static boolean login(String user, String password, Connection c) {
-        
+
         //openDB();
         //Connection c = null;
         Statement stmt = null;
-        Scanner scan = new Scanner(System.in);
         boolean good = false;
 
         try {
 
-
-           //Class.forName("org.sqlite.JDBC");
-           // c = DriverManager.getConnection("jdbc:sqlite:test.db");
+            //Class.forName("org.sqlite.JDBC");
+            // c = DriverManager.getConnection("jdbc:sqlite:test.db");
             c.setAutoCommit(false);
-          //  System.out.println("Opened DataBase Successfully");
-
-
+            //  System.out.println("Opened DataBase Successfully");
 
             stmt = c.createStatement();
 
-            String que = "SELECT * FROM USERS WHERE EXISTS (SELECT * FROM USERS WHERE username='" + user + "');";
+            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME='" + user + "';";
             String testPass = null;
 
             //GOOD QUERY
             //" SELECT * FROM USERS WHERE username='" + userName +"';"
 
             ResultSet rs = stmt.executeQuery(que);
+
             if (!rs.next()) {
 
                 System.out.println("Username does not exist");
                 good = false;
-            }
-
-
-
-            while (rs.next()) {
-
-
-                testPass = rs.getString("password");
+            } else {
+                testPass = rs.getString("PASSWORD");
 
                 if (testPass.equals(password)) {
 
                     System.out.println("Login Successful!");
                     good = true;
-
-                    break;
-
-                }
-                else {
+                } else {
 
                     System.out.println("Password did not match");
+                    good = false;
                 }
-
             }
 
             rs.close();
             stmt.close();
-            c.close();
-
-
-
-
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
-
         }
 
         //System.out.println("Login Successful");
         return good;
     }
-    
-     public static Connection openDB(){
+
+    public static Connection openDB() {
 
         Connection c = null;
         Statement stmt = null;
@@ -231,16 +140,12 @@ public class Login {
 
             stmt.executeUpdate(tbl);
             c.commit();
-          //  c.close();
-
-
-        } catch (Exception e){
+        } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
 
-         return c;
-
+        return c;
     }
 }
