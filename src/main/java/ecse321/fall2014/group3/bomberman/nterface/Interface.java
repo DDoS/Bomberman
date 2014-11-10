@@ -53,9 +53,9 @@ public class Interface extends TickingElement {
     private static final int SPRITE_SIZE = 64;
     private final Game game;
     private final Camera orthoCamera;
-    private final Context context = GLImplementation.get(getBestImpl());
     private Model spriteModel;
     private Pipeline pipeline;
+    private final Context context = GLImplementation.get(LWJGLUtil.GL20_IMPL);
     private long mapVersion = 0;
     private final Set<Model> tileModels = new HashSet<>();
     private final java.util.Map<Entity, Model> entityModels = new HashMap<>();
@@ -163,29 +163,5 @@ public class Interface extends TickingElement {
         context.destroy();
         mapVersion = 0;
         tileModels.clear();
-    }
-
-    private static GLImplementation getBestImpl() {
-        try {
-            // Create a temporary OpenGL context using an empty pixel buffer
-            Pbuffer tempContext = new Pbuffer(0, 0, new PixelFormat(), null);
-            tempContext.makeCurrent();
-            // Get the capabilities for the context
-            ContextCapabilities capabilities = GLContext.getCapabilities();
-            tempContext.destroy();
-            // Return the proper context implementation for the highest supported version
-            if (capabilities.OpenGL21) {
-                return LWJGLUtil.GL20_IMPL;
-            } else if (capabilities.OpenGL20) {
-                return LWJGLUtil.GL20_IMPL;
-            } else {
-                throw new IllegalStateException("This hardware doesn't support OpenGL2.0+");
-                // maybe use caustic-software in this case
-            }
-        } catch (LWJGLException ex) {
-            // try GL2.0 if we can't verify the supported version
-            return LWJGLUtil.GL20_IMPL;
-            // maybe use caustic-software in this case
-        }
     }
 }
