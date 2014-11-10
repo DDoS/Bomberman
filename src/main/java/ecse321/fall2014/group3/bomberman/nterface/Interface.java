@@ -70,8 +70,6 @@ public class Interface extends TickingElement {
 
     @Override
     public void onStart() {
-        // TODO: move this to Renderer
-
         context.setWindowTitle("Bomberman");
         context.setWindowSize(WIDTH, HEIGHT);
         context.create();
