@@ -16,7 +16,7 @@ public class SpriteInfo {
         this.spriteSize = spriteSize;
     }
 
-    public String getSheetID() {
+    public String getSheetName() {
         return sheetID;
     }
 

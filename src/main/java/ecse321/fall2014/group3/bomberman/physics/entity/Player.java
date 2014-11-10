@@ -6,7 +6,7 @@ import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Player extends Entity {
-    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("main", 0, Vector2f.ONE);
+    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("entity", 0, Vector2f.ONE);
     // This value is used to change the amount of travel the player needs to do in a direction
     // before he actually rotates to that direction. Higher value means more travel
     private static final float DIRECTION_CHANGE_THRESHOLD = 2 / 3f;

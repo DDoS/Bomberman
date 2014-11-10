@@ -1,5 +1,6 @@
 package ecse321.fall2014.group3.bomberman.nterface;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,11 +14,6 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextCapabilities;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.Pbuffer;
-import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.api.Camera;
 import org.spout.renderer.api.GLImplementation;
@@ -44,7 +40,7 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
 /**
  * The main class for the interface (aka the view).
  *
- * @author Aleksi
+ * @author Aleksi Sapon
  */
 public class Interface extends TickingElement {
     private static final int WIDTH = 640, HEIGHT = 480;
@@ -52,10 +48,12 @@ public class Interface extends TickingElement {
     private static final float VIEW_WIDTH = 10 * ASPECT_RATIO, VIEW_HEIGHT = 10;
     private static final int SPRITE_SIZE = 64;
     private final Game game;
-    private final Camera orthoCamera;
-    private Model spriteModel;
-    private Pipeline pipeline;
+    private final Camera orthographicCamera;
     private final Context context = GLImplementation.get(LWJGLUtil.GL20_IMPL);
+    private Program spriteProgram;
+    private VertexArray spriteVertexArray;
+    private final java.util.Map<String, Model> spriteBaseModels = new HashMap<>();
+    private final Pipeline pipeline;
     private long mapVersion = 0;
     private final Set<Model> tileModels = new HashSet<>();
     private final java.util.Map<Entity, Model> entityModels = new HashMap<>();
@@ -64,8 +62,14 @@ public class Interface extends TickingElement {
         super("Interface", 60);
         this.game = game;
 
-        orthoCamera = Camera.createOrthographic(VIEW_WIDTH, 0, VIEW_HEIGHT, 0, 0, 10);
-        pipeline = new PipelineBuilder().clearBuffer().useCamera(orthoCamera).renderModels(tileModels).renderModels(entityModels.values()).updateDisplay().build();
+        orthographicCamera = Camera.createOrthographic(VIEW_WIDTH, 0, VIEW_HEIGHT, 0, 0, 10);
+        pipeline = new PipelineBuilder()
+                .clearBuffer()
+                .useCamera(orthographicCamera)
+                .renderModels(tileModels)
+                .renderModels(entityModels.values())
+                .updateDisplay()
+                .build();
     }
 
     @Override
@@ -85,30 +89,15 @@ public class Interface extends TickingElement {
         spriteFragShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/sprite.frag")));
         spriteFragShader.compile();
 
-        final Program spriteProgram = context.newProgram();
+        spriteProgram = context.newProgram();
         spriteProgram.create();
         spriteProgram.attachShader(spriteVertShader);
         spriteProgram.attachShader(spriteFragShader);
         spriteProgram.link();
 
-        final Texture spriteSheetTexture = context.newTexture();
-        spriteSheetTexture.create();
-        spriteSheetTexture.setFilters(FilterMode.LINEAR, FilterMode.LINEAR);
-        spriteSheetTexture.setFormat(Format.RGB);
-
-        final Rectangle size = new Rectangle();
-        final ByteBuffer imageData = CausticUtil.getImageData(getClass().getResourceAsStream("/textures/sprite_sheet.png"), Format.RGB, size);
-        spriteSheetTexture.setImageData(imageData, size.getWidth(), size.getHeight());
-
-        final Material spriteMaterial = new Material(spriteProgram);
-        spriteMaterial.addTexture(0, spriteSheetTexture);
-        spriteMaterial.getUniforms().add(new IntUniform("spritesPerLine", size.getWidth() / SPRITE_SIZE));
-
-        final VertexArray spriteVertexArray = context.newVertexArray();
+        spriteVertexArray = context.newVertexArray();
         spriteVertexArray.create();
         spriteVertexArray.setData(MeshGenerator.generatePlane(Vector2f.ONE));
-
-        spriteModel = new Model(spriteVertexArray, spriteMaterial);
     }
 
     @Override
@@ -121,11 +110,9 @@ public class Interface extends TickingElement {
             for (int y = 0; y < Map.HEIGHT; y++) {
                 for (int x = 0; x < Map.WIDTH; x++) {
                     final Tile tile = map.getTile(x, y);
-                    final Model model = spriteModel.getInstance();
+                    final Model model = newSpriteModel(tile.getSpriteInfo());
                     model.setPosition(tile.getPosition().toVector3(-1));
                     model.setScale(tile.getModelSize().toVector3(1));
-                    model.getUniforms().add(new IntUniform("spriteNumber", tile.getSpriteInfo().getSpriteNumber()));
-                    model.getUniforms().add(new Vector2Uniform("spriteSize", tile.getSpriteInfo().getSpriteSize()));
                     tileModels.add(model);
                 }
             }
@@ -139,29 +126,79 @@ public class Interface extends TickingElement {
             }
         }
         for (Entity entity : entities) {
+            final SpriteInfo spriteInfo = entity.getSpriteInfo();
             Model model = entityModels.get(entity);
             if (model == null) {
-                model = spriteModel.getInstance();
-                model.setScale(entity.getModelSize().toVector3(1));
-                model.getUniforms().add(new IntUniform("spriteNumber", 0));
-                model.getUniforms().add(new Vector2Uniform("spriteSize", Vector2f.ZERO));
+                model = newSpriteModel(spriteInfo);
                 entityModels.put(entity, model);
+            } else {
+                model.getUniforms().<IntUniform>get("spriteNumber").set(spriteInfo.getSpriteNumber());
+                model.getUniforms().<Vector2Uniform>get("spriteSize").set(spriteInfo.getSpriteSize());
             }
             model.setPosition(entity.getPosition().toVector3(0));
+            model.setScale(entity.getModelSize().toVector3(1));
             model.setRotation(entity.getDirection().getRotation().toQuaternion());
-            model.getUniforms().<IntUniform>get("spriteNumber").set(entity.getSpriteInfo().getSpriteNumber());
-            model.getUniforms().<Vector2Uniform>get("spriteSize").set(entity.getSpriteInfo().getSpriteSize());
         }
 
-        orthoCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2).toVector3());
+        orthographicCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2).toVector3());
 
         pipeline.run(context);
     }
 
+    private Model newSpriteModel(SpriteInfo spriteInfo) {
+        // Try and load the sprite base model from the sheet name
+        Model model = loadSpriteBaseModel(spriteInfo.getSheetName());
+        if (model == null) {
+            throw new IllegalStateException("Missing sprite sheet: " + spriteInfo.getSheetName());
+        }
+        // Get a copy of the base model (referred to as an "instance")
+        model = model.getInstance();
+        model.getUniforms().add(new IntUniform("spriteNumber", spriteInfo.getSpriteNumber()));
+        model.getUniforms().add(new Vector2Uniform("spriteSize", spriteInfo.getSpriteSize()));
+        return model;
+    }
+
+    private Model loadSpriteBaseModel(String sheetName) {
+        // Check if it's already loaded
+        Model model = spriteBaseModels.get(sheetName);
+        if (model != null) {
+            return model;
+        }
+
+        // Else create a new one and cache it
+        final InputStream spriteInput = getClass().getResourceAsStream("/sprites/" + sheetName + ".png");
+        if (spriteInput == null) {
+            return null;
+        }
+        final Rectangle size = new Rectangle();
+        final ByteBuffer imageData = CausticUtil.getImageData(spriteInput, Format.RGB, size);
+
+        final Texture spriteSheetTexture = context.newTexture();
+        spriteSheetTexture.create();
+        spriteSheetTexture.setFilters(FilterMode.LINEAR, FilterMode.LINEAR);
+        spriteSheetTexture.setFormat(Format.RGB);
+        spriteSheetTexture.setImageData(imageData, size.getWidth(), size.getHeight());
+
+        final Material spriteMaterial = new Material(spriteProgram);
+        spriteMaterial.addTexture(0, spriteSheetTexture);
+        spriteMaterial.getUniforms().add(new IntUniform("spritesPerLine", size.getWidth() / SPRITE_SIZE));
+
+        model = new Model(spriteVertexArray, spriteMaterial);
+        spriteBaseModels.put(sheetName, model);
+
+        return model;
+    }
+
     @Override
     public void onStop() {
+        spriteProgram.destroy();
+        spriteProgram = null;
+        spriteVertexArray.destroy();
+        spriteVertexArray = null;
         context.destroy();
+        spriteBaseModels.clear();
         mapVersion = 0;
         tileModels.clear();
+        entityModels.clear();
     }
 }
