@@ -24,7 +24,7 @@ public abstract class Entity extends Collidable implements SpriteTextured {
 
     public void setVelocity(Vector2f velocity) {
         this.velocity = velocity;
-        // Only update the direction if we're actually moving, else preserve the direction
+        // Only update the direction if we're actually moving, else preserve the current direction
         if (velocity.lengthSquared() >= GenericMath.FLT_EPSILON * GenericMath.FLT_EPSILON) {
             direction = Direction.fromUnit(velocity);
         }
