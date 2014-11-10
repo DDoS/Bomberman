@@ -7,10 +7,7 @@ Note: Included a simple command line menu for testing purposes
  */
 package ecse321.fall2014.group3.bomberman.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Login {
     public static boolean createAccount(String user, String password, Connection c) {
@@ -69,7 +66,7 @@ public class Login {
 
         //openDB();
         //Connection c = null;
-        Statement stmt = null;
+        PreparedStatement stmt = null;
         boolean good = false;
 
         try {
@@ -79,15 +76,18 @@ public class Login {
             c.setAutoCommit(false);
             //  System.out.println("Opened DataBase Successfully");
 
-            stmt = c.createStatement();
+            //stmt = c.createStatement();
 
-            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME='" + user + "';";
+            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME= ? ;";
             String testPass = null;
 
+            stmt = c.prepareStatement(que);
+            stmt.setString(1, user);
             //GOOD QUERY
             //" SELECT * FROM USERS WHERE username='" + userName +"';"
 
-            ResultSet rs = stmt.executeQuery(que);
+            ResultSet rs = stmt.executeQuery();
+
 
             if (!rs.next()) {
 
