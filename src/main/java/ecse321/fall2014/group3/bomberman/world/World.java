@@ -1,8 +1,7 @@
 package ecse321.fall2014.group3.bomberman.world;
 
-import com.flowpowered.commons.ticking.TickingElement;
-
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.Wall;

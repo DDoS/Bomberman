@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 

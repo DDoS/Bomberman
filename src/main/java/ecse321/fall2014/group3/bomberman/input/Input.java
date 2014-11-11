@@ -5,9 +5,8 @@ package ecse321.fall2014.group3.bomberman.input;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.flowpowered.commons.ticking.TickingElement;
-
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
