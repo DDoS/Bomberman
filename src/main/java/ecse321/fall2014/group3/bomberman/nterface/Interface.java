@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
 
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
@@ -47,6 +48,7 @@ public class Interface extends TickingElement {
     private static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
     private static final int TILE_PIXEL_SIZE = SPRITE_SIZE;
     private static final int WIDTH = VIEW_WIDTH_TILE * TILE_PIXEL_SIZE, HEIGHT = VIEW_HEIGHT_TILE * TILE_PIXEL_SIZE;
+    private static final int SCROLL_TILE_THRESHOLD = 7;
     private final Game game;
     private final Camera orthographicCamera;
     private final Context context = GLImplementation.get(LWJGLUtil.GL20_IMPL);
@@ -140,7 +142,16 @@ public class Interface extends TickingElement {
             model.setRotation(entity.getDirection().getRotation().toQuaternion());
         }
 
-        orthographicCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH_TILE / 2, VIEW_HEIGHT_TILE / 2).toVector3());
+        final Vector3f viewPosition;
+        final Vector2f playerPosition = game.getPhysics().getPlayer().getPosition();
+        if (playerPosition.getFloorX() < SCROLL_TILE_THRESHOLD) {
+            viewPosition = Vector3f.ZERO;
+        } else if (playerPosition.getFloorX() >= Map.WIDTH - SCROLL_TILE_THRESHOLD - 1) {
+            viewPosition = new Vector3f(Map.WIDTH - VIEW_WIDTH_TILE, 0, 0);
+        } else {
+            viewPosition = new Vector3f(playerPosition.getX() - SCROLL_TILE_THRESHOLD, 0, 0);
+        }
+        orthographicCamera.setPosition(viewPosition.sub(0.5f, 0.5f, 0));
 
         pipeline.run(context);
     }
