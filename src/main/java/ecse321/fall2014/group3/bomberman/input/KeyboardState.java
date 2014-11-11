@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 public class KeyboardState {
-    private final AtomicLongArray pressTimes = new AtomicLongArray(Key.COUNT);
-    private final AtomicIntegerArray pressCounts = new AtomicIntegerArray(Key.COUNT);
+    private final AtomicLongArray pressTimes = new AtomicLongArray(Key.getCount());
+    private final AtomicIntegerArray pressCounts = new AtomicIntegerArray(Key.getCount());
 
     void incrementPressTime(Key key, long dt) {
         pressTimes.getAndAdd(key.ordinal(), dt);

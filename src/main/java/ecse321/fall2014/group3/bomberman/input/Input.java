@@ -18,9 +18,9 @@ public class Input extends TickingElement {
     private final Game game;
     private boolean keyboardCreated = false;
     private final Map<Long, KeyboardState> keyboardStates = new ConcurrentHashMap<>();
-    private final long[] dtPressTimes = new long[Key.COUNT];
-    private final int[] dtPressCounts = new int[Key.COUNT];
-    private final boolean[] pressStates = new boolean[Key.COUNT];
+    private final long[] dtPressTimes = new long[Key.getCount()];
+    private final int[] dtPressCounts = new int[Key.getCount()];
+    private final boolean[] pressStates = new boolean[Key.getCount()];
 
     public Input(Game game) {
         super("input", 60);
