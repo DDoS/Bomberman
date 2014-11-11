@@ -43,10 +43,10 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @author Aleksi Sapon
  */
 public class Interface extends TickingElement {
-    private static final int WIDTH = 640, HEIGHT = 480;
-    private static final float ASPECT_RATIO = WIDTH / (float) HEIGHT;
-    private static final float VIEW_WIDTH = 10 * ASPECT_RATIO, VIEW_HEIGHT = 10;
     private static final int SPRITE_SIZE = 64;
+    private static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
+    private static final int TILE_PIXEL_SIZE = SPRITE_SIZE;
+    private static final int WIDTH = VIEW_WIDTH_TILE * TILE_PIXEL_SIZE, HEIGHT = VIEW_HEIGHT_TILE * TILE_PIXEL_SIZE;
     private final Game game;
     private final Camera orthographicCamera;
     private final Context context = GLImplementation.get(LWJGLUtil.GL20_IMPL);
@@ -62,7 +62,7 @@ public class Interface extends TickingElement {
         super("Interface", 60);
         this.game = game;
 
-        orthographicCamera = Camera.createOrthographic(VIEW_WIDTH, 0, VIEW_HEIGHT, 0, 0, 10);
+        orthographicCamera = Camera.createOrthographic(VIEW_WIDTH_TILE, 0, VIEW_HEIGHT_TILE, 0, 0, 10);
         pipeline = new PipelineBuilder()
                 .clearBuffer()
                 .useCamera(orthographicCamera)
@@ -140,7 +140,7 @@ public class Interface extends TickingElement {
             model.setRotation(entity.getDirection().getRotation().toQuaternion());
         }
 
-        orthographicCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH / 2, VIEW_HEIGHT / 2).toVector3());
+        orthographicCamera.setPosition(game.getPhysics().getPlayer().getPosition().sub(VIEW_WIDTH_TILE / 2, VIEW_HEIGHT_TILE / 2).toVector3());
 
         pipeline.run(context);
     }
@@ -175,7 +175,7 @@ public class Interface extends TickingElement {
 
         final Texture spriteSheetTexture = context.newTexture();
         spriteSheetTexture.create();
-        spriteSheetTexture.setFilters(FilterMode.LINEAR, FilterMode.LINEAR);
+        spriteSheetTexture.setFilters(TILE_PIXEL_SIZE < SPRITE_SIZE ? FilterMode.LINEAR_MIPMAP_LINEAR : FilterMode.LINEAR, FilterMode.LINEAR);
         spriteSheetTexture.setFormat(Format.RGB);
         spriteSheetTexture.setImageData(imageData, size.getWidth(), size.getHeight());
 
