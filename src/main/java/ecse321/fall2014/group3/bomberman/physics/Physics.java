@@ -103,22 +103,16 @@ public class Physics extends TickingElement {
 
     private Vector2f getInputVector() {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
-        keyboardState.lock();
-        try {
-            Vector2f input = Vector2f.ZERO;
-            for (Direction direction : Direction.values()) {
-                final Key key = direction.getKey();
-                input = input.add(direction.getUnit().mul(keyboardState.getPressTime(key) / 1e9f));
-                keyboardState.reset(key);
-            }
-            // Make sure we're not trying to normalize the zero vector
-            if (input.lengthSquared() > 0) {
-                input = input.normalize();
-            }
-            return input;
-        } finally {
-            keyboardState.unlock();
+        Vector2f input = Vector2f.ZERO;
+        for (Direction direction : Direction.values()) {
+            final Key key = direction.getKey();
+            input = input.add(direction.getUnit().mul(keyboardState.getAndClearPressTime(key) / 1e9f));
         }
+        // Make sure we're not trying to normalize the zero vector
+        if (input.lengthSquared() > 0) {
+            input = input.normalize();
+        }
+        return input;
     }
 
     @Override
