@@ -139,6 +139,7 @@ public class Interface extends TickingElement {
             }
             model.setPosition(entity.getPosition().toVector3(0));
             model.setScale(entity.getModelSize().toVector3(1));
+            // TODO: if we add proper sprites, don't rotate but have a sprite for each orientation. This should use mirroring anyways
             model.setRotation(entity.getDirection().getRotation().toQuaternion());
         }
 
