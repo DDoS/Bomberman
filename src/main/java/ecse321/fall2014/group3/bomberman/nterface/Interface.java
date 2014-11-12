@@ -182,12 +182,12 @@ public class Interface extends TickingElement {
             return null;
         }
         final Rectangle size = new Rectangle();
-        final ByteBuffer imageData = CausticUtil.getImageData(spriteInput, Format.RGB, size);
+        final ByteBuffer imageData = CausticUtil.getImageData(spriteInput, Format.RGBA, size);
 
         final Texture spriteSheetTexture = context.newTexture();
         spriteSheetTexture.create();
         spriteSheetTexture.setFilters(TILE_PIXEL_SIZE < SPRITE_SIZE ? FilterMode.LINEAR_MIPMAP_LINEAR : FilterMode.LINEAR, FilterMode.LINEAR);
-        spriteSheetTexture.setFormat(Format.RGB);
+        spriteSheetTexture.setFormat(Format.RGBA);
         spriteSheetTexture.setImageData(imageData, size.getWidth(), size.getHeight());
 
         final Material spriteMaterial = new Material(spriteProgram);
