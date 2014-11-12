@@ -152,14 +152,14 @@ public class SweepAndPruneAlgorithm {
     }
 
     private static <T extends Comparable<T>> void insertSorted(List<T> list, T element) {
-        int i = 0;
-        for (Comparable<T> existing : list) {
-            if (existing.compareTo(element) >= 0) {
+        final ListIterator<T> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().compareTo(element) >= 0) {
+                iterator.previous();
                 break;
             }
-            i++;
         }
-        list.add(i, element);
+        iterator.add(element);
     }
 
     private static Set<CollidingPair> intersect(Set<CollidingPair> xCollisions, Set<CollidingPair> yCollisions) {
