@@ -186,7 +186,7 @@ public class Interface extends TickingElement {
 
         final Texture spriteSheetTexture = context.newTexture();
         spriteSheetTexture.create();
-        spriteSheetTexture.setFilters(TILE_PIXEL_SIZE < SPRITE_SIZE ? FilterMode.LINEAR_MIPMAP_LINEAR : FilterMode.LINEAR, FilterMode.LINEAR);
+        spriteSheetTexture.setFilters(FilterMode.LINEAR_MIPMAP_LINEAR, FilterMode.LINEAR);
         spriteSheetTexture.setFormat(Format.RGBA);
         spriteSheetTexture.setImageData(imageData, size.getWidth(), size.getHeight());
 
