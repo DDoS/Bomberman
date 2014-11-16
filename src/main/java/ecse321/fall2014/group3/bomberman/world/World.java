@@ -3,8 +3,8 @@ package ecse321.fall2014.group3.bomberman.world;
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
-import ecse321.fall2014.group3.bomberman.world.tile.Breakable;
-import ecse321.fall2014.group3.bomberman.world.tile.Wall;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
 
@@ -59,7 +59,7 @@ public class World extends TickingElement {
             for (int x = 0; x < Map.WIDTH; x++) {
                 if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
                         || y % 2 == 0 && x % 2 == 0) {
-                    map.setTile(x, y, Wall.class);
+                    map.setTile(x, y, Unbreakable.class);
                 } else {
                     // Normalize the value from (-1, 1) to (0, 1)
                     if ((perlin.getValue(x, y, 0) + 1) / 2 >= density) {
