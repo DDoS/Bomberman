@@ -46,12 +46,12 @@ public class App {
         final JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel panel = new JPanel(new GridLayout(6,2));
+        JPanel panel = new JPanel(new GridLayout(6, 2));
         frame.add(panel, BorderLayout.CENTER);
-        
+
         JLabel realNameLabel = new JLabel("Real Name");
         panel.add(realNameLabel);
-        
+
         final JTextField realNameText = new JTextField(10);
         panel.add(realNameText);
 
@@ -66,7 +66,7 @@ public class App {
 
         final JPasswordField passwordText = new JPasswordField(10);
         panel.add(passwordText);
-        
+
         JLabel verifyLabel = new JLabel("Verify Password");
         panel.add(verifyLabel);
 
@@ -87,38 +87,40 @@ public class App {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-             if  (!Arrays.equals(passwordText.getPassword(), verifyText.getPassword())){
-                 passwordText.setText("");
-                 verifyText.setText("");
-                 error.setText("passwords dont match");
-                 error.setVisible(true);
-             }else{
-                //TODO: add real name to database
-                //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
-                if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), connection)) {
-                    loginWait.release();
-                } else {
-                    passwordText.setText("");
-                    error.setText("wrong username or password");
-                    error.setVisible(true);
-                }
-            }
-        }});
 
-        createButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if  (!Arrays.equals(passwordText.getPassword(), verifyText.getPassword())){
+                if (!Arrays.equals(passwordText.getPassword(), verifyText.getPassword())) {
                     passwordText.setText("");
                     verifyText.setText("");
                     error.setText("passwords dont match");
                     error.setVisible(true);
-                }else{
+                } else {
+                    //TODO: add real name to database
+                    //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
+                    if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), connection)) {
+                        loginWait.release();
+                    } else {
+                        passwordText.setText("");
+                        verifyText.setText("");
+                        error.setText("wrong username or password");
+                        error.setVisible(true);
+                    }
+                }
+            }
+        });
+
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Arrays.equals(passwordText.getPassword(), verifyText.getPassword())) {
+                    passwordText.setText("");
+                    verifyText.setText("");
+                    error.setText("passwords dont match");
+                    error.setVisible(true);
+                } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
                     if (Login.createAccount(userText.getText(), String.valueOf(passwordText.getPassword()), connection)) {
-                    loginWait.release();
+                        loginWait.release();
                     } else {
                         realNameText.setText("");
                         userText.setText("");
@@ -126,9 +128,10 @@ public class App {
                         verifyText.setText("");
                         error.setText("user already exist");
                         error.setVisible(true);
+                    }
                 }
             }
-        }});
+        });
 
         frame.pack();
         frame.setLocationRelativeTo(null);
