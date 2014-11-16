@@ -14,6 +14,7 @@ import net.royawesome.jlibnoise.module.source.Perlin;
 public class World extends TickingElement {
     private final Game game;
     private final Map map = new Map();
+    private volatile Level level = Level.MAIN_MENU;
 
     public World(Game game) {
         super("World", 20);
@@ -36,6 +37,10 @@ public class World extends TickingElement {
 
     public Map getMap() {
         return map;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 
     private void generateMap(double density) {
