@@ -11,11 +11,14 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
-import ecse321.fall2014.group3.bomberman.physics.entity.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+
+import org.spout.renderer.api.util.CausticUtil;
 
 /**
  *
@@ -40,6 +43,13 @@ public class Physics extends TickingElement {
         entities.add(player);
         player.setPosition(Vector2f.ONE);
         collisionDetection.add(player);
+
+        // TEST
+        final TextBoxEntity test = new TextBoxEntity(new Vector2f(9.5f, 9.5f), new Vector2f(2, 2));
+        test.setForegroundColor(CausticUtil.YELLOW);
+        test.setBackgroundColor(CausticUtil.BLUE);
+        test.setText("This is a test");
+        entities.add(test);
     }
 
     @Override

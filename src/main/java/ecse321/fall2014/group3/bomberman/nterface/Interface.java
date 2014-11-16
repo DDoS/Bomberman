@@ -1,5 +1,6 @@
 package ecse321.fall2014.group3.bomberman.nterface;
 
+import java.awt.Font;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.spout.renderer.api.Pipeline.PipelineBuilder;
 import org.spout.renderer.api.data.ShaderSource;
 import org.spout.renderer.api.data.Uniform.IntUniform;
 import org.spout.renderer.api.data.Uniform.Vector2Uniform;
+import org.spout.renderer.api.data.Uniform.Vector4Uniform;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.gl.Program;
@@ -33,6 +35,8 @@ import org.spout.renderer.api.gl.Texture.FilterMode;
 import org.spout.renderer.api.gl.Texture.Format;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.api.model.Model;
+import org.spout.renderer.api.model.StringModel;
+import org.spout.renderer.api.model.StringModel.AntiAliasing;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.MeshGenerator;
 import org.spout.renderer.api.util.Rectangle;
@@ -48,17 +52,28 @@ public class Interface extends TickingElement {
     private static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
     private static final int TILE_PIXEL_SIZE = SPRITE_SIZE;
     private static final int WIDTH = VIEW_WIDTH_TILE * TILE_PIXEL_SIZE, HEIGHT = VIEW_HEIGHT_TILE * TILE_PIXEL_SIZE;
+    private static final float ASPECT_RATIO = VIEW_WIDTH_TILE / (float) VIEW_HEIGHT_TILE;
     private static final int SCROLL_TILE_THRESHOLD = 7;
+    private static final String GLYPHS;
     private final Game game;
     private final Camera orthographicCamera;
     private final Context context = GLImplementation.get(LWJGLUtil.GL20_IMPL);
     private Program spriteProgram;
+    private Program fontProgram;
     private VertexArray spriteVertexArray;
     private final java.util.Map<String, Model> spriteBaseModels = new HashMap<>();
+    private final java.util.Map<String, StringModel> textBaseModels = new HashMap<>();
     private final Pipeline pipeline;
     private long mapVersion = 0;
     private final Set<Model> tileModels = new HashSet<>();
     private final java.util.Map<Entity, Model> entityModels = new HashMap<>();
+
+    static {
+        final String alphabetic = "abcdefghijklmnopqrstuvwxyz";
+        final String numeric = "0123456789";
+        final String special = " ,.;:/\\|!@#$%?&*()-_=+";
+        GLYPHS = alphabetic + alphabetic.toUpperCase() + numeric + special;
+    }
 
     public Interface(Game game) {
         super("Interface", 60);
@@ -100,6 +115,21 @@ public class Interface extends TickingElement {
         spriteVertexArray = context.newVertexArray();
         spriteVertexArray.create();
         spriteVertexArray.setData(MeshGenerator.generatePlane(Vector2f.ONE));
+
+        final Shader fontVertShader = context.newShader();
+        fontVertShader.create();
+        fontVertShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/font.vert")));
+        fontVertShader.compile();
+        final Shader fontFragShader = context.newShader();
+        fontFragShader.create();
+        fontFragShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/font.frag")));
+        fontFragShader.compile();
+
+        fontProgram = context.newProgram();
+        fontProgram.create();
+        fontProgram.attachShader(fontVertShader);
+        fontProgram.attachShader(fontFragShader);
+        fontProgram.link();
     }
 
     @Override
@@ -128,17 +158,22 @@ public class Interface extends TickingElement {
             }
         }
         for (Entity entity : entities) {
-            final SpriteInfo spriteInfo = entity.getSpriteInfo();
             Model model = entityModels.get(entity);
-            if (model == null) {
-                model = newSpriteModel(spriteInfo);
-                entityModels.put(entity, model);
+            Model newModel;
+            if (entity instanceof SpriteTextured) {
+                newModel = updateSpriteEntity((SpriteTextured) entity, model);
+                newModel.setScale(entity.getModelSize().toVector3(1));
+            } else if (entity instanceof TextTextured) {
+                newModel = updateTextEntity((TextTextured) entity, (StringModel) model);
+                newModel.setScale(entity.getModelSize().mul(1, ASPECT_RATIO).toVector3(1));
             } else {
-                model.getUniforms().<IntUniform>get("spriteNumber").set(spriteInfo.getSpriteNumber());
-                model.getUniforms().<Vector2Uniform>get("spriteSize").set(spriteInfo.getSpriteSize());
+                throw new IllegalStateException("Unknown entity draw type: neither sprite or text \"" + entity + "\"");
+            }
+            if (model == null) {
+                entityModels.put(entity, newModel);
+                model = newModel;
             }
             model.setPosition(entity.getPosition().toVector3(0));
-            model.setScale(entity.getModelSize().toVector3(1));
             // TODO: if we add proper sprites, don't rotate but have a sprite for each orientation. This should use mirroring anyways
             model.setRotation(entity.getDirection().getRotation().toQuaternion());
         }
@@ -155,6 +190,17 @@ public class Interface extends TickingElement {
         orthographicCamera.setPosition(viewPosition.sub(0.5f, 0.5f, 0));
 
         pipeline.run(context);
+    }
+
+    private Model updateSpriteEntity(SpriteTextured entity, Model model) {
+        final SpriteInfo spriteInfo = entity.getSpriteInfo();
+        if (model == null) {
+            model = newSpriteModel(spriteInfo);
+        } else {
+            model.getUniforms().<IntUniform>get("spriteNumber").set(spriteInfo.getSpriteNumber());
+            model.getUniforms().<Vector2Uniform>get("spriteSize").set(spriteInfo.getSpriteSize());
+        }
+        return model;
     }
 
     private Model newSpriteModel(SpriteInfo spriteInfo) {
@@ -201,14 +247,51 @@ public class Interface extends TickingElement {
         return model;
     }
 
+    private StringModel updateTextEntity(TextTextured entity, StringModel model) {
+        if (model == null) {
+            model = newTextModel(entity.getFontInfo());
+        }
+        model.setString(entity.getText());
+        model.getUniforms().<Vector4Uniform>get("foregroundColor").set(entity.getForegroundColor());
+        model.getUniforms().<Vector4Uniform>get("backgroundColor").set(entity.getBackgroundColor());
+        return model;
+    }
+
+    private StringModel newTextModel(FontInfo fontInfo) {
+        // Load the text base model from the font type
+        final StringModel model = loadTextBaseModel(fontInfo.getTypeString());
+        // Return a copy of the base model (referred to as an "instance")
+        model.getUniforms().add(new Vector4Uniform("foregroundColor", CausticUtil.WHITE));
+        model.getUniforms().add(new Vector4Uniform("backgroundColor", CausticUtil.BLACK));
+        return model.getInstance();
+    }
+
+    private StringModel loadTextBaseModel(String fontType) {
+        // Check if it's already loaded
+        StringModel model = textBaseModels.get(fontType);
+        if (model != null) {
+            return model;
+        }
+
+        // Else create a new one and cache it
+        final Font font = Font.decode(fontType);
+        model = new StringModel(context, fontProgram, GLYPHS, font, AntiAliasing.OFF, TILE_PIXEL_SIZE);
+        textBaseModels.put(fontType, model);
+
+        return model;
+    }
+
     @Override
     public void onStop() {
         spriteProgram.destroy();
         spriteProgram = null;
         spriteVertexArray.destroy();
         spriteVertexArray = null;
+        fontProgram.destroy();
+        fontProgram = null;
         context.destroy();
         spriteBaseModels.clear();
+        textBaseModels.clear();
         mapVersion = 0;
         tileModels.clear();
         entityModels.clear();

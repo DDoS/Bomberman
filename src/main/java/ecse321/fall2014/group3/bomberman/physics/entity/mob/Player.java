@@ -1,11 +1,14 @@
-package ecse321.fall2014.group3.bomberman.physics.entity;
+package ecse321.fall2014.group3.bomberman.physics.entity.mob;
 
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
+import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
 
-public class Player extends Entity {
+public class Player extends Mob {
+    private static final Vector2f SIZE = Vector2f.ONE.mul(0.75f);
+    private static final CollisionBox COLLISION_BOX = new CollisionBox(Vector2f.ONE);
     private static final SpriteInfo STILL_SPRITE = new SpriteInfo("entity", 0, Vector2f.ONE);
     // This value is used to change the amount of travel the player needs to do in a direction
     // before he actually rotates to that direction. Higher value means more travel
@@ -73,5 +76,10 @@ public class Player extends Entity {
     @Override
     public SpriteInfo getSpriteInfo() {
         return currentSprite;
+    }
+
+    @Override
+    public Vector2f getModelSize() {
+        return SIZE;
     }
 }
