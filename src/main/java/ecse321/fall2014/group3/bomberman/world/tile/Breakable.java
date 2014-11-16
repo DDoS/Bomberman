@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Breakable extends Tile {
-    private static final SpriteInfo Breakable_SPRITE = new SpriteInfo("main", 128, Vector2f.ONE);
+    private static final SpriteInfo BREAKABLE_SPRITE = new SpriteInfo("terrain", 128, Vector2f.ONE);
 
     public Breakable(Vector2f position) {
         super(position, Tile.COLLISION_BOX);
@@ -13,6 +13,6 @@ public class Breakable extends Tile {
 
     @Override
     public SpriteInfo getSpriteInfo() {
-        return Breakable_SPRITE;
+        return BREAKABLE_SPRITE;
     }
 }

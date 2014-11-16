@@ -9,4 +9,7 @@ uniform sampler2D spriteSheet;
 
 void main() {
     gl_FragColor = texture2D(spriteSheet, spriteCoords);
+    if (gl_FragColor.a < 0.5) {
+        discard;
+    }
 }

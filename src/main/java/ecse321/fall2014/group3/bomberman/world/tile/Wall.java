@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Wall extends Tile {
-    private static final SpriteInfo WALL_SPRITE = new SpriteInfo("main", 192, Vector2f.ONE);
+    private static final SpriteInfo WALL_SPRITE = new SpriteInfo("terrain", 192, Vector2f.ONE);
 
     public Wall(Vector2f position) {
         super(position, Tile.COLLISION_BOX);

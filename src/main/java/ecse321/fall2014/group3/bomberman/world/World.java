@@ -1,22 +1,19 @@
 package ecse321.fall2014.group3.bomberman.world;
 
-import java.util.Random;
-
-import com.flowpowered.commons.ticking.TickingElement;
-
 import ecse321.fall2014.group3.bomberman.Game;
-import ecse321.fall2014.group3.bomberman.world.tile.*;
-
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
+import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.Breakable;
+import ecse321.fall2014.group3.bomberman.world.tile.Wall;
 
 /**
  *
  */
 public class World extends TickingElement {
+    private static final float BREAKABLE_WALL_THRESHOLD = 0.3f;
     private final Game game;
     private final Map map = new Map();
-    Random rand = new Random(); 
-    int limit = 30;
- 
+
     public World(Game game) {
         super("World", 20);
         this.game = game;
@@ -30,12 +27,12 @@ public class World extends TickingElement {
                         || y % 2 == 0 && x % 2 == 0) {
                     map.setTile(x, y, Wall.class);
                 } else {
-                	if ((rand.nextInt(100) > limit)|| (y < 2) ||(x< 2)){
-                		map.setTile(x, y, Air.class);
-                	}else {
-                		map.setTile(x, y, Breakable.class);
-                	}
-                    
+                    // TODO: generate this better
+                    if (y < 2 || x < 2 || Math.random() > BREAKABLE_WALL_THRESHOLD) {
+                        map.setTile(x, y, Air.class);
+                    } else {
+                        map.setTile(x, y, Breakable.class);
+                    }
                 }
             }
         }

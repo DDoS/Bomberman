@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.flowpowered.commons.ticking.TickingElement;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
@@ -13,6 +12,7 @@ import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.Player;
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
@@ -103,22 +103,16 @@ public class Physics extends TickingElement {
 
     private Vector2f getInputVector() {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
-        keyboardState.lock();
-        try {
-            Vector2f input = Vector2f.ZERO;
-            for (Direction direction : Direction.values()) {
-                final Key key = direction.getKey();
-                input = input.add(direction.getUnit().mul(keyboardState.getPressTime(key) / 1e9f));
-                keyboardState.reset(key);
-            }
-            // Make sure we're not trying to normalize the zero vector
-            if (input.lengthSquared() > 0) {
-                input = input.normalize();
-            }
-            return input;
-        } finally {
-            keyboardState.unlock();
+        Vector2f input = Vector2f.ZERO;
+        for (Direction direction : Direction.values()) {
+            final Key key = direction.getKey();
+            input = input.add(direction.getUnit().mul(keyboardState.getAndClearPressTime(key) / 1e9f));
         }
+        // Make sure we're not trying to normalize the zero vector
+        if (input.lengthSquared() > 0) {
+            input = input.normalize();
+        }
+        return input;
     }
 
     @Override

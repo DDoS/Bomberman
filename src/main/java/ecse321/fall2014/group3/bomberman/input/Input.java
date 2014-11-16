@@ -2,12 +2,11 @@ package ecse321.fall2014.group3.bomberman.input;
 
 //import com.flowpowered.commons.ticking.TickingElement;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import com.flowpowered.commons.ticking.TickingElement;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -18,10 +17,10 @@ import org.lwjgl.opengl.Display;
 public class Input extends TickingElement {
     private final Game game;
     private boolean keyboardCreated = false;
-    private final Map<Long, KeyboardState> keyboardStates = new HashMap<>();
-    private final long[] dtPressTimes = new long[Key.COUNT];
-    private final int[] dtPressCounts = new int[Key.COUNT];
-    private final boolean[] pressStates = new boolean[Key.COUNT];
+    private final Map<Long, KeyboardState> keyboardStates = new ConcurrentHashMap<>();
+    private final long[] dtPressTimes = new long[Key.getCount()];
+    private final int[] dtPressCounts = new int[Key.getCount()];
+    private final boolean[] pressStates = new boolean[Key.getCount()];
 
     public Input(Game game) {
         super("input", 60);
@@ -65,15 +64,10 @@ public class Input extends TickingElement {
             }
             // update the keyboard state objects
             for (KeyboardState state : keyboardStates.values()) {
-                state.lock();
-                try {
-                    for (Key key : Key.values()) {
-                        final int ordinal = key.ordinal();
-                        state.incrementPressTime(key, dtPressTimes[ordinal]);
-                        state.incrementPressCount(key, dtPressCounts[ordinal]);
-                    }
-                } finally {
-                    state.unlock();
+                for (Key key : Key.values()) {
+                    final int ordinal = key.ordinal();
+                    state.incrementPressTime(key, dtPressTimes[ordinal]);
+                    state.incrementPressCount(key, dtPressCounts[ordinal]);
                 }
             }
         }
@@ -106,7 +100,7 @@ public class Input extends TickingElement {
     }
 
     public KeyboardState getKeyboardState() {
-        // One keyboard state per thread. TODO: maybe use ThreadLocal?
+        // One keyboard state per thread.
         final long callerID = Thread.currentThread().getId();
         KeyboardState state = keyboardStates.get(callerID);
         if (state == null) {

@@ -10,7 +10,7 @@ public enum Key {
     SPACE(Keyboard.KEY_SPACE),
     PAUSE(Keyboard.KEY_P),
     CLOSE(Keyboard.KEY_ESCAPE);
-    public static final int COUNT = values().length;
+    private static final int COUNT = values().length;
     private final int keyCode;
 
     private Key(int keyCode) {
@@ -23,5 +23,9 @@ public enum Key {
 
     boolean isDown() {
         return Keyboard.isKeyDown(keyCode);
+    }
+
+    public static int getCount() {
+        return COUNT;
     }
 }

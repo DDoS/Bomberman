@@ -6,7 +6,7 @@ ECSE 321 group project
 
 ### Tools ###
 - Java 7 JKD
-- Maven 2
+- Maven 3
 - Recommended IDE: Intellij IDEA Community Edition
 
 ### Commands ###
