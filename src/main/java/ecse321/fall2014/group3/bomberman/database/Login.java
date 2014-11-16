@@ -12,8 +12,7 @@ import java.sql.*;
 public class Login {
     public static boolean createAccount(String user, String password, Connection c) {
 
-        //openDB();
-        //Connection con = c;
+
         PreparedStatement stmt = null;
 
         if (user.isEmpty() || password.isEmpty()) {
@@ -24,20 +23,20 @@ public class Login {
 
         try {
 
-            //Class.forName("org.sqlite.JDBC");
-            //  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+
             c.setAutoCommit(false);
 
 
             String usr = null;
 
             usr = user;
+
             //Check if username already exists
             String check = "SELECT USERNAME FROM USERS WHERE USERNAME= ? ;";
 
             stmt = c.prepareStatement(check);
             stmt.setString(1, user);
-           // ResultSet rs = stmt.executeQuery("SELECT USERNAME FROM USERS WHERE USERNAME='" + usr + "';");
+
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -46,8 +45,6 @@ public class Login {
                 return false;
             }
 
-            //System.out.println("Enter a Password");
-            // String pass = scan.nextLine();
 
             String sql = "INSERT INTO USERS (USERNAME,PASSWORD) " +
                     " VALUES (?, ? )";
@@ -74,19 +71,15 @@ public class Login {
 
     public static boolean login(String user, String password, Connection c) {
 
-        //openDB();
-        //Connection c = null;
+
         PreparedStatement stmt = null;
         boolean good = false;
 
         try {
 
-            //Class.forName("org.sqlite.JDBC");
-            // c = DriverManager.getConnection("jdbc:sqlite:test.db");
-            c.setAutoCommit(false);
-            //  System.out.println("Opened DataBase Successfully");
 
-            //stmt = c.createStatement();
+            c.setAutoCommit(false);
+
 
             String que = "SELECT PASSWORD FROM USERS WHERE USERNAME= ? ;";
             String testPass = null;
@@ -125,7 +118,7 @@ public class Login {
             System.exit(0);
         }
 
-        //System.out.println("Login Successful");
+
         return good;
     }
 
