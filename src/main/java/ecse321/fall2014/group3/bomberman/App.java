@@ -19,6 +19,7 @@ import java.util.concurrent.Semaphore;
 
 import ecse321.fall2014.group3.bomberman.database.Login;
 
+import ecse321.fall2014.group3.bomberman.database.Session;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 public class App {
@@ -27,21 +28,22 @@ public class App {
     public static void main(String[] args) {
         LWJGLUtil.deployNatives(null);
 
-        final Connection connection = Login.openDB();
-        final JFrame frame = createLoginScreen(connection);
+       // final Connection connection = Login.openDB();
+        final Session session = new Session();
+        final JFrame frame = createLoginScreen(session);
 
         loginWait.acquireUninterruptibly();
 
         frame.dispose();
         try {
-            connection.close();
+            session.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         new Game().open();
     }
 
-    private static JFrame createLoginScreen(final Connection connection) {
+    private static JFrame createLoginScreen(final Session session) {
 
         final JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -96,7 +98,7 @@ public class App {
                 } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
-                    if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), connection)) {
+                    if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
                         loginWait.release();
                     } else {
                         passwordText.setText("");
@@ -119,7 +121,7 @@ public class App {
                 } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
-                    if (Login.createAccount(userText.getText(), String.valueOf(passwordText.getPassword()), connection)) {
+                    if (Login.createAccount(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
                         loginWait.release();
                     } else {
                         realNameText.setText("");

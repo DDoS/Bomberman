@@ -2,7 +2,6 @@
 
 Login and Create Account Scripts
 
-Note: Included a simple command line menu for testing purposes
 
  */
 package ecse321.fall2014.group3.bomberman.database;
@@ -10,7 +9,7 @@ package ecse321.fall2014.group3.bomberman.database;
 import java.sql.*;
 
 public class Login {
-    public static boolean createAccount(String user, String password, Connection c) {
+    public static boolean createAccount(String user, String password, Session session) {
 
 
         PreparedStatement stmt = null;
@@ -21,105 +20,40 @@ public class Login {
             return false;
         }
 
-        try {
+        if (session.setUserName(user, password)) {
 
+            System.out.println("Username is okay");
+            //session.setPassword(password);
+            System.out.println("Create Account Success");
+            return true;
 
-            c.setAutoCommit(false);
+        } else {
 
-
-            String usr = null;
-
-            usr = user;
-
-            //Check if username already exists
-            String check = "SELECT USERNAME FROM USERS WHERE USERNAME= ? ;";
-
-            stmt = c.prepareStatement(check);
-            stmt.setString(1, user);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-
-                System.out.println("Username already exists");
-                return false;
-            }
-
-
-            String sql = "INSERT INTO USERS (USERNAME,PASSWORD) " +
-                    " VALUES (?, ? )";
-
-            stmt = c.prepareStatement(sql);
-
-            stmt.setString(1, user);
-            stmt.setString(2, password);
-
-            stmt.executeUpdate();
-
-            c.commit();
-            stmt.close();
-            c.setAutoCommit(true);
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            System.out.println("Account creation FAILED");
+            return false;
         }
-
-        System.out.println("Create Account Success");
-        return true;
     }
 
-    public static boolean login(String user, String password, Connection c) {
+    public static boolean login(String user, String password, Session session) {
 
 
         PreparedStatement stmt = null;
         boolean good = false;
 
-        try {
+        if (session.getPassword(user) ==null){
+            return false;
+        }
 
+        if (session.getPassword(user).equals(password)){
 
-            c.setAutoCommit(false);
+            return true;
+        }
 
-
-            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME= ? ;";
-            String testPass = null;
-
-            stmt = c.prepareStatement(que);
-            stmt.setString(1, user);
-            //GOOD QUERY
-            //" SELECT * FROM USERS WHERE username='" + userName +"';"
-
-            ResultSet rs = stmt.executeQuery();
-
-
-            if (!rs.next()) {
-
-                System.out.println("Username does not exist");
-                good = false;
-            } else {
-                testPass = rs.getString("PASSWORD");
-
-                if (testPass.equals(password)) {
-
-                    System.out.println("Login Successful!");
-                    good = true;
-                } else {
-
-                    System.out.println("Password did not match");
-                    good = false;
-                }
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+        else {
+            return false;
         }
 
 
-        return good;
     }
 
     public static Connection openDB() {
