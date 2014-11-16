@@ -88,6 +88,11 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.7.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.flowpowered</groupId>
+			<artifactId>flow-noise</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
 		<!-- Testing only -->
 		<dependency>
 			<groupId>junit</groupId>
