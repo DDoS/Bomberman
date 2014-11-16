@@ -1,7 +1,6 @@
 package ecse321.fall2014.group3.bomberman;
 
 import javax.swing.JButton;
-import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,13 +12,13 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 import ecse321.fall2014.group3.bomberman.database.Login;
-
 import ecse321.fall2014.group3.bomberman.database.Session;
+
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 public class App {
@@ -77,6 +76,7 @@ public class App {
 
         JButton loginButton = new JButton("login");
         panel.add(loginButton);
+        panel.getRootPane().setDefaultButton(loginButton);
 
         JButton createButton = new JButton("New");
         panel.add(createButton);
