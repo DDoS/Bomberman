@@ -27,7 +27,6 @@ public class App {
     public static void main(String[] args) {
         LWJGLUtil.deployNatives(null);
 
-       // final Connection connection = Login.openDB();
         final Session session = new Session();
         final JFrame frame = createLoginScreen(session);
 
@@ -100,6 +99,8 @@ public class App {
                     //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
                     if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
                         loginWait.release();
+                        session.create(userText.getText());
+
                     } else {
                         passwordText.setText("");
                         verifyText.setText("");
@@ -122,6 +123,7 @@ public class App {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),userText.getText(), String.valueOf(passwordText.getPassword()), connection))
                     if (Login.createAccount(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
+                        session.create(userText.getText());
                         loginWait.release();
                     } else {
                         realNameText.setText("");
