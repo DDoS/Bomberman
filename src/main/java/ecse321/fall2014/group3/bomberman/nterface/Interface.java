@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
 
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
@@ -25,7 +26,6 @@ import org.spout.renderer.api.Pipeline.PipelineBuilder;
 import org.spout.renderer.api.data.ShaderSource;
 import org.spout.renderer.api.data.Uniform.IntUniform;
 import org.spout.renderer.api.data.Uniform.Vector2Uniform;
-import org.spout.renderer.api.data.Uniform.Vector4Uniform;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.gl.Program;
@@ -118,11 +118,11 @@ public class Interface extends TickingElement {
 
         final Shader fontVertShader = context.newShader();
         fontVertShader.create();
-        fontVertShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/font.vert")));
+        fontVertShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/glsl120/font.vert")));
         fontVertShader.compile();
         final Shader fontFragShader = context.newShader();
         fontFragShader.create();
-        fontFragShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/font.frag")));
+        fontFragShader.setSource(new ShaderSource(getClass().getResourceAsStream("/shaders/glsl120/font.frag")));
         fontFragShader.compile();
 
         fontProgram = context.newProgram();
@@ -251,18 +251,21 @@ public class Interface extends TickingElement {
         if (model == null) {
             model = newTextModel(entity.getFontInfo());
         }
-        model.setString(entity.getText());
-        model.getUniforms().<Vector4Uniform>get("foregroundColor").set(entity.getForegroundColor());
-        model.getUniforms().<Vector4Uniform>get("backgroundColor").set(entity.getBackgroundColor());
+        model.setString(formatColoredText(entity.getText(), entity.getTextColor()));
         return model;
+    }
+
+    private String formatColoredText(String text, Vector4f color) {
+        // Scale to [0, 255]
+        color = color.mul(255);
+        // Append color code to start of string for decode by string renderer
+        return "#" + Integer.toHexString((color.getFloorW() & 255) << 24 | (color.getFloorX() & 255) << 16 | (color.getFloorY() & 255) << 8 | color.getFloorZ() & 255) + text;
     }
 
     private StringModel newTextModel(FontInfo fontInfo) {
         // Load the text base model from the font type
         final StringModel model = loadTextBaseModel(fontInfo.getTypeString());
         // Return a copy of the base model (referred to as an "instance")
-        model.getUniforms().add(new Vector4Uniform("foregroundColor", CausticUtil.WHITE));
-        model.getUniforms().add(new Vector4Uniform("backgroundColor", CausticUtil.BLACK));
         return model.getInstance();
     }
 

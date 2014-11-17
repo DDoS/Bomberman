@@ -46,8 +46,7 @@ public class Physics extends TickingElement {
 
         // TEST
         final TextBoxEntity test = new TextBoxEntity(new Vector2f(9.5f, 9.5f), new Vector2f(2, 2));
-        test.setForegroundColor(CausticUtil.YELLOW);
-        test.setBackgroundColor(CausticUtil.BLUE);
+        test.setTextColor(CausticUtil.YELLOW);
         test.setText("This is a test");
         entities.add(test);
     }

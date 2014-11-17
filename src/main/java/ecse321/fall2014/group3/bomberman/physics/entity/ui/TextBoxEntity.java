@@ -6,8 +6,7 @@ import com.flowpowered.math.vector.Vector4f;
 import org.spout.renderer.api.util.CausticUtil;
 
 public class TextBoxEntity extends UIBoxEntity {
-    private volatile Vector4f foregroundColor = CausticUtil.WHITE;
-    private volatile Vector4f backgroundColor = CausticUtil.BLACK;
+    private volatile Vector4f textColor = CausticUtil.WHITE;
     private volatile String text = "";
 
     public TextBoxEntity(Vector2f position, Vector2f size) {
@@ -20,21 +19,12 @@ public class TextBoxEntity extends UIBoxEntity {
     }
 
     @Override
-    public Vector4f getForegroundColor() {
-        return foregroundColor;
+    public Vector4f getTextColor() {
+        return textColor;
     }
 
-    @Override
-    public Vector4f getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setForegroundColor(Vector4f foregroundColor) {
-        this.foregroundColor = foregroundColor;
-    }
-
-    public void setBackgroundColor(Vector4f backgroundColor) {
-        this.backgroundColor = backgroundColor;
+    public void setTextColor(Vector4f textColor) {
+        this.textColor = textColor;
     }
 
     public void setText(String text) {

@@ -10,7 +10,5 @@ public interface TextTextured extends Textured{
 
     String getText();
 
-    Vector4f getForegroundColor();
-
-    Vector4f getBackgroundColor();
+    Vector4f getTextColor();
 }
