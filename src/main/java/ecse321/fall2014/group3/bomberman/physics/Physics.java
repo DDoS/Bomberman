@@ -139,7 +139,14 @@ public class Physics extends TickingElement {
         return entities;
     }
 
-    private static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
+    /**
+     * Blocks the movement in the desired direction, which is represented as a unit vector.
+     *
+     * @param movement The movement as a vector
+     * @param unitDirection The unit direction to block. Must be a unit to function correctly!
+     * @return The new movement but with all motion in the given direction removed
+     */
+    public static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
         // Check if we have movement in the direction
         if (movement.dot(unitDirection) > 0) {
             // Get motion in the direction and subtracted from total movement
@@ -149,19 +156,52 @@ public class Physics extends TickingElement {
         return movement;
     }
 
-    private static Direction getCollisionDirection(Intersection intersection, Collidable other) {
+    /**
+     * Gets the direction of a collision. This uses the intersection between the two collided objects, which can be obtained with {@link #getIntersection(Collidable, Collidable)}, the object that was
+     * collided. The direction found points towards the collided object.
+     *
+     * @param intersection The intersection from the collision
+     * @param other The object that was collided
+     * @return The direction of the collision
+     */
+    public static Direction getCollisionDirection(Intersection intersection, Collidable other) {
         final Vector2f offset = other.getPosition().sub(intersection.center);
         return Direction.fromUnit(offset);
     }
 
-    private static Intersection getIntersection(Collidable object, Collidable other) {
+    /**
+     * Gets the collision intersection information for two object that are colliding. If the object aren't colliding, the resulting information is undefined.
+     *
+     * @param object The first object of the collision
+     * @param other The second object of the collision
+     * @return An intersection object containing the collision information
+     */
+    public static Intersection getIntersection(Collidable object, Collidable other) {
         final Vector2f intersectMax = object.getBoxMaxPoint().min(other.getBoxMaxPoint());
         final Vector2f intersectMin = object.getBoxMinPoint().max(other.getBoxMinPoint());
         return new Intersection(intersectMax, intersectMin);
     }
 
-    private static class Intersection {
-        private final Vector2f max, min, size, center;
+    /**
+     * Represents an intersection between two colliding objects.
+     */
+    public static class Intersection {
+        /**
+         * The max point of the intersection box.
+         */
+        public final Vector2f max;
+        /**
+         * The min point of the intersection box.
+         */
+        public final Vector2f min;
+        /**
+         * The size of the intersection box as the diagonal vector.
+         */
+        public final Vector2f size;
+        /**
+         * The center of the intersection box (halfway up the diagonal).
+         */
+        public final Vector2f center;
 
         private Intersection(Vector2f max, Vector2f min) {
             this.max = max;
