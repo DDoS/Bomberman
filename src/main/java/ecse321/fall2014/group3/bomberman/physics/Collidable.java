@@ -47,6 +47,10 @@ public abstract class Collidable {
         return collisionList;
     }
 
+    public boolean isCollidingWith(Collidable collidable) {
+        return collisionList.contains(collidable);
+    }
+
     void clearCollisionList() {
         collisionList.clear();
     }

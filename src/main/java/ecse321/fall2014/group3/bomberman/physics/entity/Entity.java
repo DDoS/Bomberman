@@ -1,6 +1,6 @@
 package ecse321.fall2014.group3.bomberman.physics.entity;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flowpowered.math.GenericMath;
@@ -37,22 +37,22 @@ public abstract class Entity extends Collidable implements Textured {
     }
 
     public Set<Entity> getEntityCollisionList() {
-        // TODO: implement me
-        return Collections.EMPTY_SET;
+        final Set<Entity> entities = new HashSet<>();
+        for (Collidable collidable : getCollisionList()) {
+            if (collidable instanceof Entity) {
+                entities.add((Entity) collidable);
+            }
+        }
+        return entities;
     }
 
     public Set<Tile> getTileCollisionList() {
-        // TODO: implement me
-        return Collections.EMPTY_SET;
-    }
-
-    public boolean isCollidingWith(Tile tile) {
-        // TODO: implement me
-        return false;
-    }
-
-    public boolean isCollidingWith(Entity entity) {
-        // TODO: implement me
-        return false;
+        final Set<Tile> tiles = new HashSet<>();
+        for (Collidable collidable : getCollisionList()) {
+            if (collidable instanceof Tile) {
+                tiles.add((Tile) collidable);
+            }
+        }
+        return tiles;
     }
 }
