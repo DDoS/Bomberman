@@ -4,15 +4,15 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
-public class DetonatorPowerUP extends PowerUP {
-    private static final SpriteInfo DETONATOR_POWERUP_SPRITE = new SpriteInfo("terrain", 36, Vector2f.ONE);
+public class BombPass extends PowerUP {
+    private static final SpriteInfo BOMBPASS_POWERUP_SPRITE = new SpriteInfo("terrain", 37, Vector2f.ONE);
 
-    public DetonatorPowerUP(Vector2f position) {
+    public BombPass(Vector2f position) {
         super(position, false);
     }
 
     @Override
     public SpriteInfo getSpriteInfo() {
-        return DETONATOR_POWERUP_SPRITE;
+        return BOMBPASS_POWERUP_SPRITE;
     }
 }
