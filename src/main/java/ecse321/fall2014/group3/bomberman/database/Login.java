@@ -9,10 +9,13 @@ package ecse321.fall2014.group3.bomberman.database;
 import java.sql.*;
 
 public class Login {
+
     public static boolean createAccount(String user, String password, Session session) {
 
 
         PreparedStatement stmt = null;
+
+        System.out.println(user);
 
         if (user.isEmpty() || password.isEmpty()) {
 
@@ -20,11 +23,16 @@ public class Login {
             return false;
         }
 
-        if (session.setUserName(user, password)) {
+        if (session.getName(user) == null) {
 
+
+            session.setUserName(user);
             System.out.println("Username is okay");
-            //session.setPassword(password);
+            session.setPassword(user, password);
+
             System.out.println("Create Account Success");
+
+
             return true;
 
         } else {
@@ -40,7 +48,7 @@ public class Login {
         PreparedStatement stmt = null;
         boolean good = false;
 
-        if (session.getPassword(user) ==null){
+        if (session.getPassword(user) == null){
             return false;
         }
 
@@ -56,33 +64,4 @@ public class Login {
 
     }
 
-    public static Connection openDB() {
-
-        Connection c = null;
-        Statement stmt = null;
-
-        try {
-
-            //opening database test
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
-            System.out.println("Check Database Successfully");
-
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
-
-            String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
-                    "(USERNAME       TEXT   NOT NULL," +
-                    " PASSWORD       TEXT   NOT NULL)";
-
-            stmt.executeUpdate(tbl);
-            c.commit();
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        return c;
-    }
 }
