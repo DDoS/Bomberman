@@ -85,7 +85,8 @@ public class Database {
 
                 String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
                         "(USERNAME       TEXT   NOT NULL," +
-                        " PASSWORD       TEXT   NOT NULL)";
+                        " PASSWORD       TEXT   NOT NULL," +
+                        " REALNAME       TEXT   NOT NULL)";
 
                 stmt.executeUpdate(tbl);
                 //connection.commit();
@@ -115,12 +116,13 @@ public class Database {
                 //that username does not exist
 
                 //create the username
-                String sql = "INSERT INTO " + table + " (USERNAME, PASSWORD) " +
-                        " VALUES (?,?)";
+                String sql = "INSERT INTO " + table + " (USERNAME, PASSWORD, REALNAME) " +
+                        " VALUES (?,?,?)";
 
                 stmt = connection.prepareStatement(sql);
                 stmt.setString(1, username);
                 stmt.setString(2, "abc");
+                stmt.setString(3, username);
                 stmt.executeUpdate();
 
                 connection.commit();

@@ -10,12 +10,12 @@ import java.sql.*;
 
 public class Login {
 
-    public static boolean createAccount(String user, String password, Session session) {
+    public static boolean createAccount(String user, String password, String realName, Session session) {
 
 
         PreparedStatement stmt = null;
 
-        System.out.println(user);
+        System.out.println(realName);
 
         if (user.isEmpty() || password.isEmpty()) {
 
@@ -27,8 +27,8 @@ public class Login {
 
 
             session.setUserName(user);
-            System.out.println("Username is okay");
             session.setPassword(user, password);
+            session.setRealName(user, realName);
 
             System.out.println("Create Account Success");
 

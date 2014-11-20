@@ -137,7 +137,7 @@ public class App {
                 } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),newUserText.getText(), String.valueOf(newPasswordText.getPassword()), connection))
-                    if (Login.createAccount(newUserText.getText(), String.valueOf(newPasswordText.getPassword()), session)) {
+                    if (Login.createAccount(newUserText.getText(), String.valueOf(newPasswordText.getPassword()), String.valueOf(realNameText.getText()), session)) {
                         session.create(userText.getText());
                         loginWait.release();
                     } else {
