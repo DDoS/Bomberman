@@ -38,18 +38,15 @@ public class World extends TickingElement {
     public void onTick(long dt) {
         boolean updatedMap = false;
         // Do bomb placement
-        final int bombsToPlace = game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE);
-        // Only try to place on bomb per tick since we can't superimpose bombs
-        if (bombsToPlace > 0) {
-            final Player player = game.getPhysics().getPlayer();
-            final int placeableBombs = player.getBombPlacementCount();
-            if (activeBombs < placeableBombs) {
-                final Vector2f inFront = player.getPosition().round().add(player.getDirection().getUnit());
-                if (map.isTile(inFront, Air.class)) {
-                    map.setTile(inFront, Bomb.class);
-                    updatedMap = true;
-                    activeBombs++;
-                }
+        final Player player = game.getPhysics().getPlayer();
+        final int bombPlaceInput = game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE);
+        final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
+        for (int i = 0; i < bombsToPlace; i++) {
+            final Vector2f inFront = player.getPosition().round().add(player.getDirection().getUnit());
+            if (map.isTile(inFront, Air.class)) {
+                map.setTile(inFront, Bomb.class);
+                updatedMap = true;
+                activeBombs++;
             }
         }
         // Explode expired bombs
