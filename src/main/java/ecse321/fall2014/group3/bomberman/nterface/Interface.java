@@ -4,11 +4,11 @@ import java.awt.Font;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector4f;
 
@@ -16,6 +16,7 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Map;
+import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 import org.spout.renderer.api.Camera;
@@ -65,7 +66,7 @@ public class Interface extends TickingElement {
     private final java.util.Map<String, StringModel> textBaseModels = new HashMap<>();
     private final Pipeline pipeline;
     private long mapVersion = 0;
-    private final Set<Model> tileModels = new HashSet<>();
+    private final java.util.Map<Vector2i, Model> tileModels = new HashMap<>();
     private final java.util.Map<Entity, Model> entityModels = new HashMap<>();
 
     static {
@@ -83,7 +84,7 @@ public class Interface extends TickingElement {
         pipeline = new PipelineBuilder()
                 .clearBuffer()
                 .useCamera(orthographicCamera)
-                .renderModels(tileModels)
+                .renderModels(tileModels.values())
                 .renderModels(entityModels.values())
                 .updateDisplay()
                 .build();
@@ -94,6 +95,7 @@ public class Interface extends TickingElement {
         context.setWindowTitle("Bomberman");
         context.setWindowSize(WIDTH, HEIGHT);
         context.create();
+        context.setClearColor(CausticUtil.GREEN);
         context.enableCapability(Capability.CULL_FACE);
         context.enableCapability(Capability.DEPTH_TEST);
 
@@ -141,14 +143,30 @@ public class Interface extends TickingElement {
             tileModels.clear();
             for (int y = 0; y < Map.HEIGHT; y++) {
                 for (int x = 0; x < Map.WIDTH; x++) {
-                    final Tile tile = map.getTile(x, y);
+                    final Vector2i position = new Vector2i(x, y);
+                    final Tile tile = map.getTile(position);
+                    if (tile instanceof Air) {
+                        continue;
+                    }
                     final Model model = newSpriteModel(tile.getSpriteInfo());
                     model.setPosition(tile.getPosition().toVector3(-1));
                     model.setScale(tile.getModelSize().toVector3(1));
-                    tileModels.add(model);
+                    tileModels.put(position, model);
                 }
             }
             mapVersion = newVersion;
+        } else {
+            for (int y = 0; y < Map.HEIGHT; y++) {
+                for (int x = 0; x < Map.WIDTH; x++) {
+                    final Vector2i position = new Vector2i(x, y);
+                    final Tile tile = map.getTile(position);
+                    if (tile instanceof Air) {
+                        continue;
+                    }
+                    final Model model = tileModels.get(position);
+                    model.setScale(tile.getModelSize().toVector3(1));
+                }
+            }
         }
 
         final Set<Entity> entities = game.getPhysics().getEntities();
