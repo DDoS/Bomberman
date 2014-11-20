@@ -99,7 +99,7 @@ public class Physics extends TickingElement {
                     final Vector2f shiftDirection = direction.getPerpendicularUnit().mul(offset).normalize();
                     // Check if we can shift, by looking for a path around the tile in the shift direction
                     final Vector2f adjacentPosition = collidable.getPosition().add(shiftDirection);
-                    if (map.getTile(adjacentPosition) instanceof Air && map.getTile(adjacentPosition.sub(direction.getUnit())) instanceof Air) {
+                    if (map.isTile(adjacentPosition, Air.class) && map.isTile(adjacentPosition.sub(direction.getUnit()), Air.class)) {
                         // Redirect the blocked motion towards the free path
                         movement = movement.add(shiftDirection.mul(inputVector.dot(direction.getUnit())));
                     }
