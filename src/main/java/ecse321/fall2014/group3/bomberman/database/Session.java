@@ -23,14 +23,11 @@ public class Session {
     public void create(String name){
 
             name = name;
-
     }
 
    public String getName(String username){
 
-
        return DB.getString("USERS",username,"USERNAME");
-
 
    }
 
@@ -47,14 +44,16 @@ public class Session {
 
            DB.setString("USERS",username,"USERNAME", username);
 
-
     }
 
     public void setPassword(String username, String password){
 
-
           DB.setString("USERS", username, "PASSWORD", password);
+    }
 
+    public void setRealName(String username, String realName){
+
+        DB.setString("USERS", username, "REALNAME", realName);
     }
 
     public String getPassword(String username){
