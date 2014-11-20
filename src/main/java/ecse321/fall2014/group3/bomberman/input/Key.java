@@ -9,7 +9,8 @@ public enum Key {
     RIGHT(Keyboard.KEY_RIGHT),
     SPACE(Keyboard.KEY_SPACE),
     PAUSE(Keyboard.KEY_P),
-    CLOSE(Keyboard.KEY_ESCAPE);
+    CLOSE(Keyboard.KEY_ESCAPE),
+    PLACE(Keyboard.KEY_A);
     private static final int COUNT = values().length;
     private final int keyCode;
 
