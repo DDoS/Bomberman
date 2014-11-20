@@ -129,15 +129,15 @@ public class App {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!Arrays.equals(passwordText.getPassword(), verifyText.getPassword())) {
-                    passwordText.setText("");
+                if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
+                    newPasswordText.setText("");
                     verifyText.setText("");
                     error.setText("passwords dont match");
                     error.setVisible(true);
                 } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),newUserText.getText(), String.valueOf(newPasswordText.getPassword()), connection))
-                    if (Login.createAccount(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
+                    if (Login.createAccount(newUserText.getText(), String.valueOf(newPasswordText.getPassword()), session)) {
                         session.create(userText.getText());
                         loginWait.release();
                     } else {

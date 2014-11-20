@@ -41,7 +41,7 @@ public class Database {
 
         try {
 
-            verifyTableUsers();
+            verifyTable("USERS");
 
         }catch (Exception e){
 
@@ -71,27 +71,29 @@ public class Database {
 
     }
 
-    private void verifyTableUsers(){
+
+
+    private void verifyTable(String table){
 
         Statement stmt = null;
 
         try {
 
+            if (table.equals("USERS")) {
 
-            stmt = connection.createStatement();
+                stmt = connection.createStatement();
 
-            String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
-                    "(USERNAME       TEXT   NOT NULL," +
-                    " PASSWORD       TEXT   NOT NULL)";
+                String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
+                        "(USERNAME       TEXT   NOT NULL," +
+                        " PASSWORD       TEXT   NOT NULL)";
 
-            stmt.executeUpdate(tbl);
-            //connection.commit();
+                stmt.executeUpdate(tbl);
+                //connection.commit();
 
+                System.out.println("Checked USER Table Successfully");
 
-
-            System.out.println("Checked Table Successfully");
-
-
+            }
+            //TODO: Implement Leaderboard Table
 
         } catch (Exception e){
 
@@ -101,7 +103,70 @@ public class Database {
         }
     }
 
-    public boolean get(String username){
+    public void setString(String table, String username, String column, String value){
+
+        PreparedStatement stmt = null;
+
+        try {
+
+            if (column.equals("USERNAME")) {
+                connection.setAutoCommit(false);
+
+                //that username does not exist
+
+                //create the username
+                String sql = "INSERT INTO " + table + " (USERNAME, PASSWORD) " +
+                        " VALUES (?,?)";
+
+                stmt = connection.prepareStatement(sql);
+                stmt.setString(1, username);
+                stmt.setString(2, "abc");
+                stmt.executeUpdate();
+
+                connection.commit();
+                stmt.close();
+                connection.setAutoCommit(true);
+
+                System.out.println("Created Username");
+                System.out.println(username);
+
+            }else {
+
+                connection.setAutoCommit(false);
+
+                String sql = "UPDATE " + table + " SET " + column  +
+                        "=? WHERE USERNAME=?";
+
+                stmt = connection.prepareStatement(sql);
+
+                stmt.setString(1, value);
+                stmt.setString(2, username);
+                stmt.executeUpdate();
+
+                connection.commit();
+                stmt.close();
+                connection.setAutoCommit(true);
+
+                System.out.println("Created Password");
+                System.out.println(value);
+            }
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+
+
+    }
+
+    public void setInt(String table, String username, int value){
+
+        //TODO: Implement for Leaderboard
+
+    }
+
+    public String getString(String table, String username, String column){
 
         PreparedStatement stmt = null;
 
@@ -111,107 +176,38 @@ public class Database {
             connection.setAutoCommit(false);
 
 
+
             //Check if username already exists
-            String check = "SELECT USERNAME FROM USERS WHERE USERNAME= ? ;";
+            String check = "SELECT "+ column +" FROM "+ table +" WHERE USERNAME= ? ;";
 
             stmt = connection.prepareStatement(check);
             stmt.setString(1, username);
 
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
+            if (!rs.next()){
 
-                System.out.println("Username already exists");
-                return false;
-            }
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        return true;
-
-    }
-    public String getPass(String username){
-
-        String pass = null;
-
-        PreparedStatement stmt = null;
-
-        try {
-
-
-            connection.setAutoCommit(false);
-
-
-            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME= ? ;";
-
-            stmt = connection.prepareStatement(que);
-            stmt.setString(1, username);
-            //GOOD QUERY
-            //" SELECT * FROM USERS WHERE username='" + userName +"';"
-
-            ResultSet rs = stmt.executeQuery();
-
-
-            if (!rs.next()) {
-
-                System.out.println("Username does not exist");
+                System.out.println("No results found for "+column);
                 return null;
 
-            } else {
-
-                pass = rs.getString("PASSWORD");
-
-
             }
 
-            rs.close();
-            stmt.close();
+            return rs.getString(column);
+
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
 
-        return pass;
+        return null;
+
     }
 
+    public int getInt(String table, String username, String value){
 
-    public boolean update(String username, String password){
-
-        PreparedStatement stmt = null;
-
-        try {
-
-            if (!get(username)){
-
-                return false;
-            }
-
-            String sql = "INSERT INTO USERS (USERNAME, PASSWORD) " +
-                    " VALUES (?,?)";
-
-            stmt = connection.prepareStatement(sql);
-
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.executeUpdate();
-
-            connection.commit();
-            stmt.close();
-            connection.setAutoCommit(true);
-
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        return true;
-
-
+        //TODO: Implement for Leaderboard
+        return 0;
     }
 
 

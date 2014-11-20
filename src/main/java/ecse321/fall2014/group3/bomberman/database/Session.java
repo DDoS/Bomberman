@@ -26,13 +26,12 @@ public class Session {
 
     }
 
-   public String getName(){
+   public String getName(String username){
 
-       String name = null;
 
-       //TODO: Query to retrieve display name
+       return DB.getString("USERS",username,"USERNAME");
 
-       return name;
+
    }
 
     public String getDisplayName(){
@@ -44,23 +43,23 @@ public class Session {
         return username;
     }
 
-    public boolean setUserName(String username, String password){
+    public void setUserName(String username){
 
-           return DB.update(username, password);
+           DB.setString("USERS",username,"USERNAME", username);
 
 
     }
 
-    public void setPassword(String password){
+    public void setPassword(String username, String password){
 
-        //TODO: Query to change password
 
+          DB.setString("USERS", username, "PASSWORD", password);
 
     }
 
     public String getPassword(String username){
 
-       return DB.getPass(username);
+       return DB.getString("USERS",username, "PASSWORD");
 
     }
 
