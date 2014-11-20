@@ -9,5 +9,5 @@ public abstract class TimedTile extends CollidableTile {
         super(position);
     }
 
-    public abstract int getRemainingTime();
+    public abstract long getRemainingTime();
 }
