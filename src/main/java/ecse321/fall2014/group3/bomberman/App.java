@@ -121,6 +121,8 @@ public class App {
                         session.create(userText.getText());
                         leaderboard.updateScore(userText.getText(), (leaderboard.getScore(userText.getText()) +10));
 
+                        //For testing purposes
+                        leaderboard.getTop(3);
 
                     } else {
                         passwordText.setText("");
