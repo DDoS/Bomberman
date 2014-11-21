@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
+import ecse321.fall2014.group3.bomberman.database.Leaderboard;
 import ecse321.fall2014.group3.bomberman.database.Login;
 import ecse321.fall2014.group3.bomberman.database.Session;
 
@@ -28,7 +29,9 @@ public class App {
         LWJGLUtil.deployNatives(null);
 
         final Session session = new Session();
-        final JFrame frame = createLoginScreen(session);
+        final Leaderboard leaderboard = new Leaderboard(session);
+        final JFrame frame = createLoginScreen(session, leaderboard);
+
 
         loginWait.acquireUninterruptibly();
 
@@ -41,7 +44,7 @@ public class App {
         new Game().open();
     }
 
-    private static JFrame createLoginScreen(final Session session) {
+    private static JFrame createLoginScreen(final Session session, final Leaderboard leaderboard) {
 
         final JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -116,6 +119,8 @@ public class App {
                     if (Login.login(userText.getText(), String.valueOf(passwordText.getPassword()), session)) {
                         loginWait.release();
                         session.create(userText.getText());
+                        leaderboard.updateScore(userText.getText(), (leaderboard.getScore(userText.getText()) +10));
+
 
                     } else {
                         passwordText.setText("");
@@ -137,7 +142,7 @@ public class App {
                 } else {
                     //TODO: add real name to database
                     //if(Login.login(realNameText.getText(),newUserText.getText(), String.valueOf(newPasswordText.getPassword()), connection))
-                    if (Login.createAccount(newUserText.getText(), String.valueOf(newPasswordText.getPassword()), String.valueOf(realNameText.getText()), session)) {
+                    if (Login.createAccount(newUserText.getText(), String.valueOf(newPasswordText.getPassword()), String.valueOf(realNameText.getText()), session, leaderboard)) {
                         session.create(userText.getText());
                         loginWait.release();
                     } else {

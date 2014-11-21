@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class Session {
 
-    private final Database DB;
+    protected final Database DB;
     private String name;
 
 

@@ -86,7 +86,9 @@ public class Database {
                 String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
                         "(USERNAME       TEXT   NOT NULL," +
                         " PASSWORD       TEXT   NOT NULL," +
-                        " REALNAME       TEXT   NOT NULL)";
+                        " REALNAME       TEXT   NOT NULL," +
+                        " SCORE          INT    NOT NULL," +
+                        " LEVEL          INT    NOT NULL)";
 
                 stmt.executeUpdate(tbl);
                 //connection.commit();
@@ -116,13 +118,17 @@ public class Database {
                 //that username does not exist
 
                 //create the username
-                String sql = "INSERT INTO " + table + " (USERNAME, PASSWORD, REALNAME) " +
-                        " VALUES (?,?,?)";
+                String sql = "INSERT INTO " + table + " (USERNAME, PASSWORD, REALNAME, SCORE, LEVEL) " +
+                        " VALUES (?,?,?,?,?)";
 
                 stmt = connection.prepareStatement(sql);
                 stmt.setString(1, username);
-                stmt.setString(2, "abc");
+                stmt.setString(2, "");
                 stmt.setString(3, username);
+                stmt.setInt(4, 0);
+                stmt.setInt(5, 1);
+
+
                 stmt.executeUpdate();
 
                 connection.commit();
@@ -149,7 +155,7 @@ public class Database {
                 stmt.close();
                 connection.setAutoCommit(true);
 
-                System.out.println("Created Password");
+                System.out.println("Created "+column);
                 System.out.println(value);
             }
         } catch (Exception e) {
@@ -162,10 +168,36 @@ public class Database {
 
     }
 
-    public void setInt(String table, String username, int value){
+    public void setInt(String table, String username, String column, int value){
 
-        //TODO: Implement for Leaderboard
 
+        PreparedStatement stmt = null;
+
+        try {
+
+                connection.setAutoCommit(false);
+
+                String sql = "UPDATE " + table + " SET " + column  +
+                        "=? WHERE USERNAME=?";
+
+                stmt = connection.prepareStatement(sql);
+
+                stmt.setInt(1, value);
+                stmt.setString(2, username);
+                stmt.executeUpdate();
+
+                connection.commit();
+                stmt.close();
+                connection.setAutoCommit(true);
+
+                System.out.println("Updated "+column);
+                System.out.println(value);
+
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
     }
 
     public String getString(String table, String username, String column){
@@ -206,10 +238,39 @@ public class Database {
 
     }
 
-    public int getInt(String table, String username, String value){
+    public int getInt(String table, String username, String column){
 
-        //TODO: Implement for Leaderboard
-        return 0;
+        PreparedStatement stmt = null;
+
+        try {
+
+
+            connection.setAutoCommit(false);
+
+            String check = "SELECT "+ column +" FROM "+ table +" WHERE USERNAME= ? ;";
+
+            stmt = connection.prepareStatement(check);
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()){
+
+                System.out.println("No results found for "+column);
+                return -1;
+
+            }
+
+            return rs.getInt(column);
+
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        return -1;
+
     }
 
 

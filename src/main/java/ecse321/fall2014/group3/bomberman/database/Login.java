@@ -10,7 +10,7 @@ import java.sql.*;
 
 public class Login {
 
-    public static boolean createAccount(String user, String password, String realName, Session session) {
+    public static boolean createAccount(String user, String password, String realName, Session session, Leaderboard leaderboard) {
 
 
         PreparedStatement stmt = null;
@@ -29,6 +29,9 @@ public class Login {
             session.setUserName(user);
             session.setPassword(user, password);
             session.setRealName(user, realName);
+            leaderboard.updateScore(user, 0);
+            leaderboard.updateMap(user, 1);
+
 
             System.out.println("Create Account Success");
 
