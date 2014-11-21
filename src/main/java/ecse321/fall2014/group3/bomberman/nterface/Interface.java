@@ -164,7 +164,9 @@ public class Interface extends TickingElement {
                         continue;
                     }
                     final Model model = tileModels.get(position);
-                    model.setScale(tile.getModelSize().toVector3(1));
+                    if (model != null) {
+                        model.setScale(tile.getModelSize().toVector3(1));
+                    }
                 }
             }
         }
