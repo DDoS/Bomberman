@@ -2,12 +2,16 @@ package ecse321.fall2014.group3.bomberman.world;
 
 import com.flowpowered.math.vector.Vector2f;
 
+import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.TimedTile;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
@@ -49,17 +53,39 @@ public class World extends TickingElement {
                 activeBombs++;
             }
         }
-        // Explode expired bombs
-        for (Bomb bomb : map.getTiles(Bomb.class)) {
-            if (bomb.getRemainingTime() <= 0) {
-                map.setTile(bomb.getPosition(), Air.class);
+        // Explode expired bombs and remove dead flames
+        final int blastRadius = player.getBlastRadius();
+        for (TimedTile timed : map.getTiles(TimedTile.class)) {
+            if (timed.hasExpired()) {
+                if (timed instanceof Bomb) {
+                    generateFlames(timed.getPosition(), blastRadius);
+                    activeBombs--;
+                } else {
+                    map.setTile(timed.getPosition(), Air.class);
+                }
                 updatedMap = true;
-                activeBombs--;
             }
         }
         // Update new map version if needed
         if (updatedMap) {
             map.incrementVersion();
+        }
+    }
+
+    private void generateFlames(Vector2f position, int blastRadius) {
+        for (Direction direction : Direction.values()) {
+            for (int i = 0; i <= blastRadius; i++) {
+                final Vector2f flamePosition = position.add(direction.getUnit().mul(i));
+                final Tile tile = map.getTile(flamePosition);
+                if (tile instanceof Unbreakable) {
+                    break;
+                }
+                map.setTile(flamePosition, Fire.class);
+                if (tile instanceof Bomb) {
+                    generateFlames(flamePosition, blastRadius);
+                    activeBombs--;
+                }
+            }
         }
     }
 
