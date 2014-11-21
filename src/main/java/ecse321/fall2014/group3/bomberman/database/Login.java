@@ -34,8 +34,6 @@ public class Login {
 
 
             System.out.println("Create Account Success");
-
-
             return true;
 
         } else {
@@ -56,7 +54,6 @@ public class Login {
         }
 
         if (session.getPassword(user).equals(password)){
-
             return true;
         }
 
