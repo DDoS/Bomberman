@@ -8,16 +8,9 @@ public class Bomb extends TimedTile {
     private static final SpriteInfo BOMB_SPRITE = new SpriteInfo("terrain", 32, Vector2f.ONE);
     private static final long LIFE_TIME = 3000;
     private static final float ANIMATION_GROWTH_PERCENT = 0.25f;
-    private final long placeTime;
 
     public Bomb(Vector2f position) {
-        super(position);
-        placeTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public long getRemainingTime() {
-        return Math.max(LIFE_TIME - (System.currentTimeMillis() - placeTime), 0);
+        super(position, LIFE_TIME);
     }
 
     @Override
