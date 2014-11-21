@@ -82,6 +82,11 @@ public class Physics extends TickingElement {
         // Compute the motion for the tick
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
+            // ghost collidables only report collisions, but don't actually collide
+            if (collidable.isGhost()) {
+                continue;
+            }
+            // Find the intersection of the collision (a box) and the direction
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);
             // Allow for a small amount of contact on the sides to prevent the player from getting stuck in adjacent tiles
@@ -106,6 +111,7 @@ public class Physics extends TickingElement {
                 }
             }
         }
+        // Update player movement
         player.setPosition(player.getPosition().add(movement));
         player.setVelocity(movement.div(timeSeconds));
     }
