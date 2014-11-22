@@ -61,11 +61,7 @@ public class Leaderboard {
             int i = 0;
 
             while (rs.next() && i < leaders.length) {
-
-                //For testing purposes
-                System.out.println("Position " + (i + 1) + ": " + rs.getString("USERNAME"));
                 leaders[i] = rs.getString("USERNAME");
-
                 i++;
             }
 
@@ -74,7 +70,6 @@ public class Leaderboard {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
         return leaders;
