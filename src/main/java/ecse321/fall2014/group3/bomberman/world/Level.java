@@ -1,7 +1,7 @@
 package ecse321.fall2014.group3.bomberman.world;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -42,14 +42,14 @@ public enum Level {
         return number;
     }
 
-    public Set<UIBoxEntity> buildUI() {
-        final Set<UIBoxEntity> ui = new HashSet<>();
+    public List<UIBoxEntity> buildUI() {
+        final List<UIBoxEntity> ui = new ArrayList<>();
         switch (this) {
             case MAIN_MENU:
                 ui.add(newText(0, 4, "Bomberman"));
-                ui.add(newButton(2, 2, "Continue"));
-                ui.add(newButton(3, 2, "Select level"));
-                ui.add(newButton(4, 2, "View leader board"));
+                ui.add(newButton(2, 2, "Continue", "levelload.restore"));
+                ui.add(newButton(3, 2, "Select level", "menuload.levelselect"));
+                ui.add(newButton(4, 2, "View leader board", "menuload.loaderboard"));
                 break;
             case LEVEL_SELECT:
                 ui.add(newText(0, 4, "Level select"));
@@ -62,22 +62,21 @@ public enum Level {
                 break;
             case LEVEL_PAUSE:
                 ui.add(newText(0, 4, "Level paused"));
-                ui.add(newButton(2, 2, "Continue"));
-                ui.add(newButton(3, 2, "View leader board"));
-                ui.add(newButton(4, 2, "Save"));
-                ui.add(newButton(5, 2, "Quit"));
+                ui.add(newButton(2, 2, "Continue", "levelload.restore"));
+                ui.add(newButton(3, 2, "View leader board", "menuload.loaderboard"));
+                ui.add(newButton(4, 2, "Save", "levelload.store"));
+                ui.add(newButton(5, 2, "Quit", "menuload.main"));
                 break;
             case LEVEL_END:
                 ui.add(newText(0, 4, "Level complete"));
-                ui.add(newButton(2, 2, "Next level"));
-                ui.add(newButton(3, 2, "View leader board"));
-                ui.add(newButton(4, 2, "Save"));
-                ui.add(newButton(5, 2, "Quit"));
+                ui.add(newButton(2, 2, "Next level", "levelload.next"));
+                ui.add(newButton(3, 2, "View leader board", "menuload.loaderboard"));
+                ui.add(newButton(4, 2, "Quit", "menuload.main"));
                 break;
             case GAME_OVER:
                 ui.add(newText(0, 4, "Game Over"));
-                ui.add(newButton(2, 2, "View leader board"));
-                ui.add(newButton(3, 2, "Quit"));
+                ui.add(newButton(2, 2, "View leader board", "menuload.loaderboard"));
+                ui.add(newButton(3, 2, "Quit", "menuload.main"));
                 break;
         }
         return ui;
@@ -87,7 +86,7 @@ public enum Level {
         return new TextBoxEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text);
     }
 
-    private static ButtonEntity newButton(int position, int size, String text) {
-        return new ButtonEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text);
+    private static ButtonEntity newButton(int position, int size, String text, String action) {
+        return new ButtonEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text, action);
     }
 }

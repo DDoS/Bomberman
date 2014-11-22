@@ -1,7 +1,9 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -12,6 +14,8 @@ import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
@@ -29,6 +33,8 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<Entity>());
     private final Player player = new Player(Vector2f.ZERO);
+    private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
+    private volatile int selectedButtonIndex;
     private Level currentLevel;
     private long mapVersion = 0;
 
@@ -65,11 +71,27 @@ public class Physics extends TickingElement {
         collisionDetection.clear();
         collidableTiles.clear();
         // Add UI entities
-        entities.addAll(game.getWorld().getLevel().buildUI());
+        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI();
+        entities.addAll(uiEntities);
+        for (UIBoxEntity uiEntity : uiEntities) {
+            if (uiEntity instanceof ButtonEntity) {
+                buttonOrder.add((ButtonEntity) uiEntity);
+            }
+        }
+        selectedButtonIndex = 0;
     }
 
     private void doMenuTick(long dt) {
-
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
+        final int buttonCount = buttonOrder.size();
+        final int oldSelected = selectedButtonIndex;
+        final int newSelected = ((oldSelected + selectedShift) % buttonCount + buttonCount) % buttonCount;
+        if (buttonCount > 0) {
+            buttonOrder.get(oldSelected).setSelected(false);
+            buttonOrder.get(newSelected).setSelected(true);
+        }
+        selectedButtonIndex = newSelected;
     }
 
     private void setupGame() {
@@ -172,6 +194,13 @@ public class Physics extends TickingElement {
 
     public Set<Entity> getEntities() {
         return entities;
+    }
+
+    public ButtonEntity getSelectedButton() {
+        if (buttonOrder.size() <= selectedButtonIndex) {
+            return null;
+        }
+        return buttonOrder.get(selectedButtonIndex);
     }
 
     /**
