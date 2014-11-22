@@ -50,7 +50,7 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  */
 public class Interface extends TickingElement {
     private static final int SPRITE_SIZE = 64;
-    private static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
+    public static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
     private static final int TILE_PIXEL_SIZE = SPRITE_SIZE;
     private static final int WIDTH = VIEW_WIDTH_TILE * TILE_PIXEL_SIZE, HEIGHT = VIEW_HEIGHT_TILE * TILE_PIXEL_SIZE;
     private static final float ASPECT_RATIO = VIEW_WIDTH_TILE / (float) VIEW_HEIGHT_TILE;
@@ -199,13 +199,17 @@ public class Interface extends TickingElement {
         }
 
         final Vector3f viewPosition;
-        final Vector2f playerPosition = game.getPhysics().getPlayer().getPosition();
-        if (playerPosition.getFloorX() < SCROLL_TILE_THRESHOLD) {
+        if (game.getWorld().getLevel().isMenu()) {
             viewPosition = Vector3f.ZERO;
-        } else if (playerPosition.getFloorX() >= Map.WIDTH - SCROLL_TILE_THRESHOLD - 1) {
-            viewPosition = new Vector3f(Map.WIDTH - VIEW_WIDTH_TILE, 0, 0);
         } else {
-            viewPosition = new Vector3f(playerPosition.getX() - SCROLL_TILE_THRESHOLD, 0, 0);
+            final Vector2f playerPosition = game.getPhysics().getPlayer().getPosition();
+            if (playerPosition.getFloorX() < SCROLL_TILE_THRESHOLD) {
+                viewPosition = Vector3f.ZERO;
+            } else if (playerPosition.getFloorX() >= Map.WIDTH - SCROLL_TILE_THRESHOLD - 1) {
+                viewPosition = new Vector3f(Map.WIDTH - VIEW_WIDTH_TILE, 0, 0);
+            } else {
+                viewPosition = new Vector3f(playerPosition.getX() - SCROLL_TILE_THRESHOLD, 0, 0);
+            }
         }
         orthographicCamera.setPosition(viewPosition.sub(0.5f, 0.5f, 0));
 
