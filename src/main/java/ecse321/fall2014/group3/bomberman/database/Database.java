@@ -34,7 +34,6 @@ public class Database {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
         connection = c;
@@ -46,7 +45,6 @@ public class Database {
         }catch (Exception e){
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
 
@@ -63,9 +61,7 @@ public class Database {
             try {
                 connection.close();
             }catch (Exception e) {
-
                 System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
             }
 
 
@@ -96,13 +92,11 @@ public class Database {
                 System.out.println("Checked USER Table Successfully");
 
             }
-            //TODO: Implement Leaderboard Table
 
         } catch (Exception e){
 
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
     }
 
@@ -161,7 +155,6 @@ public class Database {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
 
@@ -196,7 +189,6 @@ public class Database {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
     }
 
@@ -231,7 +223,6 @@ public class Database {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
         return null;
@@ -266,7 +257,6 @@ public class Database {
         } catch (Exception e) {
 
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
         }
 
         return -1;
