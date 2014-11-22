@@ -7,10 +7,11 @@ import org.spout.renderer.api.util.CausticUtil;
 
 public class TextBoxEntity extends UIBoxEntity {
     private volatile Vector4f textColor = CausticUtil.WHITE;
-    private volatile String text = "";
+    private volatile String text;
 
-    public TextBoxEntity(Vector2f position, Vector2f size) {
+    public TextBoxEntity(Vector2f position, Vector2f size, String text) {
         super(position, size);
+        this.text = text;
     }
 
     @Override

@@ -12,13 +12,11 @@ import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
+import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
-
-import org.spout.renderer.api.util.CausticUtil;
 
 /**
  *
@@ -31,6 +29,7 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<Entity>());
     private final Player player = new Player(Vector2f.ZERO);
+    private Level currentLevel;
     private long mapVersion = 0;
 
     public Physics(Game game) {
@@ -40,19 +39,48 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStart() {
-        entities.add(player);
-        player.setPosition(Vector2f.ONE);
-        collisionDetection.add(player);
-
-        // TEST
-        final TextBoxEntity test = new TextBoxEntity(new Vector2f(9.5f, 9.5f), new Vector2f(2, 2));
-        test.setTextColor(CausticUtil.YELLOW);
-        test.setText("This is a test");
-        entities.add(test);
     }
 
     @Override
     public void onTick(long dt) {
+        final Level level = game.getWorld().getLevel();
+        if (currentLevel != level) {
+            currentLevel = level;
+            if (currentLevel.isMenu()) {
+                setupMenu();
+            } else {
+                setupGame();
+            }
+        }
+        if (currentLevel.isMenu()) {
+            doMenuTick(dt);
+        } else {
+            doGameTick(dt);
+        }
+    }
+
+    private void setupMenu() {
+        // Clear collision detection
+        entities.clear();
+        collisionDetection.clear();
+        collidableTiles.clear();
+        // Add UI entities
+        entities.addAll(game.getWorld().getLevel().buildUI());
+    }
+
+    private void doMenuTick(long dt) {
+
+    }
+
+    private void setupGame() {
+        // Add player
+        entities.add(player);
+        player.setPosition(Vector2f.ONE);
+        collisionDetection.add(player);
+        // Add enemies
+    }
+
+    private void doGameTick(long dt) {
         final Map map = game.getWorld().getMap();
         final long newVersion = map.getVersion();
 
@@ -132,6 +160,7 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStop() {
+        collidableTiles.clear();
         collisionDetection.clear();
         entities.clear();
         mapVersion = 0;
