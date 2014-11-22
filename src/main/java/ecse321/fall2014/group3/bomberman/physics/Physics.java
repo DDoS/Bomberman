@@ -52,6 +52,7 @@ public class Physics extends TickingElement {
         final Level level = game.getWorld().getLevel();
         if (currentLevel != level) {
             currentLevel = level;
+            clearEntities();
             if (currentLevel.isMenu()) {
                 setupMenu();
             } else {
@@ -65,11 +66,16 @@ public class Physics extends TickingElement {
         }
     }
 
-    private void setupMenu() {
+    private void clearEntities() {
         // Clear collision detection
         entities.clear();
         collisionDetection.clear();
         collidableTiles.clear();
+        // Clear UI
+        buttonOrder.clear();
+    }
+
+    private void setupMenu() {
         // Add UI entities
         final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI();
         entities.addAll(uiEntities);
@@ -182,9 +188,7 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStop() {
-        collidableTiles.clear();
-        collisionDetection.clear();
-        entities.clear();
+        clearEntities();
         mapVersion = 0;
     }
 

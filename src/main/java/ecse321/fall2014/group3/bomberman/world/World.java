@@ -35,14 +35,54 @@ public class World extends TickingElement {
 
     @Override
     public void onStart() {
-        generateLevel(0.5);
+        generateMenuBackground();
         // Signal a new map version to the physics and rendering
         map.incrementVersion();
     }
 
     @Override
     public void onTick(long dt) {
-        // Handle normal game play
+        if (level.isMenu()) {
+            menuTick(dt);
+        } else {
+            gameTick(dt);
+        }
+    }
+
+    private void menuTick(long dt) {
+        if (game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE) <= 0) {
+            return;
+        }
+        final String[] action = game.getPhysics().getSelectedButton().getAction();
+        if (action[0].equals("levelload")) {
+            if (action[1].equals("restore")) {
+                level = Level.LEVEL_1;
+            } else if (action[1].equals("next")) {
+                level = level.next();
+            } else {
+                throw new IllegalStateException("Unknown button action: " + action[1]);
+            }
+            generateLevel(0.5);
+            map.incrementVersion();
+            activeBombs = 0;
+        } else if (action[0].equals("menuload")) {
+            if (action[1].equals("main")) {
+                level = Level.MAIN_MENU;
+            } else if (action[1].equals("levelselect")) {
+                level = Level.LEVEL_SELECT;
+            } else if (action[1].equals("loaderboard")) {
+                level = Level.LEADER_BOARD;
+            } else {
+                throw new IllegalStateException("Unknown button action: " + action[1]);
+            }
+            generateMenuBackground();
+            map.incrementVersion();
+        } else {
+            throw new IllegalStateException("Unknown button action target: " + action[0]);
+        }
+    }
+
+    private void gameTick(long dt) {
         boolean updatedMap = false;
         // Do bomb placement
         final Player player = game.getPhysics().getPlayer();
