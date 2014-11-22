@@ -24,7 +24,7 @@ public enum Level {
     LEVEL_1(false, 1),
     LEVEL_2(false, 2),
     LEVEL_3(false, 3),
-    LEVEL_BONUS(false, 0);
+    BONUS_LEVEL_1(false, 4);
     // TODO: add more LEVEL_n as needed
     private final boolean menu;
     private final int number;
@@ -42,6 +42,13 @@ public enum Level {
         return number;
     }
 
+    public Level next() {
+        if (number <= 0 || number > 4) {
+            return null;
+        }
+        return values()[ordinal() + 1];
+    }
+
     public List<UIBoxEntity> buildUI() {
         final List<UIBoxEntity> ui = new ArrayList<>();
         switch (this) {
@@ -53,9 +60,11 @@ public enum Level {
                 break;
             case LEVEL_SELECT:
                 ui.add(newText(0, 4, "Level select"));
+                ui.add(newButton(2, 2, "Back", "menuload.main"));
                 break;
             case LEADER_BOARD:
                 ui.add(newText(0, 4, "Leader board"));
+                ui.add(newButton(2, 2, "Back", "menuload.main"));
                 break;
             case LEVEL_START:
                 ui.add(newText(0, 4, "Level start"));
