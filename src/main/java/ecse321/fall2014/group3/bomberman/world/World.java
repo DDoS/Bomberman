@@ -81,7 +81,7 @@ public class World extends TickingElement {
                     break;
                 }
                 map.setTile(flamePosition, Fire.class);
-                if (tile instanceof Bomb) {
+                if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
                     activeBombs--;
                 }
