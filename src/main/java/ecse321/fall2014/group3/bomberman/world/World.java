@@ -5,9 +5,11 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
+import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
@@ -33,13 +35,54 @@ public class World extends TickingElement {
 
     @Override
     public void onStart() {
-        generateMap(0.5);
+        generateMenuBackground();
         // Signal a new map version to the physics and rendering
         map.incrementVersion();
     }
 
     @Override
     public void onTick(long dt) {
+        if (level.isMenu()) {
+            menuTick(dt);
+        } else {
+            gameTick(dt);
+        }
+    }
+
+    private void menuTick(long dt) {
+        if (game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE) <= 0) {
+            return;
+        }
+        final String[] action = game.getPhysics().getSelectedButton().getAction();
+        if (action[0].equals("levelload")) {
+            if (action[1].equals("restore")) {
+                level = Level.LEVEL_1;
+            } else if (action[1].equals("next")) {
+                level = level.next();
+            } else {
+                throw new IllegalStateException("Unknown button action: " + action[1]);
+            }
+            generateLevel(0.5);
+            map.incrementVersion();
+            activeBombs = 0;
+        } else if (action[0].equals("menuload")) {
+            if (action[1].equals("main")) {
+                level = Level.MAIN_MENU;
+            } else if (action[1].equals("levelselect")) {
+                level = Level.LEVEL_SELECT;
+            } else if (action[1].equals("loaderboard")) {
+                level = Level.LEADER_BOARD;
+            } else {
+                throw new IllegalStateException("Unknown button action: " + action[1]);
+            }
+            generateMenuBackground();
+            map.incrementVersion();
+        } else {
+            throw new IllegalStateException("Unknown button action target: " + action[0]);
+        }
+    }
+
+    private void gameTick(long dt) {
         boolean updatedMap = false;
         // Do bomb placement
         final Player player = game.getPhysics().getPlayer();
@@ -91,7 +134,6 @@ public class World extends TickingElement {
 
     @Override
     public void onStop() {
-
     }
 
     public Map getMap() {
@@ -102,7 +144,16 @@ public class World extends TickingElement {
         return level;
     }
 
-    private void generateMap(double density) {
+    private void generateMenuBackground() {
+        for (int y = 0; y < Interface.VIEW_HEIGHT_TILE; y++) {
+            for (int x = 0; x < Interface.VIEW_WIDTH_TILE; x++) {
+                map.setTile(x, y, MenuBackground.class);
+            }
+        }
+        map.incrementVersion();
+    }
+
+    private void generateLevel(double density) {
         // Invert the block density to get the air density
         density = 1 - density;
         // Seed a perlin noise generator to the current time

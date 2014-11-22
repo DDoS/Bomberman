@@ -1,7 +1,9 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -12,13 +14,13 @@ import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
+import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
-
-import org.spout.renderer.api.util.CausticUtil;
 
 /**
  *
@@ -31,6 +33,9 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<Entity>());
     private final Player player = new Player(Vector2f.ZERO);
+    private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
+    private volatile int selectedButtonIndex;
+    private Level currentLevel;
     private long mapVersion = 0;
 
     public Physics(Game game) {
@@ -40,19 +45,70 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStart() {
-        entities.add(player);
-        player.setPosition(Vector2f.ONE);
-        collisionDetection.add(player);
-
-        // TEST
-        final TextBoxEntity test = new TextBoxEntity(new Vector2f(9.5f, 9.5f), new Vector2f(2, 2));
-        test.setTextColor(CausticUtil.YELLOW);
-        test.setText("This is a test");
-        entities.add(test);
     }
 
     @Override
     public void onTick(long dt) {
+        final Level level = game.getWorld().getLevel();
+        if (currentLevel != level) {
+            currentLevel = level;
+            clearEntities();
+            if (currentLevel.isMenu()) {
+                setupMenu();
+            } else {
+                setupGame();
+            }
+        }
+        if (currentLevel.isMenu()) {
+            doMenuTick(dt);
+        } else {
+            doGameTick(dt);
+        }
+    }
+
+    private void clearEntities() {
+        // Clear collision detection
+        entities.clear();
+        collisionDetection.clear();
+        collidableTiles.clear();
+        // Clear UI
+        buttonOrder.clear();
+    }
+
+    private void setupMenu() {
+        // Add UI entities
+        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI();
+        entities.addAll(uiEntities);
+        for (UIBoxEntity uiEntity : uiEntities) {
+            if (uiEntity instanceof ButtonEntity) {
+                buttonOrder.add((ButtonEntity) uiEntity);
+            }
+        }
+        selectedButtonIndex = 0;
+    }
+
+    private void doMenuTick(long dt) {
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
+        final int buttonCount = buttonOrder.size();
+        final int oldSelected = selectedButtonIndex;
+        final int newSelected = ((oldSelected + selectedShift) % buttonCount + buttonCount) % buttonCount;
+        if (buttonCount > 0) {
+            buttonOrder.get(oldSelected).setSelected(false);
+            buttonOrder.get(newSelected).setSelected(true);
+        }
+        selectedButtonIndex = newSelected;
+    }
+
+    private void setupGame() {
+        // Add player
+        entities.add(player);
+        player.setPosition(Vector2f.ONE);
+        collisionDetection.add(player);
+        // Add enemies
+    }
+
+    private void doGameTick(long dt) {
         final Map map = game.getWorld().getMap();
         final long newVersion = map.getVersion();
 
@@ -132,8 +188,7 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStop() {
-        collisionDetection.clear();
-        entities.clear();
+        clearEntities();
         mapVersion = 0;
     }
 
@@ -143,6 +198,13 @@ public class Physics extends TickingElement {
 
     public Set<Entity> getEntities() {
         return entities;
+    }
+
+    public ButtonEntity getSelectedButton() {
+        if (buttonOrder.size() <= selectedButtonIndex) {
+            return null;
+        }
+        return buttonOrder.get(selectedButtonIndex);
     }
 
     /**
