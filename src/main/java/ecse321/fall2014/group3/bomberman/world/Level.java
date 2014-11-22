@@ -24,7 +24,9 @@ public enum Level {
     LEVEL_1(false, 1),
     LEVEL_2(false, 2),
     LEVEL_3(false, 3),
-    BONUS_LEVEL_1(false, 4);
+    LEVEL_4(false, 4),
+    LEVEL_5(false, 5),
+    BONUS_LEVEL_1(false, 6);
     // TODO: add more LEVEL_n as needed
     private final boolean menu;
     private final int number;
@@ -42,8 +44,12 @@ public enum Level {
         return number;
     }
 
+    public boolean isBonus() {
+        return number % 6 == 0;
+    }
+
     public Level next() {
-        if (number <= 0 || number > 4) {
+        if (number <= 0 || number > 6) {
             return null;
         }
         return values()[ordinal() + 1];
