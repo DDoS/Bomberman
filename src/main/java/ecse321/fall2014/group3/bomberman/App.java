@@ -159,7 +159,7 @@ public class App {
         launcherScreen = frame;
     }
 
-    private static boolean validatePassword(String pass) {
+    public static boolean validatePassword(String pass) {
         Matcher match = pattern.matcher(pass);
         return match.matches();
     }
