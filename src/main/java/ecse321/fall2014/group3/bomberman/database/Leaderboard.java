@@ -3,6 +3,7 @@ package ecse321.fall2014.group3.bomberman.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author Marco
@@ -27,37 +28,21 @@ public class Leaderboard {
     }
 
     public String[] getTop(int num) {
-
         final String leaders[] = new String[num];
-
-        PreparedStatement stmt;
-
         final Connection connection = database.getConnection();
-
-        try {
-
-            connection.setAutoCommit(false);
-
-            //Check if username already exists
-            String check = "SELECT * FROM USERS ORDER BY SCORE DESC;";
-
-            stmt = connection.prepareStatement(check);
-
-            ResultSet rs = stmt.executeQuery();
-
+        final String sql = "SELECT USERNAME FROM USERS ORDER BY SCORE DESC";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            final ResultSet rs = stmt.executeQuery();
+            connection.commit();
             int i = 0;
-
             while (rs.next() && i < leaders.length) {
                 leaders[i] = rs.getString(Database.USERNAME_KEY);
                 i++;
             }
-
-            System.out.println(i);
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        } catch (SQLException exception) {
+            System.err.println("Couldn't get top scores");
+            exception.printStackTrace();
         }
-
         return leaders;
     }
 }
