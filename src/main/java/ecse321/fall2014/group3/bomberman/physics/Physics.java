@@ -68,6 +68,7 @@ public class Physics extends TickingElement {
         } else {
             doGameTick(dt);
         }
+        game.getInput().getKeyboardState().clearAll();
     }
 
     private void clearEntities() {
@@ -81,7 +82,7 @@ public class Physics extends TickingElement {
 
     private void setupMenu() {
         // Add UI entities
-        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI();
+        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
         entities.addAll(uiEntities);
         for (UIBoxEntity uiEntity : uiEntities) {
             if (uiEntity instanceof ButtonEntity) {
@@ -101,7 +102,6 @@ public class Physics extends TickingElement {
     private void doMenuTick(long dt) {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
-        final int sliderShift = keyboardState.getAndClearPressCount(Key.RIGHT) - keyboardState.getAndClearPressCount(Key.LEFT);
         final int buttonCount = buttonOrder.size();
         final int oldSelected = selectedButtonIndex;
         final int newSelected = ((oldSelected + selectedShift) % buttonCount + buttonCount) % buttonCount;
@@ -112,6 +112,7 @@ public class Physics extends TickingElement {
         selectedButtonIndex = newSelected;
         final ButtonEntity selectedButton = getSelectedButton();
         if (selectedButton instanceof SliderEntity) {
+            final int sliderShift = keyboardState.getAndClearPressCount(Key.RIGHT) - keyboardState.getAndClearPressCount(Key.LEFT);
             ((SliderEntity) selectedButton).add(sliderShift);
         }
     }
@@ -121,6 +122,9 @@ public class Physics extends TickingElement {
         entities.add(player);
         player.setPosition(Vector2f.ONE);
         collisionDetection.add(player);
+        // Add UI
+        final String levelString = currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber();
+        entities.add(new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString));
         // Add enemies
     }
 
