@@ -7,7 +7,8 @@ public enum Key {
     DOWN(Keyboard.KEY_DOWN),
     LEFT(Keyboard.KEY_LEFT),
     RIGHT(Keyboard.KEY_RIGHT),
-    PLACE(Keyboard.KEY_A);
+    PLACE(Keyboard.KEY_A),
+    EXIT(Keyboard.KEY_ESCAPE);
     private static final int COUNT = values().length;
     private final int keyCode;
 
