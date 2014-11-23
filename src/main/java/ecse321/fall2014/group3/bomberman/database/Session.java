@@ -13,7 +13,7 @@ public class Session {
     }
 
     public String getUserName() {
-        return database.getString(username, Database.USERNAME_KEY);
+        return username;
     }
 
     public void setPassword(String password) {
@@ -26,6 +26,14 @@ public class Session {
 
     public String getPassword() {
         return database.getString(username, Database.PASSWORD_KEY);
+    }
+
+    public int getLevel() {
+        return database.getInt(username, Database.LEVEL_KEY);
+    }
+
+    public int getScore() {
+        return database.getInt(username, Database.SCORE_KEY);
     }
 
     public static Session open(Database database, String username, String password) {

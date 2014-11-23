@@ -27,16 +27,16 @@ public class Leaderboard {
         return database.getInt(username, Database.SCORE_KEY);
     }
 
-    public String[] getTop(int num) {
-        final String leaders[] = new String[num];
+    public Leader[] getTop(int num) {
+        final Leader leaders[] = new Leader[num];
         final Connection connection = database.getConnection();
-        final String sql = "SELECT USERNAME FROM USERS ORDER BY SCORE DESC";
+        final String sql = "SELECT USERNAME, SCORE FROM USERS ORDER BY SCORE DESC";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             final ResultSet rs = stmt.executeQuery();
             connection.commit();
             int i = 0;
             while (rs.next() && i < leaders.length) {
-                leaders[i] = rs.getString(Database.USERNAME_KEY);
+                leaders[i] = new Leader(rs.getString(Database.USERNAME_KEY), rs.getInt(Database.SCORE_KEY));
                 i++;
             }
         } catch (SQLException exception) {
@@ -44,5 +44,19 @@ public class Leaderboard {
             exception.printStackTrace();
         }
         return leaders;
+    }
+
+    public static class Leader {
+        public final String username;
+        public final int score;
+
+        public Leader(String username, int score) {
+            this.username = username;
+            this.score = score;
+        }
+
+        public String getFormatted() {
+            return username + ": " + score;
+        }
     }
 }
