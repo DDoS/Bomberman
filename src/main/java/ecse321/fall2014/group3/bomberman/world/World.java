@@ -27,8 +27,8 @@ import net.royawesome.jlibnoise.module.source.Perlin;
 public class World extends TickingElement {
     private final Game game;
     private final Map map = new Map();
-    private volatile Level level = Level.MAIN_MENU;
-    private int activeBombs = 0;
+    private volatile Level level;
+    private int activeBombs;
 
     public World(Game game) {
         super("World", 20);
@@ -37,6 +37,7 @@ public class World extends TickingElement {
 
     @Override
     public void onStart() {
+        level = Level.MAIN_MENU;
         generateMenuBackground();
         // Signal a new map version to the physics and rendering
         map.incrementVersion();
