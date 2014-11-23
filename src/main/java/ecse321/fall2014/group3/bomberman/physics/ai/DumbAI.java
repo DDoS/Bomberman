@@ -15,7 +15,6 @@ public class DumbAI extends AI {
       super(target);
    }
 
-<<<<<<< HEAD
    @Override
    public Vector2f nextPosition(float dt, Map map) {
       float timeSec = dt/TOSECS;
@@ -64,11 +63,4 @@ public class DumbAI extends AI {
          }
       }
    }
-=======
-    @Override
-    public Vector2f nextPosition(long dt, Map map) {
-        // TODO implement me, for now just return the same position
-        return target.getPosition();
-    }
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
 }
