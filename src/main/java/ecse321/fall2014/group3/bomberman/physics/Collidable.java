@@ -50,6 +50,15 @@ public abstract class Collidable {
         return collisionList.contains(collidable);
     }
 
+    public boolean isCollidingWith(Class<? extends Collidable> type) {
+        for (Collidable collidable : collisionList) {
+            if (type.isAssignableFrom(collidable.getClass())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void clearCollisionList() {
         collisionList.clear();
     }

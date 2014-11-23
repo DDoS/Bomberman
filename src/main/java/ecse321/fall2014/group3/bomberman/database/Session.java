@@ -16,6 +16,7 @@ public class Session {
         return username;
     }
 
+<<<<<<< HEAD
     public void setPassword(String password) {
         database.setString(username, Database.PASSWORD_KEY, password);
     }
@@ -26,10 +27,29 @@ public class Session {
 
     public String getPassword() {
         return database.getString(username, Database.PASSWORD_KEY);
+=======
+    public String getPassword() {
+        return database.getString(username, Database.PASSWORD_KEY);
+    }
+
+    public void setPassword(String password) {
+        database.setString(username, Database.PASSWORD_KEY, password);
+    }
+
+    public void setRealName(String realName) {
+        database.setString(username, Database.REALNAME_KEY, realName);
+>>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
     }
 
     public int getLevel() {
         return database.getInt(username, Database.LEVEL_KEY);
+<<<<<<< HEAD
+=======
+    }
+
+    public void setLevel(int level) {
+        database.setInt(username, Database.LEVEL_KEY, level);
+>>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
     }
 
     public int getScore() {

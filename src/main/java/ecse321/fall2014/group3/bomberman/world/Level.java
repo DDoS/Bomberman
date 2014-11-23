@@ -18,9 +18,12 @@ public enum Level {
     MAIN_MENU(true, 0),
     LEVEL_SELECT(true, 0),
     LEADER_BOARD(true, 0),
+<<<<<<< HEAD
     LEVEL_START(true, 0),
     LEVEL_PAUSE(true, 0),
     LEVEL_END(true, 0),
+=======
+>>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
     GAME_OVER(true, 0),
     LEVEL_1(false, 1),
     LEVEL_2(false, 2),
@@ -117,7 +120,11 @@ public enum Level {
         return values()[nextOrdinal];
     }
 
+<<<<<<< HEAD
     public List<UIBoxEntity> buildUI() {
+=======
+    public List<UIBoxEntity> buildUI(int maxLevel) {
+>>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
         final List<UIBoxEntity> ui = new ArrayList<>();
         switch (this) {
             case MAIN_MENU:
@@ -128,6 +135,7 @@ public enum Level {
                 break;
             case LEVEL_SELECT:
                 ui.add(newText(0, 4, "Level select"));
+<<<<<<< HEAD
                 ui.add(newButton(2, 2, "Back", "menuload.main"));
                 ui.add(newSlider(3, 2, "Level: %d", "levelload.number", 1, 50));
                 break;
@@ -155,6 +163,19 @@ public enum Level {
                 ui.add(newText(0, 4, "Game Over"));
                 ui.add(newButton(2, 2, "View leader board", "menuload.loaderboard"));
                 ui.add(newButton(3, 2, "Quit", "menuload.main"));
+=======
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
+                ui.add(newSlider(3, 2, "Level: %d", "levelload.number", 1, maxLevel));
+                break;
+            case LEADER_BOARD:
+                ui.add(newText(0, 4, "Leader board"));
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
+                break;
+            case GAME_OVER:
+                ui.add(newText(0, 4, "Game Over"));
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
+                ui.add(newButton(3, 2, "View leader board", "menuload.loaderboard"));
+>>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
                 break;
         }
         return ui;
