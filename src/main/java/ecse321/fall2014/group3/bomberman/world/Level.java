@@ -125,17 +125,17 @@ public enum Level {
                 break;
             case LEVEL_SELECT:
                 ui.add(newText(0, 4, "Level select"));
-                ui.add(newButton(2, 2, "Back", "menuload.main"));
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
                 ui.add(newSlider(3, 2, "Level: %d", "levelload.number", 1, 50));
                 break;
             case LEADER_BOARD:
                 ui.add(newText(0, 4, "Leader board"));
-                ui.add(newButton(2, 2, "Back", "menuload.main"));
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
                 break;
             case GAME_OVER:
                 ui.add(newText(0, 4, "Game Over"));
                 ui.add(newButton(2, 2, "View leader board", "menuload.loaderboard"));
-                ui.add(newButton(3, 2, "Quit", "menuload.main"));
+                ui.add(newButton(3, 2, "Main menu", "menuload.main"));
                 break;
         }
         return ui;

@@ -100,9 +100,16 @@ public class World extends TickingElement {
     }
 
     private void gameTick(long dt) {
+        final Player player = game.getPhysics().getPlayer();
+        if (player.isCollidingWith(Fire.class)) {
+            level = Level.GAME_OVER;
+            generateMenuBackground();
+            map.incrementVersion();
+            return;
+        }
+
         boolean updatedMap = false;
         // Do bomb placement
-        final Player player = game.getPhysics().getPlayer();
         final int bombPlaceInput = game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE);
         final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
         for (int i = 0; i < bombsToPlace; i++) {
