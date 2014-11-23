@@ -27,7 +27,7 @@ import net.royawesome.jlibnoise.module.source.Perlin;
 public class World extends TickingElement {
     private final Game game;
     private final Map map = new Map();
-    private volatile Level level;
+    private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
 
     public World(Game game) {
