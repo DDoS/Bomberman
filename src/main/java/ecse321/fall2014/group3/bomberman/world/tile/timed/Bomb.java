@@ -6,14 +6,17 @@ import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Bomb extends TimedTile {
     private static final SpriteInfo BOMB_SPRITE = new SpriteInfo("terrain", 32, Vector2f.ONE);
+    private static final long LIFE_TIME = 3000;
+    private static final float ANIMATION_GROWTH_PERCENT = 0.25f;
 
     public Bomb(Vector2f position) {
-        super(position);
+        super(position, LIFE_TIME);
     }
 
     @Override
-    public int getRemainingTime() {
-        return 0;
+    public Vector2f getModelSize() {
+        final float timePercent = 1 - getRemainingTime() / (float) LIFE_TIME;
+        return super.getModelSize().mul(timePercent * ANIMATION_GROWTH_PERCENT + (1 - ANIMATION_GROWTH_PERCENT));
     }
 
     @Override

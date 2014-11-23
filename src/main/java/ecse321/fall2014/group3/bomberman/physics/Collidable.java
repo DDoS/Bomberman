@@ -16,7 +16,6 @@ public abstract class Collidable {
     private final Set<Collidable> collisionList = Collections.synchronizedSet(new HashSet<Collidable>());
     protected volatile Vector2f position = Vector2f.ZERO;
     protected volatile CollisionBox collisionBox;
-    protected volatile boolean ghost = false;
 
     protected Collidable(Vector2f position, CollisionBox collisionBox) {
         this.position = position;
@@ -40,7 +39,7 @@ public abstract class Collidable {
     }
 
     public boolean isGhost() {
-        return ghost;
+        return false;
     }
 
     public Set<Collidable> getCollisionList() {

@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -18,7 +17,7 @@ public class Map {
     public static final int HEIGHT = 13, WIDTH = 31;
     private final Tile tiles[][] = new Tile[HEIGHT][WIDTH];
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private final AtomicLong version = new AtomicLong(0);
+    private volatile long version = 0;
 
     public Map() {
         final Lock write = lock.writeLock();
@@ -53,8 +52,9 @@ public class Map {
         }
     }
 
-    public List<Tile> getTiles(Class<? extends Tile> type) {
-        final List<Tile> tileList = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    public <T extends Tile> List<T> getTiles(Class<T> type) {
+        final List<T> tileList = new ArrayList<>();
         final Lock read = lock.readLock();
         read.lock();
         try {
@@ -62,7 +62,7 @@ public class Map {
                 for (int x = 0; x < WIDTH; x++) {
                     final Tile tile = tiles[y][x];
                     if (type.isAssignableFrom(tile.getClass())) {
-                        tileList.add(tile);
+                        tileList.add((T) tile);
                     }
                 }
             }
@@ -72,8 +72,16 @@ public class Map {
         }
     }
 
+    public boolean isTile(Vector2f position, Class<? extends Tile> type) {
+        return type.isAssignableFrom(getTile(position).getClass());
+    }
+
     void setTile(int x, int y, Class<? extends Tile> type) {
         setTile(new Vector2i(x, y), type);
+    }
+
+    void setTile(Vector2f pos, Class<? extends Tile> type) {
+        setTile(pos.toInt(), type);
     }
 
     void setTile(Vector2i pos, Class<? extends Tile> type) {
@@ -98,11 +106,11 @@ public class Map {
     }
 
     void incrementVersion() {
-        version.incrementAndGet();
+        version++;
     }
 
     public long getVersion() {
-        return version.get();
+        return version;
     }
 
     private void checkInBounds(Vector2i pos) {

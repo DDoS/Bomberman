@@ -1,8 +1,21 @@
 package ecse321.fall2014.group3.bomberman.world;
 
+import com.flowpowered.math.vector.Vector2f;
+
+import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.input.Key;
+import ecse321.fall2014.group3.bomberman.nterface.Interface;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
+import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.TimedTile;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
@@ -15,6 +28,7 @@ public class World extends TickingElement {
     private final Game game;
     private final Map map = new Map();
     private volatile Level level = Level.MAIN_MENU;
+    private int activeBombs = 0;
 
     public World(Game game) {
         super("World", 20);
@@ -23,16 +37,119 @@ public class World extends TickingElement {
 
     @Override
     public void onStart() {
-        generateMap(0.5);
+        generateMenuBackground();
+        // Signal a new map version to the physics and rendering
+        map.incrementVersion();
     }
 
     @Override
     public void onTick(long dt) {
+        if (level.isMenu()) {
+            menuTick(dt);
+        } else {
+            gameTick(dt);
+        }
+    }
+
+    private void menuTick(long dt) {
+        if (game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE) <= 0) {
+            return;
+        }
+        final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
+        final String[] action = selectedButton.getAction();
+        switch (action[0]) {
+            case "levelload":
+                switch (action[1]) {
+                    case "restore":
+                        level = Level.fromNumber(game.getSession().getLevel());
+                        break;
+                    case "next":
+                        level = level.next();
+                        break;
+                    case "number":
+                        level = Level.fromNumber(((SliderEntity) selectedButton).getValue());
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown button action: " + action[1]);
+                }
+                generateLevel(0.5);
+                map.incrementVersion();
+                activeBombs = 0;
+                break;
+            case "menuload":
+                switch (action[1]) {
+                    case "main":
+                        level = Level.MAIN_MENU;
+                        break;
+                    case "levelselect":
+                        level = Level.LEVEL_SELECT;
+                        break;
+                    case "loaderboard":
+                        level = Level.LEADER_BOARD;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown button action: " + action[1]);
+                }
+                generateMenuBackground();
+                map.incrementVersion();
+                break;
+            default:
+                throw new IllegalStateException("Unknown button action target: " + action[0]);
+        }
+    }
+
+    private void gameTick(long dt) {
+        boolean updatedMap = false;
+        // Do bomb placement
+        final Player player = game.getPhysics().getPlayer();
+        final int bombPlaceInput = game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE);
+        final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
+        for (int i = 0; i < bombsToPlace; i++) {
+            final Vector2f inFront = player.getPosition().round().add(player.getDirection().getUnit());
+            if (map.isTile(inFront, Air.class)) {
+                map.setTile(inFront, Bomb.class);
+                updatedMap = true;
+                activeBombs++;
+            }
+        }
+        // Explode expired bombs and remove dead flames
+        final int blastRadius = player.getBlastRadius();
+        for (TimedTile timed : map.getTiles(TimedTile.class)) {
+            if (timed.hasExpired()) {
+                if (timed instanceof Bomb) {
+                    generateFlames(timed.getPosition(), blastRadius);
+                    activeBombs--;
+                } else {
+                    map.setTile(timed.getPosition(), Air.class);
+                }
+                updatedMap = true;
+            }
+        }
+        // Update new map version if needed
+        if (updatedMap) {
+            map.incrementVersion();
+        }
+    }
+
+    private void generateFlames(Vector2f position, int blastRadius) {
+        for (Direction direction : Direction.values()) {
+            for (int i = 0; i <= blastRadius; i++) {
+                final Vector2f flamePosition = position.add(direction.getUnit().mul(i));
+                final Tile tile = map.getTile(flamePosition);
+                if (tile instanceof Unbreakable) {
+                    break;
+                }
+                map.setTile(flamePosition, Fire.class);
+                if (i > 0 && tile instanceof Bomb) {
+                    generateFlames(flamePosition, blastRadius);
+                    activeBombs--;
+                }
+            }
+        }
     }
 
     @Override
     public void onStop() {
-
     }
 
     public Map getMap() {
@@ -43,7 +160,16 @@ public class World extends TickingElement {
         return level;
     }
 
-    private void generateMap(double density) {
+    private void generateMenuBackground() {
+        for (int y = 0; y < Interface.VIEW_HEIGHT_TILE; y++) {
+            for (int x = 0; x < Interface.VIEW_WIDTH_TILE; x++) {
+                map.setTile(x, y, MenuBackground.class);
+            }
+        }
+        map.incrementVersion();
+    }
+
+    private void generateLevel(double density) {
         // Invert the block density to get the air density
         density = 1 - density;
         // Seed a perlin noise generator to the current time
@@ -74,7 +200,5 @@ public class World extends TickingElement {
         map.setTile(1, 1, Air.class);
         map.setTile(2, 1, Air.class);
         map.setTile(1, 2, Air.class);
-        // Signal a new map version to the physics and rendering
-        map.incrementVersion();
     }
 }

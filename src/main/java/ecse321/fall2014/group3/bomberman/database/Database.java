@@ -1,218 +1,136 @@
 package ecse321.fall2014.group3.bomberman.database;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /**
- * Created by mangia_hockey on 2014-11-17.
+ * @author Marco
  */
-
-import java.sql.*;
-
-
 public class Database {
+    public static final String USERNAME_KEY = "USERNAME";
+    public static final String PASSWORD_KEY = "PASSWORD";
+    public static final String REALNAME_KEY = "REALNAME";
+    public static final String SCORE_KEY = "SCORE";
+    public static final String LEVEL_KEY = "LEVEL";
+    private final Connection connection;
 
-    private Connection connection;
-
-    public Database(){
-
-        //Empty Constructor
-
-    }
-
-    public void connect(){
-
-        Connection c = null;
-        Statement stmt = null;
-
+    public Database() {
         try {
-
-            //opening database test
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
-            System.out.println("Check Database Successfully");
-
-            c.setAutoCommit(false);
-
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        connection = c;
-
-        try {
-
-            verifyTableUsers();
-
-        }catch (Exception e){
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-
-    }
-
-    public void disconnect() throws SQLException{
-
-
-            if (connection == null){
-
-                return;
-            }
-
-            try {
-                connection.close();
-            }catch (Exception e) {
-
-                System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
-            }
-
-
-    }
-
-    private void verifyTableUsers(){
-
-        Statement stmt = null;
-
-        try {
-
-
-            stmt = connection.createStatement();
-
-            String tbl = " CREATE TABLE IF NOT EXISTS USERS " +
-                    "(USERNAME       TEXT   NOT NULL," +
-                    " PASSWORD       TEXT   NOT NULL)";
-
-            stmt.executeUpdate(tbl);
-            //connection.commit();
-
-
-
-            System.out.println("Checked Table Successfully");
-
-
-
-        } catch (Exception e){
-
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-    }
-
-    public boolean get(String username){
-
-        PreparedStatement stmt = null;
-
-        try {
-
-
+            connection = DriverManager.getConnection("jdbc:sqlite:accounts.db");
             connection.setAutoCommit(false);
-
-
-            //Check if username already exists
-            String check = "SELECT USERNAME FROM USERS WHERE USERNAME= ? ;";
-
-            stmt = connection.prepareStatement(check);
-            stmt.setString(1, username);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-
-                System.out.println("Username already exists");
-                return false;
-            }
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+        } catch (ClassNotFoundException | SQLException exception) {
+            throw new RuntimeException("Couldn't open database connection", exception);
         }
-
-        return true;
-
-    }
-    public String getPass(String username){
-
-        String pass = null;
-
-        PreparedStatement stmt = null;
-
-        try {
-
-
-            connection.setAutoCommit(false);
-
-
-            String que = "SELECT PASSWORD FROM USERS WHERE USERNAME= ? ;";
-
-            stmt = connection.prepareStatement(que);
-            stmt.setString(1, username);
-            //GOOD QUERY
-            //" SELECT * FROM USERS WHERE username='" + userName +"';"
-
-            ResultSet rs = stmt.executeQuery();
-
-
-            if (!rs.next()) {
-
-                System.out.println("Username does not exist");
-                return null;
-
-            } else {
-
-                pass = rs.getString("PASSWORD");
-
-
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-
-        return pass;
+        verifyTable();
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
 
-    public boolean update(String username, String password){
-
-        PreparedStatement stmt = null;
-
+    public void disconnect() {
         try {
+            connection.close();
+        } catch (SQLException exception) {
+            System.err.println("Couldn't close database connection");
+            exception.printStackTrace();
+        }
+    }
 
-            if (!get(username)){
-
-                return false;
-            }
-
-            String sql = "INSERT INTO USERS (USERNAME, PASSWORD) " +
-                    " VALUES (?,?)";
-
-            stmt = connection.prepareStatement(sql);
-
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.executeUpdate();
-
+    private void verifyTable() {
+        try (Statement statement = connection.createStatement()) {
+            final String sql = "CREATE TABLE IF NOT EXISTS USERS " +
+                    "(USERNAME  TEXT  NOT NULL  PRIMARY KEY," +
+                    " PASSWORD  TEXT  NOT NULL," +
+                    " REALNAME  TEXT  NOT NULL," +
+                    " SCORE     INT   NOT NULL," +
+                    " LEVEL     INT   NOT NULL)";
+            statement.executeUpdate(sql);
             connection.commit();
-            stmt.close();
-            connection.setAutoCommit(true);
-
-        } catch (Exception e) {
-
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+        } catch (SQLException exception) {
+            System.err.println("Couldn't verify user table");
+            exception.printStackTrace();
         }
-
-        return true;
-
-
     }
 
+    public void setString(String username, String column, String value) {
+        if (column.equals(USERNAME_KEY)) {
+            final String sql = "INSERT INTO USERS (USERNAME, PASSWORD, REALNAME, SCORE, LEVEL) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, username);
+                statement.setString(2, "");
+                statement.setString(3, username);
+                statement.setInt(4, 0);
+                statement.setInt(5, 1);
+                statement.executeUpdate();
+                connection.commit();
+            } catch (SQLException exception) {
+                System.err.println("Couldn't create user row");
+                exception.printStackTrace();
+            }
+        } else {
+            final String sql = "UPDATE USERS SET " + column + " = ? WHERE USERNAME = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, value);
+                statement.setString(2, username);
+                statement.executeUpdate();
+                connection.commit();
+            } catch (SQLException exception) {
+                System.err.println("Couldn't update user row");
+                exception.printStackTrace();
+            }
+        }
+    }
 
+    public void setInt(String username, String column, int value) {
+        final String sql = "UPDATE USERS SET " + column + " = ? WHERE USERNAME = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, value);
+            statement.setString(2, username);
+            statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException exception) {
+            System.err.println("Couldn't update user row");
+            exception.printStackTrace();
+        }
+    }
+
+    public String getString(String username, String column) {
+        final String sql = "SELECT " + column + " FROM USERS WHERE USERNAME = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            final ResultSet rs = statement.executeQuery();
+            connection.commit();
+            if (!rs.next()) {
+                return null;
+            }
+            return rs.getString(column);
+        } catch (SQLException exception) {
+            System.err.println("Couldn't get user column");
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    public int getInt(String username, String column) {
+        final String sql = "SELECT " + column + " FROM USERS WHERE USERNAME = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            final ResultSet rs = statement.executeQuery();
+            connection.commit();
+            if (!rs.next()) {
+                return -1;
+            }
+            return rs.getInt(column);
+        } catch (SQLException exception) {
+            System.err.println("Couldn't get user column");
+            exception.printStackTrace();
+        }
+        return -1;
+    }
 }

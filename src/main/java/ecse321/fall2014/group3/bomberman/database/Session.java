@@ -1,75 +1,61 @@
 package ecse321.fall2014.group3.bomberman.database;
 
 /**
- * Created by marco on 16/11/14.
+ * @author Marco
  */
-
-
-import java.sql.*;
-
 public class Session {
+    private final Database database;
+    private final String username;
 
-    private final Database DB;
-    private String name;
-
-
-    public Session(){
-
-        DB = new Database();
-        DB.connect();
-
+    private Session(Database database, String username) {
+        this.database = database;
+        this.username = username;
     }
 
-    public void create(String name){
-
-            name = name;
-
-    }
-
-   public String getName(){
-
-       String name = null;
-
-       //TODO: Query to retrieve display name
-
-       return name;
-   }
-
-    public String getDisplayName(){
-
-        String username = null;
-
-        //TODO: Query to get username
-
+    public String getUserName() {
         return username;
     }
 
-    public boolean setUserName(String username, String password){
-
-           return DB.update(username, password);
-
-
+    public void setPassword(String password) {
+        database.setString(username, Database.PASSWORD_KEY, password);
     }
 
-    public void setPassword(String password){
-
-        //TODO: Query to change password
-
-
+    public void setRealName(String realName) {
+        database.setString(username, Database.REALNAME_KEY, realName);
     }
 
-    public String getPassword(String username){
-
-       return DB.getPass(username);
-
+    public String getPassword() {
+        return database.getString(username, Database.PASSWORD_KEY);
     }
 
-    public void disconnect() throws SQLException{
-
-     DB.disconnect();
-
+    public int getLevel() {
+        return database.getInt(username, Database.LEVEL_KEY);
     }
 
+    public int getScore() {
+        return database.getInt(username, Database.SCORE_KEY);
+    }
 
+    public static Session open(Database database, String username, String password) {
+        if (database.getString(username, Database.USERNAME_KEY) == null) {
+            return null;
+        }
+        final String pass = database.getString(username, Database.PASSWORD_KEY);
+        if (!password.equals(pass)) {
+            return null;
+        }
+        return new Session(database, username);
+    }
 
+    public static Session create(Database database, String username, String password, String realname) {
+        if (database.getString(username, Database.USERNAME_KEY) != null) {
+            return null;
+        }
+        database.setString(username, Database.USERNAME_KEY, username);
+        database.setString(username, Database.PASSWORD_KEY, password);
+        database.setString(username, Database.REALNAME_KEY, realname);
+        database.setInt(username, Database.SCORE_KEY, 0);
+        database.setInt(username, Database.LEVEL_KEY, 1);
+        return new Session(database, username);
+    }
 }

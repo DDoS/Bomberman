@@ -1,24 +1,30 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
+import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
+import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
-
-import org.spout.renderer.api.util.CausticUtil;
 
 /**
  *
@@ -31,6 +37,9 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<Entity>());
     private final Player player = new Player(Vector2f.ZERO);
+    private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
+    private volatile int selectedButtonIndex;
+    private Level currentLevel;
     private long mapVersion = 0;
 
     public Physics(Game game) {
@@ -40,19 +49,82 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStart() {
-        entities.add(player);
-        player.setPosition(Vector2f.ONE);
-        collisionDetection.add(player);
-
-        // TEST
-        final TextBoxEntity test = new TextBoxEntity(new Vector2f(9.5f, 9.5f), new Vector2f(2, 2));
-        test.setTextColor(CausticUtil.YELLOW);
-        test.setText("This is a test");
-        entities.add(test);
     }
 
     @Override
     public void onTick(long dt) {
+        final Level level = game.getWorld().getLevel();
+        if (currentLevel != level) {
+            currentLevel = level;
+            clearEntities();
+            if (currentLevel.isMenu()) {
+                setupMenu();
+            } else {
+                setupGame();
+            }
+        }
+        if (currentLevel.isMenu()) {
+            doMenuTick(dt);
+        } else {
+            doGameTick(dt);
+        }
+    }
+
+    private void clearEntities() {
+        // Clear collision detection
+        entities.clear();
+        collisionDetection.clear();
+        collidableTiles.clear();
+        // Clear UI
+        buttonOrder.clear();
+    }
+
+    private void setupMenu() {
+        // Add UI entities
+        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI();
+        entities.addAll(uiEntities);
+        for (UIBoxEntity uiEntity : uiEntities) {
+            if (uiEntity instanceof ButtonEntity) {
+                buttonOrder.add((ButtonEntity) uiEntity);
+            }
+        }
+        selectedButtonIndex = 0;
+        // Add extra entities for leaderboard menu
+        if (currentLevel == Level.LEADER_BOARD) {
+            final Leader[] top = game.getLeaderboard().getTop(10);
+            for (int i = 0; i < top.length && top[i] != null; i++) {
+                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i)), Vector2f.ONE, top[i].getFormatted()));
+            }
+        }
+    }
+
+    private void doMenuTick(long dt) {
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
+        final int sliderShift = keyboardState.getAndClearPressCount(Key.RIGHT) - keyboardState.getAndClearPressCount(Key.LEFT);
+        final int buttonCount = buttonOrder.size();
+        final int oldSelected = selectedButtonIndex;
+        final int newSelected = ((oldSelected + selectedShift) % buttonCount + buttonCount) % buttonCount;
+        if (buttonCount > 0) {
+            buttonOrder.get(oldSelected).setSelected(false);
+            buttonOrder.get(newSelected).setSelected(true);
+        }
+        selectedButtonIndex = newSelected;
+        final ButtonEntity selectedButton = getSelectedButton();
+        if (selectedButton instanceof SliderEntity) {
+            ((SliderEntity) selectedButton).add(sliderShift);
+        }
+    }
+
+    private void setupGame() {
+        // Add player
+        entities.add(player);
+        player.setPosition(Vector2f.ONE);
+        collisionDetection.add(player);
+        // Add enemies
+    }
+
+    private void doGameTick(long dt) {
         final Map map = game.getWorld().getMap();
         final long newVersion = map.getVersion();
 
@@ -82,6 +154,11 @@ public class Physics extends TickingElement {
         // Compute the motion for the tick
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
+            // ghost collidables only report collisions, but don't actually collide
+            if (collidable.isGhost()) {
+                continue;
+            }
+            // Find the intersection of the collision (a box) and the direction
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);
             // Allow for a small amount of contact on the sides to prevent the player from getting stuck in adjacent tiles
@@ -99,13 +176,14 @@ public class Physics extends TickingElement {
                     final Vector2f shiftDirection = direction.getPerpendicularUnit().mul(offset).normalize();
                     // Check if we can shift, by looking for a path around the tile in the shift direction
                     final Vector2f adjacentPosition = collidable.getPosition().add(shiftDirection);
-                    if (map.getTile(adjacentPosition) instanceof Air && map.getTile(adjacentPosition.sub(direction.getUnit())) instanceof Air) {
+                    if (map.isTile(adjacentPosition, Air.class) && map.isTile(adjacentPosition.sub(direction.getUnit()), Air.class)) {
                         // Redirect the blocked motion towards the free path
                         movement = movement.add(shiftDirection.mul(inputVector.dot(direction.getUnit())));
                     }
                 }
             }
         }
+        // Update player movement
         player.setPosition(player.getPosition().add(movement));
         player.setVelocity(movement.div(timeSeconds));
     }
@@ -126,8 +204,7 @@ public class Physics extends TickingElement {
 
     @Override
     public void onStop() {
-        collisionDetection.clear();
-        entities.clear();
+        clearEntities();
         mapVersion = 0;
     }
 
@@ -137,6 +214,13 @@ public class Physics extends TickingElement {
 
     public Set<Entity> getEntities() {
         return entities;
+    }
+
+    public ButtonEntity getSelectedButton() {
+        if (buttonOrder.size() <= selectedButtonIndex) {
+            return null;
+        }
+        return buttonOrder.get(selectedButtonIndex);
     }
 
     /**

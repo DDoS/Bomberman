@@ -26,6 +26,8 @@ package ecse321.fall2014.group3.bomberman;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ecse321.fall2014.group3.bomberman.database.Leaderboard;
+import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.input.Input;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.Physics;
@@ -40,12 +42,16 @@ public class Game {
     // A semaphore with no permits, so that the first acquire() call blocks
     private final Semaphore semaphore = new Semaphore(0);
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final Session session;
+    private final Leaderboard leaderboard;
     private final World world;
     private final Physics physics;
     private final Interface nterface;
     private final Input input;
 
-    public Game() {
+    public Game(Session session, Leaderboard leaderboard) {
+        this.session = session;
+        this.leaderboard = leaderboard;
         world = new World(this);
         physics = new Physics(this);
         nterface = new Interface(this);
@@ -64,6 +70,14 @@ public class Game {
         physics.stop();
         world.stop();
         input.stop();
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public Leaderboard getLeaderboard() {
+        return leaderboard;
     }
 
     public World getWorld() {
