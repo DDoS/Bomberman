@@ -7,6 +7,8 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
@@ -53,15 +55,19 @@ public class World extends TickingElement {
         if (game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE) <= 0) {
             return;
         }
-        final String[] action = game.getPhysics().getSelectedButton().getAction();
+        final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
+        final String[] action = selectedButton.getAction();
         switch (action[0]) {
             case "levelload":
                 switch (action[1]) {
                     case "restore":
-                        level = Level.LEVEL_1;
+                        level = Level.fromNumber(game.getSession().getLevel());
                         break;
                     case "next":
                         level = level.next();
+                        break;
+                    case "number":
+                        level = Level.fromNumber(((SliderEntity) selectedButton).getValue());
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);

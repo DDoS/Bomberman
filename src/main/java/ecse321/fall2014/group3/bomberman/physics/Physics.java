@@ -10,11 +10,15 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
+import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Level;
@@ -85,11 +89,19 @@ public class Physics extends TickingElement {
             }
         }
         selectedButtonIndex = 0;
+        // Add extra entities for leaderboard menu
+        if (currentLevel == Level.LEADER_BOARD) {
+            final Leader[] top = game.getLeaderboard().getTop(10);
+            for (int i = 0; i < top.length && top[i] != null; i++) {
+                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i)), Vector2f.ONE, top[i].getFormatted()));
+            }
+        }
     }
 
     private void doMenuTick(long dt) {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
+        final int sliderShift = keyboardState.getAndClearPressCount(Key.RIGHT) - keyboardState.getAndClearPressCount(Key.LEFT);
         final int buttonCount = buttonOrder.size();
         final int oldSelected = selectedButtonIndex;
         final int newSelected = ((oldSelected + selectedShift) % buttonCount + buttonCount) % buttonCount;
@@ -98,6 +110,10 @@ public class Physics extends TickingElement {
             buttonOrder.get(newSelected).setSelected(true);
         }
         selectedButtonIndex = newSelected;
+        final ButtonEntity selectedButton = getSelectedButton();
+        if (selectedButton instanceof SliderEntity) {
+            ((SliderEntity) selectedButton).add(sliderShift);
+        }
     }
 
     private void setupGame() {
