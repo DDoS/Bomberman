@@ -1,35 +1,23 @@
 package ecse321.fall2014.group3.bomberman.world;
 
-<<<<<<< HEAD
-=======
 import java.util.List;
 import java.util.Random;
 
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
-<<<<<<< HEAD
-import ecse321.fall2014.group3.bomberman.input.Key;
-import ecse321.fall2014.group3.bomberman.nterface.Interface;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
-=======
 import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
-<<<<<<< HEAD
-=======
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
@@ -40,6 +28,8 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
 
+
+
 /**
  *
  */
@@ -47,12 +37,8 @@ public class World extends TickingElement {
     private final Game game;
     private final Map map = new Map();
     private volatile Level level = Level.MAIN_MENU;
-<<<<<<< HEAD
-    private int activeBombs = 0;
-=======
     private int activeBombs;
     private Vector2f exitwayTile;
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
 
     public World(Game game) {
         super("World", 20);
@@ -61,10 +47,7 @@ public class World extends TickingElement {
 
     @Override
     public void onStart() {
-<<<<<<< HEAD
-=======
         level = Level.MAIN_MENU;
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
         generateMenuBackground();
         // Signal a new map version to the physics and rendering
         map.incrementVersion();
@@ -77,10 +60,7 @@ public class World extends TickingElement {
         } else {
             gameTick(dt);
         }
-<<<<<<< HEAD
-=======
         game.getInput().getKeyboardState().clearAll();
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
     }
 
     private void menuTick(long dt) {
@@ -95,23 +75,13 @@ public class World extends TickingElement {
                     case "restore":
                         level = Level.fromNumber(game.getSession().getLevel());
                         break;
-<<<<<<< HEAD
-                    case "next":
-                        level = level.next();
-                        break;
-=======
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
                     case "number":
                         level = Level.fromNumber(((SliderEntity) selectedButton).getValue());
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);
                 }
-<<<<<<< HEAD
-                generateLevel(0.5);
-=======
                 generateLevel(level);
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
                 map.incrementVersion();
                 activeBombs = 0;
                 break;
@@ -138,12 +108,6 @@ public class World extends TickingElement {
     }
 
     private void gameTick(long dt) {
-<<<<<<< HEAD
-        boolean updatedMap = false;
-        // Do bomb placement
-        final Player player = game.getPhysics().getPlayer();
-        final int bombPlaceInput = game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE);
-=======
         final Player player = game.getPhysics().getPlayer();
         if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class)) {
             level = Level.GAME_OVER;
@@ -179,7 +143,6 @@ public class World extends TickingElement {
         boolean updatedMap = false;
         // Do bomb placement
         final int bombPlaceInput = keyboardState.getAndClearPressCount(Key.PLACE);
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
         final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
         for (int i = 0; i < bombsToPlace; i++) {
             final Vector2f inFront = player.getPosition().round().add(player.getDirection().getUnit());
@@ -216,15 +179,11 @@ public class World extends TickingElement {
                 if (tile instanceof Unbreakable) {
                     break;
                 }
-<<<<<<< HEAD
-                map.setTile(flamePosition, Fire.class);
-=======
                 if (flamePosition.equals(exitwayTile)) {
                     map.setTile(flamePosition, ExitWay.class);
                 } else {
                     map.setTile(flamePosition, Fire.class);
                 }
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
                 if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
                     activeBombs--;
@@ -254,13 +213,9 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
-<<<<<<< HEAD
-    private void generateLevel(double density) {
-=======
     private void generateLevel(Level level) {
         // Compute the density from the level difficulty
         double density = level.isBonus() ? 0.5 : level.getNumber() / 100d + 0.25;
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
         // Invert the block density to get the air density
         density = 1 - density;
         // Seed a perlin noise generator to the level index
@@ -291,11 +246,8 @@ public class World extends TickingElement {
         map.setTile(1, 1, Air.class);
         map.setTile(2, 1, Air.class);
         map.setTile(1, 2, Air.class);
-<<<<<<< HEAD
-=======
         // Select a random tile for the exitway
         final List<Breakable> possibleTiles = map.getTiles(Breakable.class);
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
->>>>>>> 65222e1ed0242cecb6346ea84a6e5090e6010175
     }
 }
