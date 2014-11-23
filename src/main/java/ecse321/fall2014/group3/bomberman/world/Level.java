@@ -114,7 +114,7 @@ public enum Level {
         return values()[nextOrdinal];
     }
 
-    public List<UIBoxEntity> buildUI() {
+    public List<UIBoxEntity> buildUI(int maxLevel) {
         final List<UIBoxEntity> ui = new ArrayList<>();
         switch (this) {
             case MAIN_MENU:
@@ -126,7 +126,7 @@ public enum Level {
             case LEVEL_SELECT:
                 ui.add(newText(0, 4, "Level select"));
                 ui.add(newButton(2, 2, "Main menu", "menuload.main"));
-                ui.add(newSlider(3, 2, "Level: %d", "levelload.number", 1, 50));
+                ui.add(newSlider(3, 2, "Level: %d", "levelload.number", 1, maxLevel));
                 break;
             case LEADER_BOARD:
                 ui.add(newText(0, 4, "Leader board"));
