@@ -14,7 +14,7 @@ public class SmartAI extends AI {
     }
 
     @Override
-    public Vector2f nextPosition(long dt, Map map) {
+    public Vector2f nextPosition(long dt, Map map, Player player) {
         // TODO: implement me, for now just return the same position
         return target.getPosition();
     }
