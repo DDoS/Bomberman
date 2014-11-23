@@ -21,27 +21,29 @@ public class DumbAI extends AI {
    @Override
    public Vector2f nextPosition(long dt, Map map, Player player) {
       float timeSec = dt / TO_SECS;
+      Vector2f enemyPos = target.getPosition();
+      Vector2f eVelocity = target.getVelocity();
       Set<Tile> colTiles = target.getTileCollisionList();
 
-      if ((target.getVelocity()).length() == 0) {
-         return target.getPosition();
+      if (eVelocity.length() == 0) {
+         return enemyPos;
       } else if (colTiles.isEmpty()) {
          Random random = new Random();
          switch (random.nextInt(4)) {
             case 0:
-               return (target.getPosition()).sub((target.getVelocity()).getX() * timeSec, 0f);
+               return enemyPos.sub(eVelocity.getX() * timeSec, 0f);
             case 1:
-               return (target.getPosition()).sub(0f, (target.getVelocity()).getY() * timeSec);
+               return enemyPos.sub(0f, eVelocity.getY() * timeSec);
             case 2:
-               return (target.getPosition()).add(0f, (target.getVelocity()).getY() * timeSec);
+               return enemyPos.add(0f, eVelocity.getY() * timeSec);
             case 3:
-               return (target.getPosition()).add((target.getVelocity()).getX() * timeSec, 0f);
+               return enemyPos.add(eVelocity.getX() * timeSec, 0f);
          }
       } else {
          boolean frontCollide = false;
 
          for (Tile tile : colTiles) {
-            if ((tile.getPosition()).dot(target.getPosition()) > 0) {
+            if ((tile.getPosition()).dot(enemyPos) > 0) {
                frontCollide = true;
             }
          }
@@ -50,11 +52,11 @@ public class DumbAI extends AI {
             Random random = new Random();
             switch (random.nextInt(3)) {
                case 0:
-                  return (target.getPosition()).add(0f, (target.getVelocity()).getY() * timeSec);
+                  return enemyPos.add(0f, eVelocity.getY() * timeSec);
                case 1:
-                  return (target.getPosition()).sub(0f, (target.getVelocity()).getY() * timeSec);
+                  return enemyPos.sub(0f, eVelocity.getY() * timeSec);
                case 2:
-                  return (target.getPosition()).sub((target.getVelocity()).getX() * timeSec, 0f);
+                  return enemyPos.sub(eVelocity.getX() * timeSec, 0f);
             }
          }
       }
