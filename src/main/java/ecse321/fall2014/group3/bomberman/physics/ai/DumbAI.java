@@ -15,21 +15,7 @@ public class DumbAI extends AI {
 
     @Override
     public Vector2f nextPosition(long dt, Map map) {
-        if((target.getTileCollisionList()).isEmpty())
-            return (target.getPosition() + target.getVelocity()*dt);
-        else {
-            Random random = new Random();
-            switch(random.nextInt(3)) {
-            case 0:
-                return (target.getPosition() + target.getVelocity()*dt).negate();
-                break;
-            case 1:
-                return (target.getPosition() + target.getVelocity()*dt).getPerpendicular();
-                break;
-            case 2:
-                return (target.getPosition() + target.getVelocity()*dt).getPerpendicular().negate(); 
-                break; 
-            }  
-        }
+        // TODO implement me, for now just return the same position
+        return target.getPosition();
     }
 }
