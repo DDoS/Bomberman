@@ -7,6 +7,7 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
@@ -101,7 +102,7 @@ public class World extends TickingElement {
 
     private void gameTick(long dt) {
         final Player player = game.getPhysics().getPlayer();
-        if (player.isCollidingWith(Fire.class)) {
+        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class)) {
             level = Level.GAME_OVER;
             generateMenuBackground();
             map.incrementVersion();

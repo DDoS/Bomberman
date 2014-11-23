@@ -134,8 +134,8 @@ public enum Level {
                 break;
             case GAME_OVER:
                 ui.add(newText(0, 4, "Game Over"));
-                ui.add(newButton(2, 2, "View leader board", "menuload.loaderboard"));
-                ui.add(newButton(3, 2, "Main menu", "menuload.main"));
+                ui.add(newButton(2, 2, "Main menu", "menuload.main"));
+                ui.add(newButton(3, 2, "View leader board", "menuload.loaderboard"));
                 break;
         }
         return ui;

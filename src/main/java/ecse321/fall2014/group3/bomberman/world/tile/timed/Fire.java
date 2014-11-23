@@ -9,7 +9,7 @@ public class Fire extends TimedTile {
     private static final long LIFE_TIME = 1000;
 
     public Fire(Vector2f position) {
-        super(position, LIFE_TIME);
+        super(position, 0.8f, LIFE_TIME);
     }
 
     @Override
