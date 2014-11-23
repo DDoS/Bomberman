@@ -54,31 +54,41 @@ public class World extends TickingElement {
             return;
         }
         final String[] action = game.getPhysics().getSelectedButton().getAction();
-        if (action[0].equals("levelload")) {
-            if (action[1].equals("restore")) {
-                level = Level.LEVEL_1;
-            } else if (action[1].equals("next")) {
-                level = level.next();
-            } else {
-                throw new IllegalStateException("Unknown button action: " + action[1]);
-            }
-            generateLevel(0.5);
-            map.incrementVersion();
-            activeBombs = 0;
-        } else if (action[0].equals("menuload")) {
-            if (action[1].equals("main")) {
-                level = Level.MAIN_MENU;
-            } else if (action[1].equals("levelselect")) {
-                level = Level.LEVEL_SELECT;
-            } else if (action[1].equals("loaderboard")) {
-                level = Level.LEADER_BOARD;
-            } else {
-                throw new IllegalStateException("Unknown button action: " + action[1]);
-            }
-            generateMenuBackground();
-            map.incrementVersion();
-        } else {
-            throw new IllegalStateException("Unknown button action target: " + action[0]);
+        switch (action[0]) {
+            case "levelload":
+                switch (action[1]) {
+                    case "restore":
+                        level = Level.LEVEL_1;
+                        break;
+                    case "next":
+                        level = level.next();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown button action: " + action[1]);
+                }
+                generateLevel(0.5);
+                map.incrementVersion();
+                activeBombs = 0;
+                break;
+            case "menuload":
+                switch (action[1]) {
+                    case "main":
+                        level = Level.MAIN_MENU;
+                        break;
+                    case "levelselect":
+                        level = Level.LEVEL_SELECT;
+                        break;
+                    case "loaderboard":
+                        level = Level.LEADER_BOARD;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown button action: " + action[1]);
+                }
+                generateMenuBackground();
+                map.incrementVersion();
+                break;
+            default:
+                throw new IllegalStateException("Unknown button action target: " + action[0]);
         }
     }
 
