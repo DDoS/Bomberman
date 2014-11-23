@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ecse321.fall2014.group3.bomberman.database.Database;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard;
@@ -26,6 +28,10 @@ public class App {
     private static volatile JFrame launcherScreen;
     private static volatile Database database;
     private static volatile Session session;
+
+    //1 Digit, 1 Upper, 1 Lower, 1 Special, Minimum length of 8
+    private static final Pattern pattern =
+            Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$&%]).{8,})");
 
     public static void main(String[] args) {
         LWJGLUtil.deployNatives(null);
@@ -120,7 +126,13 @@ public class App {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
+                if (!validatePassword(String.valueOf(newPasswordText.getPassword()))){
+                    newPasswordText.setText("");
+                    verifyText.setText("");
+                    error.setText("Invalid Password!");
+                    error.setVisible(true);
+                }
+                else if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
                     newPasswordText.setText("");
                     verifyText.setText("");
                     error.setText("passwords don't match");
@@ -145,5 +157,10 @@ public class App {
         frame.setVisible(true);
 
         launcherScreen = frame;
+    }
+
+    private static boolean validatePassword(String pass) {
+        Matcher match = pattern.matcher(pass);
+        return match.matches();
     }
 }
