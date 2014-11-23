@@ -16,6 +16,10 @@ public class Session {
         return username;
     }
 
+    public String getPassword() {
+        return database.getString(username, Database.PASSWORD_KEY);
+    }
+
     public void setPassword(String password) {
         database.setString(username, Database.PASSWORD_KEY, password);
     }
@@ -24,12 +28,12 @@ public class Session {
         database.setString(username, Database.REALNAME_KEY, realName);
     }
 
-    public String getPassword() {
-        return database.getString(username, Database.PASSWORD_KEY);
-    }
-
     public int getLevel() {
         return database.getInt(username, Database.LEVEL_KEY);
+    }
+
+    public void setLevel(int level) {
+        database.setInt(username, Database.LEVEL_KEY, level);
     }
 
     public int getScore() {
