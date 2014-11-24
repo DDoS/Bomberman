@@ -28,7 +28,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
-
+import org.lwjgl.Sys;
 
 
 /**
@@ -40,7 +40,8 @@ public class World extends TickingElement {
     private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
     private Vector2f exitwayTile;
-    public int score;
+    private int score;
+
 
     public World(Game game) {
         super("World", 20);
@@ -125,7 +126,14 @@ public class World extends TickingElement {
             return;
         }
         if (player.isCollidingWith(ExitWay.class)) {
-            score += 50 * level.getNumber();
+            if (level.isBonus()){
+                score += 150 * Math.abs(level.getNumber());
+            } else {
+                score += 50 *level.getNumber();
+            }
+            System.out.println("FINAL SCORE: "+score);
+            score += game.getLeaderboard().getScore(game.getSession().getUserName());
+            game.getLeaderboard().updateScore(game.getSession().getUserName(), score);
             if (level.getNumber() == 50) {
                 level = Level.MAIN_MENU;
                 generateMenuBackground();
@@ -133,6 +141,8 @@ public class World extends TickingElement {
                 return;
             }
             level = level.next();
+            score = 0;
+            System.out.println("LEVEL SCORE: " +score);
             final Session session = game.getSession();
             if (session.getLevel() < level.getNumber()) {
                 session.setLevel(level.getNumber());
