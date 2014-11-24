@@ -1,15 +1,12 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import sun.misc.Queue;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -21,7 +18,15 @@ import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.*;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Balloom;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Doll;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Kondoria;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Minvo;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Oneal;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Ovapi;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pass;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pontan;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
@@ -29,8 +34,11 @@ import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
+import ecse321.fall2014.group3.bomberman.world.World;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 
 /**
  *
@@ -47,6 +55,8 @@ public class Physics extends TickingElement {
     private volatile int selectedButtonIndex;
     private Level currentLevel;
     private long mapVersion = 0;
+    private boolean powerUPCollected = false;
+    private TextBoxEntity levelStateText;
 
     public Physics(Game game) {
         super("Physics", 60);
@@ -129,116 +139,68 @@ public class Physics extends TickingElement {
         player.setPosition(Vector2f.ONE);
         collisionDetection.add(player);
         // Add UI
-        final String levelString = currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber();
-        entities.add(new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString));
+        final World world = game.getWorld();
+        final String levelString =
+                currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
+                        + " | Score " + world.getScore() + " |  Timer " + world.getTimer();
+        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
+        entities.add(levelStateText);
         // Add enemies
-        final List<Vector2f> freePositions = getFreePositions(game.getWorld().getMap());
+        final List<Vector2f> freePositions = getFreePositions(world.getMap());
         Collections.shuffle(freePositions);
-        final Vector2f[] free = freePositions.toArray(new Vector2f[freePositions.size()]);
-
-        /*
-        if (freePositions.size() > 0) {
-            final Balloom balloom = new Balloom(freePositions.get(0));
+        // get the number of enemies on the level
+        int[] enemies = currentLevel.getEnemyForLevel();
+        int i = 0;
+        // add balloom
+        for (int j = 0; j < enemies[0] && i < freePositions.size(); j++, i++) {
+            Balloom balloom = new Balloom(freePositions.get(i));
             entities.add(balloom);
             collisionDetection.add(balloom);
         }
-        */
-        //get the number of enemies on the level
-        int[] enemies = currentLevel.getEnemyForLevel().clone();
-
-        Balloom balloom;
-        Oneal oneal;
-        Doll doll;
-        Minvo minvo;
-        Kondoria kondoria;
-        Ovapi ovapi;
-        Pass pass;
-        Pontan pontan;
-
-        int i = 0;
-        //add balloom
-
-        for (int j = 0; j < enemies[0]; j++) {
-            if (i < free.length) {
-                balloom = new Balloom(free[i]);
-                entities.add(balloom);
-                collisionDetection.add(balloom);
-                i++;
-            }
+        // add oneal
+        for (int j = 0; j < enemies[1] && i < freePositions.size(); j++, i++) {
+            Oneal oneal = new Oneal(freePositions.get(i));
+            entities.add(oneal);
+            collisionDetection.add(oneal);
         }
-
-        //add oneal
-        for (int j = 0; j < enemies[1]; j++) {
-            if (i < free.length) {
-                oneal= new Oneal(free[i]);
-                entities.add(oneal);
-                collisionDetection.add(oneal);
-                i++;
-            }
-
+        // add doll
+        for (int j = 0; j < enemies[2] && i < freePositions.size(); j++, i++) {
+            Doll doll = new Doll(freePositions.get(i));
+            entities.add(doll);
+            collisionDetection.add(doll);
+            i++;
         }
-
-        //add doll
-        for (int j = 0; j < enemies[2]; j++) {
-            if (i < free.length) {
-                doll = new Doll(free[i]);
-                entities.add(doll);
-                collisionDetection.add(doll);
-                i++;
-            }
+        // add minvo
+        for (int j = 0; j < enemies[3] && i < freePositions.size(); j++, i++) {
+            Minvo minvo = new Minvo(freePositions.get(i));
+            entities.add(minvo);
+            collisionDetection.add(minvo);
         }
-
-        //add minvo
-
-        for (int j = 0; j < enemies[3]; j++) {
-            if (i < free.length) {
-                minvo = new Minvo(free[i]);
-                entities.add(minvo);
-                collisionDetection.add(minvo);
-                i++;
-            }
+        // add kondoria
+        for (int j = 0; j < enemies[4] && i < freePositions.size(); j++, i++) {
+            Kondoria kondoria = new Kondoria(freePositions.get(i));
+            entities.add(kondoria);
+            collisionDetection.add(kondoria);
         }
-
-        //add kondoria
-        for (int j = 0; j < enemies[4]; j++) {
-            if (i < free.length) {
-                kondoria = new Kondoria(free[i]);
-                entities.add(kondoria);
-                collisionDetection.add(kondoria);
-                i++;
-            }
+        // add ovapi
+        for (int j = 0; j < enemies[5] && i < freePositions.size(); j++, i++) {
+            Ovapi ovapi = new Ovapi(freePositions.get(i));
+            entities.add(ovapi);
+            collisionDetection.add(ovapi);
         }
-
-        //add ovapi
-        for (int j = 0; j < enemies[5]; j++) {
-            if (i < free.length) {
-                ovapi = new Ovapi(free[i]);
-                entities.add(ovapi);
-                collisionDetection.add(ovapi);
-                i++;
-            }
+        // add pass
+        for (int j = 0; j < enemies[6] && i < freePositions.size(); j++, i++) {
+            Pass pass = new Pass(freePositions.get(i));
+            entities.add(pass);
+            collisionDetection.add(pass);
         }
-
-        //add pass
-        for (int j = 0; j < enemies[6]; j++) {
-            if (i < free.length) {
-                pass = new Pass(free[i]);
-                entities.add(pass);
-                collisionDetection.add(pass);
-                i++;
-            }
+        // add pontan
+        for (int j = 0; j < enemies[7] && i < freePositions.size(); j++, i++) {
+            Pontan pontan = new Pontan(freePositions.get(i));
+            entities.add(pontan);
+            collisionDetection.add(pontan);
         }
-
-        //add pontan
-        for (int j = 0; j < enemies[7]; j++) {
-            if (i < free.length) {
-                pontan = new Pontan(free[i]);
-                entities.add(pontan);
-                collisionDetection.add(pontan);
-                i++;
-            }
-        }
-
+        powerUPCollected = false;
     }
 
     private void doGameTick(long dt) {
@@ -264,6 +226,15 @@ public class Physics extends TickingElement {
         }
 
         collisionDetection.update();
+
+        if (!powerUPCollected) {
+            for (Collidable tile : player.getCollisionList()) {
+                if (tile instanceof PowerUP) {
+                    player.addPowerUP((PowerUP) tile);
+                    powerUPCollected = true;
+                }
+            }
+        }
 
         final float timeSeconds = dt / 1e9f;
         // Process player input
@@ -303,9 +274,14 @@ public class Physics extends TickingElement {
         // Update player movement
         player.setPosition(player.getPosition().add(movement));
         player.setVelocity(movement.div(timeSeconds));
-        // Update enemy positions
-        for (Entity entity : entities) {
+        // Update enemy positions and remove dead ones
+        for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext(); ) {
+            final Entity entity = iterator.next();
             if (entity instanceof Enemy) {
+                if (entity.isCollidingWith(Fire.class)) {
+                    iterator.remove();
+                    collisionDetection.remove(entity);
+                }
                 final Enemy enemy = (Enemy) entity;
                 final Vector2f currentPosition = enemy.getPosition();
                 final Vector2f nextPosition = enemy.getAI().nextPosition(enemy, dt, map, player);
@@ -313,6 +289,10 @@ public class Physics extends TickingElement {
                 enemy.setVelocity(nextPosition.sub(currentPosition).div(timeSeconds));
             }
         }
+        // Update UI
+        final World world = game.getWorld();
+        levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
+                + " | Score " + world.getScore() + " |  Timer " + world.getTimer());
     }
 
     private Vector2f getInputVector() {
@@ -364,14 +344,11 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Blocks the movement in the desired direction, which is represented as a
-     * unit vector.
+     * Blocks the movement in the desired direction, which is represented as a unit vector.
      *
      * @param movement The movement as a vector
-     * @param unitDirection The unit direction to block. Must be a unit to
-     *            function correctly!
-     * @return The new movement but with all motion in the given direction
-     *         removed
+     * @param unitDirection The unit direction to block. Must be a unit to function correctly!
+     * @return The new movement but with all motion in the given direction removed
      */
     public static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
         // Check if we have movement in the direction
@@ -384,9 +361,7 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Gets the direction of a collision. This uses the intersection between the
-     * two collided objects, which can be obtained with
-     * {@link #getIntersection(Collidable, Collidable)}, the object that was
+     * Gets the direction of a collision. This uses the intersection between the two collided objects, which can be obtained with {@link #getIntersection(Collidable, Collidable)}, the object that was
      * collided. The direction found points towards the collided object.
      *
      * @param intersection The intersection from the collision
@@ -399,9 +374,7 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Gets the collision intersection information for two object that are
-     * colliding. If the object aren't colliding, the resulting information is
-     * undefined.
+     * Gets the collision intersection information for two object that are colliding. If the object aren't colliding, the resulting information is undefined.
      *
      * @param object The first object of the collision
      * @param other The second object of the collision
