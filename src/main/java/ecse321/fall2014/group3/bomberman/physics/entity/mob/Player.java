@@ -29,7 +29,6 @@ public class Player extends Mob {
     // A dampened velocity that never quite gets to the maximum speed of the player (asymptotic)
     private volatile Vector2f directionVelocity = Vector2f.ZERO;
     private final Map<Class<? extends PowerUP>, Integer> powerUPs = new ConcurrentHashMap<>();
-    private volatile SpriteInfo currentSprite = DOWN_SPRITE;
 
     public Player(Vector2f position) {
         super(position, COLLISION_BOX);
@@ -93,19 +92,16 @@ public class Player extends Mob {
     public SpriteInfo getSpriteInfo() {
         switch (direction) {
             case UP:
-                currentSprite = UP_SPRITE;
-                break;
+                return UP_SPRITE;
             case DOWN:
-                currentSprite = DOWN_SPRITE;
-                break;
+               return DOWN_SPRITE;
             case LEFT:
-                currentSprite = LEFT_SPRITE;
-                break;
+               return LEFT_SPRITE;
             case RIGHT:
-                currentSprite = RIGHT_SPRITE;
-                break;
+                return RIGHT_SPRITE;
+            default:
+                return DOWN_SPRITE;
         }
-        return currentSprite;
     }
 
     @Override
