@@ -20,7 +20,6 @@ public class DumbAI extends AI {
       float timeSec = dt / TO_SECS;
       Vector2f enemyPos = target.getPosition();
       Vector2f eVelocity = target.getVelocity();
-      Set<Tile> colTiles = target.getTileCollisionList();
    
       if (eVelocity.length() == 0) {
          if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
