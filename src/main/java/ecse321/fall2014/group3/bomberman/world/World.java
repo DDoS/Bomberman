@@ -44,12 +44,16 @@ public class World extends TickingElement {
     private Vector2f exitwayTile;
     private Vector2f powerUPTile;
     private int score;
+    private int timer;
+    private long curr, last =0;
 
 
     public World(Game game) {
         super("World", 20);
         this.game = game;
         score = 0;
+        last = System.currentTimeMillis();
+        timer = 500;
 
     }
 
@@ -117,11 +121,20 @@ public class World extends TickingElement {
 
     private void gameTick(long dt) {
         final Player player = game.getPhysics().getPlayer();
-        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class)) {
+        curr = System.currentTimeMillis();
+        if (curr-last > 1000){
+            last = System.currentTimeMillis();
+            timer--;
+            System.out.println("TIMER: " +timer);
+        }
+
+        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <=0) {
             score -= 10;
             System.out.println("FINAL SCORE: "+score);
             score += game.getLeaderboard().getScore(game.getSession().getUserName());
             game.getLeaderboard().updateScore(game.getSession().getUserName(), score);
+
+            timer = 500;
             level = Level.GAME_OVER;
             game.getSession().setLevel(1);
             generateMenuBackground();
@@ -130,9 +143,9 @@ public class World extends TickingElement {
         }
         if (player.isCollidingWith(ExitWay.class)) {
             if (level.isBonus()){
-                score += 150 * Math.abs(level.getNumber());
+                score += (150 * Math.abs(level.getNumber())) + timer;
             } else {
-                score += 50 *level.getNumber();
+                score += (50 *level.getNumber()) + timer;
             }
             System.out.println("FINAL SCORE: "+score);
             score += game.getLeaderboard().getScore(game.getSession().getUserName());
@@ -145,6 +158,7 @@ public class World extends TickingElement {
             }
             level = level.next();
             score = 0;
+            timer = 500;
             System.out.println("LEVEL SCORE: " +score);
             final Session session = game.getSession();
             if (session.getLevel() < level.getNumber()) {
