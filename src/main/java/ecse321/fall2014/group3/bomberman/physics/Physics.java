@@ -146,7 +146,7 @@ public class Physics extends TickingElement {
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                         + " | Score " + world.getScore() + " |  Timer " + world.getTimer();
-        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
+        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
         final List<Vector2f> freePositions = getFreePositions(world.getMap());
