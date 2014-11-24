@@ -85,6 +85,5 @@ public class DumbAI extends AI {
             }
          }
       } 
-      //return target.getPosition();
    }
 }
