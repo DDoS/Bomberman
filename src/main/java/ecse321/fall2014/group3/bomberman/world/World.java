@@ -204,7 +204,7 @@ public class World extends TickingElement {
                 if (flamePosition.equals(exitwayTile)) {
                     map.setTile(flamePosition, ExitWay.class);
                 }else if (flamePosition.equals(powerUPTile)){
-                    map.setTile(flamePosition, getPowerUPForLevel());
+                    map.setTile(flamePosition, level.getPowerUPForLevel());
                 } else {
                     map.setTile(flamePosition, Fire.class);
                     score +=5;
@@ -276,29 +276,5 @@ public class World extends TickingElement {
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
         powerUPTile =  possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
     }
-    
-    private  Class<? extends PowerUP> getPowerUPForLevel(){
-        String powerUp = level.getPowerUPForLevel();
-        switch (powerUp){
-            case "BombPass": 
-                return  BombPass.class;
-            case "BombUpgrade":
-                return  BombUpgrade.class;
-            case "Detonator":
-                return  Detonator.class;
-            case "FlamePass":
-                return  FlamePass.class;
-            case "FlameUpgrade":
-                return  FlameUpgrade.class;
-            case "Mystery":
-                return  Mystery.class;
-            case "SpeedUpgrade":
-                return  SpeedUpgrade.class;
-            case "WallPass":
-                return  WallPass.class;
-            default:
-                return null;
-                
-        }
-    }
+
 }
