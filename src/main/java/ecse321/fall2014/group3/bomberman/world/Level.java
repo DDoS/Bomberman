@@ -21,7 +21,7 @@ public enum Level {
     LEVEL_SELECT(true, 0, null, null),
     LEADER_BOARD(true, 0, null, null),
     GAME_OVER(true, 0, null, null),
-    LEVEL_1(false, 1, new int[] {6, 0, 0, 0, 0, 0, 0, 0}, null),
+    LEVEL_1(false, 1, new int[] {6, 0, 0, 0, 0, 0, 0, 0}, "FlameUpgrade"),
     LEVEL_2(false, 2, new int[] {3, 3, 0, 0, 0, 0, 0, 0}, null),
     LEVEL_3(false, 3, new int[] {2, 2, 2, 0, 0, 0, 0, 0}, null),
     LEVEL_4(false, 4, new int[] {1, 2, 2, 2, 0, 0, 0, 0}, null),
