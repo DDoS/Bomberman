@@ -1,11 +1,15 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import sun.misc.Queue;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -17,8 +21,7 @@ import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Balloom;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.*;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
@@ -130,12 +133,120 @@ public class Physics extends TickingElement {
         entities.add(new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString));
         // Add enemies
         final List<Vector2f> freePositions = getFreePositions(game.getWorld().getMap());
-        // TEST
+        Collections.shuffle(freePositions);
+        final Vector2f[] free = freePositions.toArray(new Vector2f[freePositions.size()]);
+
+        /*
         if (freePositions.size() > 0) {
             final Balloom balloom = new Balloom(freePositions.get(0));
             entities.add(balloom);
             collisionDetection.add(balloom);
         }
+        */
+        //get the number of enemies on the level
+        int[] enemies = currentLevel.getEnemyForLevel().clone();
+
+        final Balloom[] balloom = new Balloom[enemies[0]];
+        final Oneal[] oneal = new Oneal[enemies[1]];
+        final Doll[] doll = new Doll[enemies[2]];
+        final Minvo[] minvo = new Minvo[enemies[3]];
+        final Kondoria[] kondoria = new Kondoria[enemies[4]];
+        final Ovapi[] ovapi = new Ovapi[enemies[5]];
+        final Pass[] pass = new Pass[enemies[6]];
+        final Pontan[] pontan = new Pontan[enemies[7]];
+
+        int i = 0;
+        //add balloom
+
+            for (int j = 0; j < balloom.length; j++) {
+                if(i < free.length){
+                balloom[j] = new Balloom(free[i]);
+                entities.add(balloom[j]);
+                collisionDetection.add(balloom[j]);
+                i++;
+                }
+            }
+
+        
+        //add oneal
+            for (int j = 0; j < oneal.length; j++) {
+                if(i < free.length){
+                oneal[j] = new Oneal(free[i]);
+                entities.add(oneal[j]);
+                collisionDetection.add(oneal[j]);
+                i++;
+                }
+            
+            }
+        
+        //add doll
+            for (int j = 0; j < doll.length; j++) {
+                if(i < free.length){
+                doll[j] = new Doll(free[i]);
+                entities.add(doll[j]);
+                collisionDetection.add(doll[j]);
+                i++;
+                }
+            }
+
+        
+        //add minvo
+        
+            for (int j = 0; j < minvo.length; j++) {
+                if(i < free.length){
+                minvo[j] = new Minvo(free[i]);
+                entities.add(minvo[j]);
+                collisionDetection.add(minvo[j]);
+                i++;
+                }
+            }
+
+       
+        //add kondoria
+            for (int j = 0; j < doll.length; j++) {
+                if(i < free.length){
+                kondoria[j] = new Kondoria(free[i]);
+                entities.add(kondoria[j]);
+                collisionDetection.add(kondoria[j]);
+                i++;
+                }
+            }
+
+        
+        //add ovapi
+            for (int j = 0; j < ovapi.length; j++) {
+                if(i < free.length){
+                ovapi[j] = new Ovapi(free[i]);
+                entities.add(ovapi[j]);
+                collisionDetection.add(ovapi[j]);
+                i++;
+                }
+            }
+
+        
+        //add pass
+            for (int j = 0; j < pass.length; j++) {
+                if(i < free.length){
+                pass[j] = new Pass(free[i]);
+                entities.add(pass[j]);
+                collisionDetection.add(pass[j]);
+                i++;
+                }
+            }
+
+        
+        //add pontan
+            for (int j = 0; j < pontan.length; j++) {
+                if(i < free.length){
+                pontan[j] = new Pontan(free[i]);
+                entities.add(pontan[j]);
+                collisionDetection.add(pontan[j]);
+                i++;
+                }
+            }
+
+        
+
     }
 
     private void doGameTick(long dt) {
@@ -253,8 +364,7 @@ public class Physics extends TickingElement {
         for (Air freeTile : freeTiles) {
             final Vector2f position = freeTile.getPosition();
             // Reject player starting positions
-            if ((position.getFloorX() != 1 || position.getFloorY() != 1 && position.getFloorY() != 2)
-                    && (position.getFloorX() != 2 || position.getFloorY() != 1)) {
+            if ((position.getFloorX() != 1 || position.getFloorY() != 1 && position.getFloorY() != 2) && (position.getFloorX() != 2 || position.getFloorY() != 1)) {
                 free.add(position);
             }
         }
@@ -262,11 +372,14 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Blocks the movement in the desired direction, which is represented as a unit vector.
+     * Blocks the movement in the desired direction, which is represented as a
+     * unit vector.
      *
      * @param movement The movement as a vector
-     * @param unitDirection The unit direction to block. Must be a unit to function correctly!
-     * @return The new movement but with all motion in the given direction removed
+     * @param unitDirection The unit direction to block. Must be a unit to
+     *            function correctly!
+     * @return The new movement but with all motion in the given direction
+     *         removed
      */
     public static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
         // Check if we have movement in the direction
@@ -279,7 +392,9 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Gets the direction of a collision. This uses the intersection between the two collided objects, which can be obtained with {@link #getIntersection(Collidable, Collidable)}, the object that was
+     * Gets the direction of a collision. This uses the intersection between the
+     * two collided objects, which can be obtained with
+     * {@link #getIntersection(Collidable, Collidable)}, the object that was
      * collided. The direction found points towards the collided object.
      *
      * @param intersection The intersection from the collision
@@ -292,7 +407,9 @@ public class Physics extends TickingElement {
     }
 
     /**
-     * Gets the collision intersection information for two object that are colliding. If the object aren't colliding, the resulting information is undefined.
+     * Gets the collision intersection information for two object that are
+     * colliding. If the object aren't colliding, the resulting information is
+     * undefined.
      *
      * @param object The first object of the collision
      * @param other The second object of the collision
