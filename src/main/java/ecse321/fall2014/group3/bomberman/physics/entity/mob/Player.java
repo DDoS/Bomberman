@@ -17,7 +17,10 @@ import ecse321.fall2014.group3.bomberman.world.tile.powerup.SpeedUpgrade;
 public class Player extends Mob {
     private static final Vector2f SIZE = Vector2f.ONE;
     private static final CollisionBox COLLISION_BOX = new CollisionBox(SIZE);
-    private static final SpriteInfo STILL_SPRITE = new SpriteInfo("Sprite", 0, Vector2f.ONE);
+    private static final SpriteInfo DOWN_SPRITE = new SpriteInfo("Sprite", 0, Vector2f.ONE);
+    private static final SpriteInfo UP_SPRITE = new SpriteInfo("Sprite", 1, Vector2f.ONE);
+    private static final SpriteInfo LEFT_SPRITE = new SpriteInfo("Sprite", 2, Vector2f.ONE);
+    private static final SpriteInfo RIGHT_SPRITE = new SpriteInfo("Sprite", 3, Vector2f.ONE);
     // This value is used to change the amount of travel the player needs to do in a direction
     // before he actually rotates to that direction. Higher value means more travel
     private static final float DIRECTION_CHANGE_THRESHOLD = 2 / 3f;
@@ -26,7 +29,7 @@ public class Player extends Mob {
     // A dampened velocity that never quite gets to the maximum speed of the player (asymptotic)
     private volatile Vector2f directionVelocity = Vector2f.ZERO;
     private final Map<Class<? extends PowerUP>, Integer> powerUPs = new ConcurrentHashMap<>();
-    private volatile SpriteInfo currentSprite = STILL_SPRITE;
+    private volatile SpriteInfo currentSprite = DOWN_SPRITE;
 
     public Player(Vector2f position) {
         super(position, COLLISION_BOX);
@@ -84,6 +87,20 @@ public class Player extends Mob {
 
     @Override
     public SpriteInfo getSpriteInfo() {
+        switch (direction) {
+            case UP:
+                currentSprite = UP_SPRITE;
+                break;
+            case DOWN:
+                currentSprite = DOWN_SPRITE;
+                break;
+            case LEFT:
+                currentSprite = LEFT_SPRITE;
+                break;
+            case RIGHT:
+                currentSprite = RIGHT_SPRITE;
+                break;
+        }
         return currentSprite;
     }
 
