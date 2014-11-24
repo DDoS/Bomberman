@@ -146,106 +146,98 @@ public class Physics extends TickingElement {
         //get the number of enemies on the level
         int[] enemies = currentLevel.getEnemyForLevel().clone();
 
-        final Balloom[] balloom = new Balloom[enemies[0]];
-        final Oneal[] oneal = new Oneal[enemies[1]];
-        final Doll[] doll = new Doll[enemies[2]];
-        final Minvo[] minvo = new Minvo[enemies[3]];
-        final Kondoria[] kondoria = new Kondoria[enemies[4]];
-        final Ovapi[] ovapi = new Ovapi[enemies[5]];
-        final Pass[] pass = new Pass[enemies[6]];
-        final Pontan[] pontan = new Pontan[enemies[7]];
+        Balloom balloom;
+        Oneal oneal;
+        Doll doll;
+        Minvo minvo;
+        Kondoria kondoria;
+        Ovapi ovapi;
+        Pass pass;
+        Pontan pontan;
 
         int i = 0;
         //add balloom
 
-            for (int j = 0; j < balloom.length; j++) {
-                if(i < free.length){
-                balloom[j] = new Balloom(free[i]);
-                entities.add(balloom[j]);
-                collisionDetection.add(balloom[j]);
+        for (int j = 0; j < enemies[0]; j++) {
+            if (i < free.length) {
+                balloom = new Balloom(free[i]);
+                entities.add(balloom);
+                collisionDetection.add(balloom);
                 i++;
-                }
             }
+        }
 
-        
         //add oneal
-            for (int j = 0; j < oneal.length; j++) {
-                if(i < free.length){
-                oneal[j] = new Oneal(free[i]);
-                entities.add(oneal[j]);
-                collisionDetection.add(oneal[j]);
+        for (int j = 0; j < enemies[1]; j++) {
+            if (i < free.length) {
+                oneal= new Oneal(free[i]);
+                entities.add(oneal);
+                collisionDetection.add(oneal);
                 i++;
-                }
-            
             }
-        
+
+        }
+
         //add doll
-            for (int j = 0; j < doll.length; j++) {
-                if(i < free.length){
-                doll[j] = new Doll(free[i]);
-                entities.add(doll[j]);
-                collisionDetection.add(doll[j]);
+        for (int j = 0; j < enemies[2]; j++) {
+            if (i < free.length) {
+                doll = new Doll(free[i]);
+                entities.add(doll);
+                collisionDetection.add(doll);
                 i++;
-                }
             }
+        }
 
-        
         //add minvo
-        
-            for (int j = 0; j < minvo.length; j++) {
-                if(i < free.length){
-                minvo[j] = new Minvo(free[i]);
-                entities.add(minvo[j]);
-                collisionDetection.add(minvo[j]);
-                i++;
-                }
-            }
 
-       
+        for (int j = 0; j < enemies[3]; j++) {
+            if (i < free.length) {
+                minvo = new Minvo(free[i]);
+                entities.add(minvo);
+                collisionDetection.add(minvo);
+                i++;
+            }
+        }
+
         //add kondoria
-            for (int j = 0; j < doll.length; j++) {
-                if(i < free.length){
-                kondoria[j] = new Kondoria(free[i]);
-                entities.add(kondoria[j]);
-                collisionDetection.add(kondoria[j]);
+        for (int j = 0; j < enemies[4]; j++) {
+            if (i < free.length) {
+                kondoria = new Kondoria(free[i]);
+                entities.add(kondoria);
+                collisionDetection.add(kondoria);
                 i++;
-                }
             }
+        }
 
-        
         //add ovapi
-            for (int j = 0; j < ovapi.length; j++) {
-                if(i < free.length){
-                ovapi[j] = new Ovapi(free[i]);
-                entities.add(ovapi[j]);
-                collisionDetection.add(ovapi[j]);
+        for (int j = 0; j < enemies[5]; j++) {
+            if (i < free.length) {
+                ovapi = new Ovapi(free[i]);
+                entities.add(ovapi);
+                collisionDetection.add(ovapi);
                 i++;
-                }
             }
+        }
 
-        
         //add pass
-            for (int j = 0; j < pass.length; j++) {
-                if(i < free.length){
-                pass[j] = new Pass(free[i]);
-                entities.add(pass[j]);
-                collisionDetection.add(pass[j]);
+        for (int j = 0; j < enemies[6]; j++) {
+            if (i < free.length) {
+                pass = new Pass(free[i]);
+                entities.add(pass);
+                collisionDetection.add(pass);
                 i++;
-                }
             }
+        }
 
-        
         //add pontan
-            for (int j = 0; j < pontan.length; j++) {
-                if(i < free.length){
-                pontan[j] = new Pontan(free[i]);
-                entities.add(pontan[j]);
-                collisionDetection.add(pontan[j]);
+        for (int j = 0; j < enemies[7]; j++) {
+            if (i < free.length) {
+                pontan = new Pontan(free[i]);
+                entities.add(pontan);
+                collisionDetection.add(pontan);
                 i++;
-                }
             }
-
-        
+        }
 
     }
 

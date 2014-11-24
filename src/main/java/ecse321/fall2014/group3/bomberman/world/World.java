@@ -21,6 +21,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.*;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.TimedTile;
@@ -28,6 +29,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
+
 import org.lwjgl.Sys;
 
 
@@ -40,13 +42,18 @@ public class World extends TickingElement {
     private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
     private Vector2f exitwayTile;
+    private Vector2f powerUPTile;
     private int score;
+    private int timer;
+    private long curr, last =0;
 
 
     public World(Game game) {
         super("World", 20);
         this.game = game;
         score = 0;
+        last = System.currentTimeMillis();
+        timer = 500;
 
     }
 
@@ -114,11 +121,20 @@ public class World extends TickingElement {
 
     private void gameTick(long dt) {
         final Player player = game.getPhysics().getPlayer();
-        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class)) {
+        curr = System.currentTimeMillis();
+        if (curr-last > 1000){
+            last = System.currentTimeMillis();
+            timer--;
+            System.out.println("TIMER: " +timer);
+        }
+
+        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <=0) {
             score -= 10;
             System.out.println("FINAL SCORE: "+score);
             score += game.getLeaderboard().getScore(game.getSession().getUserName());
             game.getLeaderboard().updateScore(game.getSession().getUserName(), score);
+
+            timer = 500;
             level = Level.GAME_OVER;
             game.getSession().setLevel(1);
             generateMenuBackground();
@@ -127,9 +143,9 @@ public class World extends TickingElement {
         }
         if (player.isCollidingWith(ExitWay.class)) {
             if (level.isBonus()){
-                score += 150 * Math.abs(level.getNumber());
+                score += (150 * Math.abs(level.getNumber())) + timer;
             } else {
-                score += 50 *level.getNumber();
+                score += (50 *level.getNumber()) + timer;
             }
             System.out.println("FINAL SCORE: "+score);
             score += game.getLeaderboard().getScore(game.getSession().getUserName());
@@ -142,6 +158,7 @@ public class World extends TickingElement {
             }
             level = level.next();
             score = 0;
+            timer = 500;
             System.out.println("LEVEL SCORE: " +score);
             final Session session = game.getSession();
             if (session.getLevel() < level.getNumber()) {
@@ -200,6 +217,8 @@ public class World extends TickingElement {
                 }
                 if (flamePosition.equals(exitwayTile)) {
                     map.setTile(flamePosition, ExitWay.class);
+                }else if (flamePosition.equals(powerUPTile)){
+                    map.setTile(flamePosition, level.getPowerUPForLevel());
                 } else {
                     map.setTile(flamePosition, Fire.class);
                     score +=5;
@@ -269,5 +288,7 @@ public class World extends TickingElement {
         // Select a random tile for the exitway
         final List<Breakable> possibleTiles = map.getTiles(Breakable.class);
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
+        powerUPTile =  possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
     }
+
 }

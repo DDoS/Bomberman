@@ -21,7 +21,7 @@ public enum Level {
     LEVEL_SELECT(true, 0, null, null),
     LEADER_BOARD(true, 0, null, null),
     GAME_OVER(true, 0, null, null),
-    LEVEL_1(false, 1, new int[] {6, 0, 0, 0, 0, 0, 0, 0}, null),
+    LEVEL_1(false, 1, new int[] {6, 0, 0, 0, 0, 0, 0, 0}, FlameUpgrade.class),
     LEVEL_2(false, 2, new int[] {3, 3, 0, 0, 0, 0, 0, 0}, null),
     LEVEL_3(false, 3, new int[] {2, 2, 2, 0, 0, 0, 0, 0}, null),
     LEVEL_4(false, 4, new int[] {1, 2, 2, 2, 0, 0, 0, 0}, null),
@@ -84,11 +84,13 @@ public enum Level {
     private final boolean menu;
     private final int number;
     private int[] enemyForLevel;
+    private Class<? extends PowerUP> powerUP;
 
-    private Level(boolean menu, int number, int[] enemy, PowerUP powerup) {
+    private Level(boolean menu, int number, int[] enemy, Class<? extends PowerUP> powerUp) {
         this.menu = menu;
         this.number = number;
         this.enemyForLevel = enemy;
+        this.powerUP = powerUp;
     }
 
     public boolean isMenu() {
@@ -166,5 +168,9 @@ public enum Level {
 
     public int[] getEnemyForLevel() {
         return enemyForLevel;
+    }
+
+    public Class<? extends PowerUP> getPowerUPForLevel() {
+        return powerUP;
     }
 }
