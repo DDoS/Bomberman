@@ -1,8 +1,8 @@
 package ecse321.fall2014.group3.bomberman.physics;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -13,7 +13,7 @@ import com.flowpowered.math.vector.Vector2f;
 public abstract class Collidable {
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
     private final int id = ID_COUNTER.getAndIncrement();
-    private final Set<Collidable> collisionList = Collections.synchronizedSet(new HashSet<Collidable>());
+    private final Set<Collidable> collisionList = Collections.newSetFromMap(new ConcurrentHashMap<Collidable, Boolean>());
     protected volatile Vector2f position = Vector2f.ZERO;
     protected volatile CollisionBox collisionBox;
 

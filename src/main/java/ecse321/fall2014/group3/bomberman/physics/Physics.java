@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -16,6 +17,8 @@ import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Balloom;
+import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
@@ -35,7 +38,7 @@ public class Physics extends TickingElement {
     private final Game game;
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
-    private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<Entity>());
+    private final Set<Entity> entities = Collections.newSetFromMap(new ConcurrentHashMap<Entity, Boolean>());
     private final Player player = new Player(Vector2f.ZERO);
     private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
     private volatile int selectedButtonIndex;
@@ -126,6 +129,13 @@ public class Physics extends TickingElement {
         final String levelString = currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber();
         entities.add(new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString));
         // Add enemies
+        final List<Vector2f> freePositions = getFreePositions(game.getWorld().getMap());
+        // TEST
+        if (freePositions.size() > 0) {
+            final Balloom balloom = new Balloom(freePositions.get(0));
+            entities.add(balloom);
+            collisionDetection.add(balloom);
+        }
     }
 
     private void doGameTick(long dt) {
@@ -190,6 +200,16 @@ public class Physics extends TickingElement {
         // Update player movement
         player.setPosition(player.getPosition().add(movement));
         player.setVelocity(movement.div(timeSeconds));
+        // Update enemy positions
+        for (Entity entity : entities) {
+            if (entity instanceof Enemy) {
+                final Enemy enemy = (Enemy) entity;
+                final Vector2f currentPosition = enemy.getPosition();
+                final Vector2f nextPosition = enemy.getAI().nextPosition(enemy, dt, map, player);
+                enemy.setPosition(nextPosition);
+                enemy.setVelocity(nextPosition.sub(currentPosition).div(timeSeconds));
+            }
+        }
     }
 
     private Vector2f getInputVector() {
@@ -225,6 +245,20 @@ public class Physics extends TickingElement {
             return null;
         }
         return buttonOrder.get(selectedButtonIndex);
+    }
+
+    private static List<Vector2f> getFreePositions(Map map) {
+        final List<Vector2f> free = new ArrayList<>();
+        final List<Air> freeTiles = map.getTiles(Air.class);
+        for (Air freeTile : freeTiles) {
+            final Vector2f position = freeTile.getPosition();
+            // Reject player starting positions
+            if ((position.getFloorX() != 1 || position.getFloorY() != 1 && position.getFloorY() != 2)
+                    && (position.getFloorX() != 2 || position.getFloorY() != 1)) {
+                free.add(position);
+            }
+        }
+        return free;
     }
 
     /**
