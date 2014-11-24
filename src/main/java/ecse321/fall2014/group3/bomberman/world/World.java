@@ -198,6 +198,7 @@ public class World extends TickingElement {
         for (Collidable tile : player.getCollisionList()) {
             if (tile instanceof PowerUP) {
                 map.setTile(tile.getPosition(), Air.class);
+                updatedMap = true;
             }
         }
         // Update new map version if needed
