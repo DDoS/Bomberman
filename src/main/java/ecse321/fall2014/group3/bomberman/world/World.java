@@ -7,6 +7,7 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.database.Leaderboard;
 import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
@@ -39,10 +40,13 @@ public class World extends TickingElement {
     private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
     private Vector2f exitwayTile;
+    public int score;
 
     public World(Game game) {
         super("World", 20);
         this.game = game;
+        score = 0;
+
     }
 
     @Override
@@ -110,6 +114,10 @@ public class World extends TickingElement {
     private void gameTick(long dt) {
         final Player player = game.getPhysics().getPlayer();
         if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class)) {
+            score -= 10;
+            System.out.println("FINAL SCORE: "+score);
+            score += game.getLeaderboard().getScore(game.getSession().getUserName());
+            game.getLeaderboard().updateScore(game.getSession().getUserName(), score);
             level = Level.GAME_OVER;
             game.getSession().setLevel(1);
             generateMenuBackground();
@@ -117,6 +125,7 @@ public class World extends TickingElement {
             return;
         }
         if (player.isCollidingWith(ExitWay.class)) {
+            score += 50 * level.getNumber();
             if (level.getNumber() == 50) {
                 level = Level.MAIN_MENU;
                 generateMenuBackground();
@@ -183,6 +192,7 @@ public class World extends TickingElement {
                     map.setTile(flamePosition, ExitWay.class);
                 } else {
                     map.setTile(flamePosition, Fire.class);
+                    score +=5;
                 }
                 if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
