@@ -85,6 +85,10 @@ public class Player extends Mob {
         powerUPs.put(powerUP.getClass(), level);
     }
 
+    public void clearPowerUPs() {
+        powerUPs.clear();
+    }
+
     @Override
     public SpriteInfo getSpriteInfo() {
         switch (direction) {
