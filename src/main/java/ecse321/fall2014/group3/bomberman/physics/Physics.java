@@ -112,6 +112,9 @@ public class Physics extends TickingElement {
             for (int i = 0; i < top.length && top[i] != null; i++) {
                 entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i)), Vector2f.ONE, top[i].getFormatted()));
             }
+        } else if (currentLevel == Level.GAME_OVER) {
+            // Remove all powerups on game over
+            player.clearPowerUPs();
         }
     }
 
