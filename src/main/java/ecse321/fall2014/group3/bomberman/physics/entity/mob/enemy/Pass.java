@@ -7,7 +7,7 @@ import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.SmartAI;
 
 public class Pass extends Enemy {
-    private static final SpriteInfo PASS_ENEMY_SPRITE = new SpriteInfo("entity", 32, Vector2f.ONE);
+    private static final SpriteInfo PASS_ENEMY_SPRITE = new SpriteInfo("entity", 35, Vector2f.ONE);
     private static final AI PASS_ENEMY_AI = new SmartAI();
 
     public Pass(Vector2f position) {

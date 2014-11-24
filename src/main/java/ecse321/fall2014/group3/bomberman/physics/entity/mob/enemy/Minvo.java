@@ -7,7 +7,7 @@ import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.RegularAI;
 
 public class Minvo extends Enemy {
-    private static final SpriteInfo MINVO_ENEMY_SPRITE = new SpriteInfo("entity", 32, Vector2f.ONE);
+    private static final SpriteInfo MINVO_ENEMY_SPRITE = new SpriteInfo("entity", 38, Vector2f.ONE);
     private static final AI MINVO_ENEMY_AI = new RegularAI();
 
     public Minvo(Vector2f position) {

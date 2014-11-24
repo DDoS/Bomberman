@@ -7,7 +7,7 @@ import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.DumbAI;
 
 public class Doll extends Enemy {
-    private static final SpriteInfo DOLL_ENEMY_SPRITE = new SpriteInfo("entity", 32, Vector2f.ONE);
+    private static final SpriteInfo DOLL_ENEMY_SPRITE = new SpriteInfo("entity", 33, Vector2f.ONE);
     private static final AI DOLL_ENEMY_AI = new DumbAI();
 
     public Doll(Vector2f position) {

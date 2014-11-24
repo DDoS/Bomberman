@@ -7,7 +7,7 @@ import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.RegularAI;
 
 public class Ovapi extends Enemy {
-    private static final SpriteInfo OVAPI_ENEMY_SPRITE = new SpriteInfo("entity", 32, Vector2f.ONE);
+    private static final SpriteInfo OVAPI_ENEMY_SPRITE = new SpriteInfo("entity", 36, Vector2f.ONE);
     private static final AI OVAPI_ENEMY_AI = new RegularAI();
 
     public Ovapi(Vector2f position) {

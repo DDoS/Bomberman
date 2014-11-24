@@ -7,7 +7,7 @@ import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.SmartAI;
 
 public class Pontan extends Enemy {
-    private static final SpriteInfo PONTAN_ENEMY_SPRITE = new SpriteInfo("entity", 32, Vector2f.ONE);
+    private static final SpriteInfo PONTAN_ENEMY_SPRITE = new SpriteInfo("entity", 34, Vector2f.ONE);
     private static final AI PONTAN_ENEMY_AI = new SmartAI();
 
     public Pontan(Vector2f position) {
