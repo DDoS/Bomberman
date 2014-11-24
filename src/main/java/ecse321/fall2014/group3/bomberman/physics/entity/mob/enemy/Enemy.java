@@ -2,14 +2,31 @@ package ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy;
 
 import com.flowpowered.math.vector.Vector2f;
 
+import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
+import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Mob;
 
 /**
  *
  */
 public abstract class Enemy extends Mob {
-    public Enemy(Vector2f position, CollisionBox collisionBox) {
-        super(position, collisionBox);
+    
+    private static final Vector2f SIZE = Vector2f.ONE;
+    private static final CollisionBox COLLISION_BOX = new CollisionBox(SIZE);
+    public static final float ENEMY_BASE_SPEED = 2;
+    
+    public Enemy(Vector2f position) {
+        super(position, COLLISION_BOX);
     }
+    
+    public abstract AI getAI();
+    public abstract SpriteInfo getSpriteInfo();
+    public abstract float getSpeed();
+    
+    @Override
+    public Vector2f getModelSize() {
+        return SIZE;
+    }
+
 }
