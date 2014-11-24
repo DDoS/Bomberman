@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Bomb extends TimedTile {
-    private static final SpriteInfo BOMB_SPRITE = new SpriteInfo("terrain", 32, Vector2f.ONE);
+    private static final SpriteInfo BOMB_SPRITE = new SpriteInfo("Sprite", 68, Vector2f.ONE);
     private static final long LIFE_TIME = 3000;
     private static final float ANIMATION_GROWTH_PERCENT = 0.25f;
 

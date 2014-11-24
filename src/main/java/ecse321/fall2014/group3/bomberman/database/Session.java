@@ -40,6 +40,10 @@ public class Session {
         return database.getInt(username, Database.SCORE_KEY);
     }
 
+    public void setScore(int score) {
+        database.setInt(username, Database.SCORE_KEY, score);
+    }
+
     public static Session open(Database database, String username, String password) {
         if (database.getString(username, Database.USERNAME_KEY) == null) {
             return null;

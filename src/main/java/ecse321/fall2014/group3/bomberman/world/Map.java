@@ -42,7 +42,9 @@ public class Map {
     }
 
     public Tile getTile(Vector2i pos) {
-        checkInBounds(pos);
+        if (outOfBounds(pos)) {
+            return null;
+        }
         final Lock read = lock.readLock();
         read.lock();
         try {
@@ -85,7 +87,9 @@ public class Map {
     }
 
     void setTile(Vector2i pos, Class<? extends Tile> type) {
-        checkInBounds(pos);
+        if (outOfBounds(pos)) {
+            return;
+        }
         final Tile tile;
         try {
             // The use of reflection to init the tile ourselves guarantees that its position will be correct
@@ -113,9 +117,7 @@ public class Map {
         return version;
     }
 
-    private void checkInBounds(Vector2i pos) {
-        if (pos.getX() < 0 || pos.getX() >= WIDTH || pos.getY() < 0 || pos.getY() > HEIGHT) {
-            throw new IllegalArgumentException("Position is out of bounds");
-        }
+    private boolean outOfBounds(Vector2i pos) {
+        return pos.getX() < 0 || pos.getX() >= WIDTH || pos.getY() < 0 || pos.getY() >= HEIGHT;
     }
 }

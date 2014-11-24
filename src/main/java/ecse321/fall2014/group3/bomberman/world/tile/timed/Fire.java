@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Fire extends TimedTile {
-    private static final SpriteInfo FIRE_SPRITE = new SpriteInfo("terrain", 1, Vector2f.ONE);
+    private static final SpriteInfo FIRE_SPRITE = new SpriteInfo("Sprite", 69, Vector2f.ONE);
     private static final long LIFE_TIME = 1000;
 
     public Fire(Vector2f position) {
