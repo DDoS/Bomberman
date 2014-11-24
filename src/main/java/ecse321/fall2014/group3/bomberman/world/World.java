@@ -21,6 +21,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.*;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.TimedTile;
@@ -28,6 +29,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
+
 import org.lwjgl.Sys;
 
 
@@ -40,6 +42,7 @@ public class World extends TickingElement {
     private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
     private Vector2f exitwayTile;
+    private Vector2f powerUPTile;
     private int score;
 
 
@@ -200,6 +203,8 @@ public class World extends TickingElement {
                 }
                 if (flamePosition.equals(exitwayTile)) {
                     map.setTile(flamePosition, ExitWay.class);
+                }else if (flamePosition.equals(powerUPTile)){
+                    map.setTile(flamePosition, getPowerUPForLevel());
                 } else {
                     map.setTile(flamePosition, Fire.class);
                     score +=5;
@@ -269,5 +274,31 @@ public class World extends TickingElement {
         // Select a random tile for the exitway
         final List<Breakable> possibleTiles = map.getTiles(Breakable.class);
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
+        powerUPTile =  possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
+    }
+    
+    private  Class<? extends PowerUP> getPowerUPForLevel(){
+        String powerUp = level.getPowerUPForLevel();
+        switch (powerUp){
+            case "BombPass": 
+                return  BombPass.class;
+            case "BombUpgrade":
+                return  BombUpgrade.class;
+            case "Detonator":
+                return  Detonator.class;
+            case "FlamePass":
+                return  FlamePass.class;
+            case "FlameUpgrade":
+                return  FlameUpgrade.class;
+            case "Mystery":
+                return  Mystery.class;
+            case "SpeedUpgrade":
+                return  SpeedUpgrade.class;
+            case "WallPass":
+                return  WallPass.class;
+            default:
+                return null;
+                
+        }
     }
 }

@@ -84,11 +84,13 @@ public enum Level {
     private final boolean menu;
     private final int number;
     private int[] enemyForLevel;
+    private String powerUP;
 
-    private Level(boolean menu, int number, int[] enemy, PowerUP powerup) {
+    private Level(boolean menu, int number, int[] enemy, String powerUp) {
         this.menu = menu;
         this.number = number;
         this.enemyForLevel = enemy;
+        this.powerUP = powerUp;
     }
 
     public boolean isMenu() {
@@ -166,5 +168,9 @@ public enum Level {
 
     public int[] getEnemyForLevel() {
         return enemyForLevel;
+    }
+
+    public String getPowerUPForLevel() {
+        return powerUP;
     }
 }
