@@ -20,13 +20,13 @@ public class DumbAI extends AI {
       float timeSec = dt / TO_SECS;
       Vector2f enemyPos = target.getPosition();
       Vector2f eVelocity = target.getVelocity();
-   
+         
       if (eVelocity.length() == 0) {
          if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
             target.setVelocity(new Vector2f(1f, 0f));
             return enemyPos.add(1f * timeSec, 0f);
          }
-         else if (map.isTile(enemyPos.sub(1f, 0f), Air.class)) {
+         else if (map.isTile(enemyPos.add(-1f * timeSec, 0f), Air.class)) {
             target.setVelocity(new Vector2f(-1f, 0f));
             return enemyPos.sub(1f * timeSec, 0f);
          }
