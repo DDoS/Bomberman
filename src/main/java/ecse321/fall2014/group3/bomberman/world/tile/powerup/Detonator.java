@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 
 public class Detonator extends PowerUP {
-    private static final SpriteInfo DETONATOR_POWERUP_SPRITE = new SpriteInfo("terrain", 36, Vector2f.ONE);
+    private static final SpriteInfo DETONATOR_POWERUP_SPRITE = new SpriteInfo("Sprite", 52, Vector2f.ONE);
 
     public Detonator(Vector2f position) {
         super(position, false);
