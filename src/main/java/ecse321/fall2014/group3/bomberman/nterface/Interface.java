@@ -14,7 +14,6 @@ import com.flowpowered.math.vector.Vector4f;
 
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
@@ -195,9 +194,6 @@ public class Interface extends TickingElement {
                 model = newModel;
             }
             model.setPosition(entity.getPosition().toVector3(0));
-            if (!(entity instanceof Player)) {
-                model.setRotation(entity.getDirection().getRotation().toQuaternion());
-            }
         }
 
         final Vector3f viewPosition;
