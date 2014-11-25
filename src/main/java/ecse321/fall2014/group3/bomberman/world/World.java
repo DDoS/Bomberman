@@ -2,7 +2,6 @@ package ecse321.fall2014.group3.bomberman.world;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -278,31 +277,25 @@ public class World extends TickingElement {
         // After 3 octaves, the frequency is 1.2, which is smaller than a tile
         perlin.setOctaveCount(3);
         // Generate the breakable and unbreakable walls
-        final Lock writeLock = map.getWriteLock();
-        writeLock.lock();
-        try {
-            for (int y = 0; y < Map.HEIGHT; y++) {
-                for (int x = 0; x < Map.WIDTH; x++) {
-                    if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
-                            || y % 2 == 0 && x % 2 == 0) {
-                        map.setTile(x, y, Unbreakable.class);
+        for (int y = 0; y < Map.HEIGHT; y++) {
+            for (int x = 0; x < Map.WIDTH; x++) {
+                if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
+                        || y % 2 == 0 && x % 2 == 0) {
+                    map.setTile(x, y, Unbreakable.class);
+                } else {
+                    // Normalize the value from (-1, 1) to (0, 1)
+                    if ((perlin.getValue(x, y, 0) + 1) / 2 >= density) {
+                        map.setTile(x, y, Breakable.class);
                     } else {
-                        // Normalize the value from (-1, 1) to (0, 1)
-                        if ((perlin.getValue(x, y, 0) + 1) / 2 >= density) {
-                            map.setTile(x, y, Breakable.class);
-                        } else {
-                            map.setTile(x, y, Air.class);
-                        }
+                        map.setTile(x, y, Air.class);
                     }
                 }
             }
-            // Make the starting position air
-            map.setTile(1, 1, Air.class);
-            map.setTile(2, 1, Air.class);
-            map.setTile(1, 2, Air.class);
-        } finally {
-            writeLock.unlock();
         }
+        // Make the starting position air
+        map.setTile(1, 1, Air.class);
+        map.setTile(2, 1, Air.class);
+        map.setTile(1, 2, Air.class);
         // Select a random tile for the exitway
         final List<Breakable> possibleTiles = map.getTiles(Breakable.class);
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();

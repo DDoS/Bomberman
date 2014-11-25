@@ -117,10 +117,6 @@ public class Map {
         return version;
     }
 
-    Lock getWriteLock() {
-        return lock.writeLock();
-    }
-
     private boolean outOfBounds(Vector2i pos) {
         return pos.getX() < 0 || pos.getX() >= WIDTH || pos.getY() < 0 || pos.getY() >= HEIGHT;
     }
