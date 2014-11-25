@@ -77,38 +77,44 @@ public class World extends TickingElement {
         final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
         final String[] action = selectedButton.getAction();
         switch (action[0]) {
-            case "levelload":
+            case "levelload": {
+                final Level nextLevel;
                 switch (action[1]) {
                     case "restore":
-                        level = Level.fromNumber(game.getSession().getLevel());
+                        nextLevel = Level.fromNumber(game.getSession().getLevel());
                         break;
                     case "number":
-                        level = Level.fromNumber(((SliderEntity) selectedButton).getValue());
+                        nextLevel = Level.fromNumber(((SliderEntity) selectedButton).getValue());
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);
                 }
-                generateLevel(level);
+                generateLevel(nextLevel);
                 map.incrementVersion();
                 activeBombs = 0;
+                level = nextLevel;
                 break;
-            case "menuload":
+            }
+            case "menuload": {
+                final Level nextLevel;
                 switch (action[1]) {
                     case "main":
-                        level = Level.MAIN_MENU;
+                        nextLevel = Level.MAIN_MENU;
                         break;
                     case "levelselect":
-                        level = Level.LEVEL_SELECT;
+                        nextLevel = Level.LEVEL_SELECT;
                         break;
                     case "loaderboard":
-                        level = Level.LEADER_BOARD;
+                        nextLevel = Level.LEADER_BOARD;
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);
                 }
                 generateMenuBackground();
                 map.incrementVersion();
+                level = nextLevel;
                 break;
+            }
             default:
                 throw new IllegalStateException("Unknown button action target: " + action[0]);
         }
@@ -219,7 +225,7 @@ public class World extends TickingElement {
                     map.setTile(flamePosition, ExitWay.class);
                 } else if (flamePosition.equals(powerUPTile)) {
                     map.setTile(flamePosition, level.getPowerUPForLevel());
-                    powerUPTile= null;
+                    powerUPTile = null;
                 } else {
                     map.setTile(flamePosition, Fire.class);
                 }
