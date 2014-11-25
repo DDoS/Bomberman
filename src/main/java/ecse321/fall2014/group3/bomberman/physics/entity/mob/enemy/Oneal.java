@@ -4,11 +4,12 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.ai.AI;
+import ecse321.fall2014.group3.bomberman.physics.ai.DumbAI;
 import ecse321.fall2014.group3.bomberman.physics.ai.RegularAI;
 
 public class Oneal extends Enemy {
     private static final SpriteInfo ONEAL_ENEMY_SPRITE = new SpriteInfo("Sprite", 33, Vector2f.ONE);
-    private static final AI ONEAL_ENEMY_AI = new RegularAI();
+    private static final AI ONEAL_ENEMY_AI = new DumbAI();
 
     public Oneal(Vector2f position) {
         super(position);

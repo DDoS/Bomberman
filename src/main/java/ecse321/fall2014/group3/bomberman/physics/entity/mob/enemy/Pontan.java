@@ -4,12 +4,13 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.ai.AI;
+import ecse321.fall2014.group3.bomberman.physics.ai.DumbAI;
 import ecse321.fall2014.group3.bomberman.physics.ai.RegularAI;
 import ecse321.fall2014.group3.bomberman.physics.ai.SmartAI;
 
 public class Pontan extends Enemy {
     private static final SpriteInfo PONTAN_ENEMY_SPRITE = new SpriteInfo("Sprite", 39, Vector2f.ONE);
-    private static final AI PONTAN_ENEMY_AI = new RegularAI();
+    private static final AI PONTAN_ENEMY_AI = new DumbAI();
 
     public Pontan(Vector2f position) {
         super(position);
