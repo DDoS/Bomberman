@@ -220,6 +220,7 @@ public class World extends TickingElement {
                     map.setTile(flamePosition, ExitWay.class);
                 } else if (flamePosition.equals(powerUPTile)) {
                     map.setTile(flamePosition, level.getPowerUPForLevel());
+                    powerUPTile= null;
                 } else {
                     map.setTile(flamePosition, Fire.class);
                 }
