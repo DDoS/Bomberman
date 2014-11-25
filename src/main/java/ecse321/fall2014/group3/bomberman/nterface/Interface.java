@@ -73,7 +73,7 @@ public class Interface extends TickingElement {
     static {
         final String alphabetic = "abcdefghijklmnopqrstuvwxyz";
         final String numeric = "0123456789";
-        final String special = " ,.;:/\\|!@#$%?&*()-_=+";
+        final String special = " ,.;:/\\|!@#$%?&*()-_=+\"'";
         GLYPHS = alphabetic + alphabetic.toUpperCase() + numeric + special;
     }
 

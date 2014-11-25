@@ -10,7 +10,7 @@ build
 dist
 lib
 out
-target
+target/*
 *.com
 *.class
 *.dll
@@ -81,3 +81,7 @@ nb-configuration.xml
 /updates
 /worlds
 config.yml
+
+# Exceptions #
+##############
+!target/bomberman-0.1.0-SNAPSHOT.jar

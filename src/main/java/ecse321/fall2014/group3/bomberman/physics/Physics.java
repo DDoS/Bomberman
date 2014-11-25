@@ -110,7 +110,7 @@ public class Physics extends TickingElement {
         if (currentLevel == Level.LEADER_BOARD) {
             final Leader[] top = game.getLeaderboard().getTop(10);
             for (int i = 0; i < top.length && top[i] != null; i++) {
-                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i)), Vector2f.ONE, top[i].getFormatted()));
+                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
             }
         } else if (currentLevel == Level.GAME_OVER) {
             // Remove all powerups on game over
@@ -146,7 +146,7 @@ public class Physics extends TickingElement {
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                         + " | Score " + world.getScore() + " |  Timer " + world.getTimer();
-        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 4f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
+        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
         final List<Vector2f> freePositions = getFreePositions(world.getMap());
