@@ -9,6 +9,7 @@ import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
 /**
@@ -48,6 +49,9 @@ public class DumbAI extends AI {
                if (map.isTile(enemyPos.add(0f, timeSec * ys), Air.class)) {
                   return enemyPos.add(0f, ys * timeSec);
                }
+               else if (map.isTile(enemyPos.add(0f, timeSec * ys), Fire.class)) {
+                  return enemyPos.add(0f, ys * timeSec);
+               }
                else {
                   target.setVelocity(new Vector2f(0f, 1f));
                   return enemyPos.add(0f, 1f * timeSec);
@@ -55,6 +59,9 @@ public class DumbAI extends AI {
             }
             else {
                if (map.isTile(enemyPos.add(0f, ys), Air.class)) {
+                  return enemyPos.add(0f, ys * timeSec);
+               }
+               else if (map.isTile(enemyPos.add(0f, ys), Fire.class)) {
                   return enemyPos.add(0f, ys * timeSec);
                }
                else {
@@ -68,6 +75,9 @@ public class DumbAI extends AI {
                if (map.isTile(enemyPos.add(xs * timeSec, 0f), Air.class)) {
                   return enemyPos.add(xs * timeSec, 0f);
                }
+               else if (map.isTile(enemyPos.add(xs * timeSec, 0f), Fire.class)) {
+                  return enemyPos.add(xs * timeSec, 0f);
+               }
                else {
                   target.setVelocity(new Vector2f(1f, 0f));
                   return enemyPos.add(1f * timeSec, 0f);
@@ -75,6 +85,9 @@ public class DumbAI extends AI {
             }
             else {
                if (map.isTile(enemyPos.add(xs, 0f), Air.class)) {
+                  return enemyPos.add(xs * timeSec, 0f);
+               }
+               else if (map.isTile(enemyPos.add(xs, 0f), Fire.class)) {
                   return enemyPos.add(xs * timeSec, 0f);
                }
                else {
