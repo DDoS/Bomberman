@@ -132,8 +132,8 @@ public class World extends TickingElement {
             game.getSession().setScore(score);
             score = 0;
             timer = 500;
+            game.getSession().setLevel(game.getSession().getLevel());
             level = Level.GAME_OVER;
-            game.getSession().setLevel(1);
             generateMenuBackground();
             map.incrementVersion();
             return;

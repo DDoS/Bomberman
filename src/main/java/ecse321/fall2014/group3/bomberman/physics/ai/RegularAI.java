@@ -69,7 +69,7 @@ public class RegularAI extends AI {
       float ys = v.getY();
       int count = getCount(map, eP, v, ts);
 
-   System.out.println(count);
+  // System.out.println(count);
       if (count >= 3) {
          boolean choseDir = false;
          Random r = new Random();
