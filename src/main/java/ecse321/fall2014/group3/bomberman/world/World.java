@@ -12,6 +12,7 @@ import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
 import ecse321.fall2014.group3.bomberman.physics.Collidable;
+import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
@@ -137,7 +138,7 @@ public class World extends TickingElement {
             map.incrementVersion();
             return;
         }
-        if (player.isCollidingWith(ExitWay.class)) {
+        if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
             if (level.isBonus()) {
                 score += (150 * Math.abs(level.getNumber())) + timer;
             } else {
@@ -238,6 +239,15 @@ public class World extends TickingElement {
                 }
             }
         }
+    }
+
+    private boolean enemiesAllDead() {
+        for (Entity entity : game.getPhysics().getEntities()) {
+            if (entity instanceof Enemy) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

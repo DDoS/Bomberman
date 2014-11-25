@@ -84,4 +84,4 @@ config.yml
 
 # Exceptions #
 ##############
-!target/bomberman-0.1.0-SNAPSHOT.jar
+#!target/bomberman-0.1.0-SNAPSHOT.jar
