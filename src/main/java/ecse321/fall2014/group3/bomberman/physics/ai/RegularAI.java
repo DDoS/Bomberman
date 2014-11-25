@@ -67,42 +67,36 @@ public class RegularAI extends AI {
       Vector2f v = tar.getVelocity();
       float xs = v.getX();
       float ys = v.getY();
-      int[] openSpace = fillArray(map, eP, v, ts);
-      int count = 0;
-      
-      for(int i : openSpace) {
-         if (openSpace[i] != 0) {
-            count ++;
-         }
-      }
-   
+      int count = getCount(map, eP, v, ts);
+
+   System.out.println(count);
       if (count >= 3) {
          boolean choseDir = false;
          Random r = new Random();
          while (!choseDir) {
             switch (r.nextInt(4)) {
                case 0: 
-                  if (openSpace[0] >= 1) {
-                     tar.setVelocity(new Vector2f(1f, 0f));
-                     return eP.add(1f * ts, 0f);
+                  if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+                     tar.setVelocity(new Vector2f(0f, 1f));
+                     return eP.add(0f, 1f * ts);
                   }
                   break;
                case 1: 
-                  if (openSpace[1] >= 1) {
+                  if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
                      tar.setVelocity(new Vector2f(1f, 0f));
                      return eP.add(1f * ts, 0f);
                   }
                   break;
                case 2: 
-                  if (openSpace[2] >= 1) {
-                     tar.setVelocity(new Vector2f(1f, 0f));
-                     return eP.add(1f * ts, 0f);
+                  if (!map.isTile(eP.add(0f, -1f * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f * ts), Breakable.class)) {
+                     tar.setVelocity(new Vector2f(0f, -1f));
+                     return eP.add(0f, -1f * ts);
                   }
                   break;
                case 3: 
-                  if (openSpace[3] >= 1) {
-                     tar.setVelocity(new Vector2f(1f, 0f));
-                     return eP.add(1f * ts, 0f);
+                  if (!map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-1f * ts, 0f), Breakable.class)) {
+                     tar.setVelocity(new Vector2f(-1f, 0f));
+                     return eP.add(-1f * ts, 0f);
                   }
                   break;
             }
@@ -156,47 +150,27 @@ public class RegularAI extends AI {
          }
       }
    }
-      
-   public int[] fillArray(Map map, Vector2f eP, Vector2f v, float ts) {
-      int[] oSpace = new int[]{0,0,0,0};
+   
+   public int getCount(Map map, Vector2f eP, Vector2f v, float ts) {
+      int oSpace = 0;
       float xs = v.getX();
       float ys = v.getY();
       
       if(!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
-         if (ys <= 0) {
-            oSpace[0] = 1;
-         }
-         else {
-            oSpace[0] = 2;
-         }
+         oSpace++;
       }
       if(!map.isTile(eP.add(0f, -1f *ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f *ts), Breakable.class)) {
-         if (ys >= 0) {
-            oSpace[2] = 1;
-         }
-         else {
-            oSpace[2] = 2;
-         }
+         oSpace++;
       }
       if(!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
-         if (xs <= 0) {
-            oSpace[1] = 1;
-         }
-         else {
-            oSpace[1] = 2;
-         }
+         oSpace++;
       }
       if(!map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-1f * ts, 0f), Breakable.class)) {
-         if (xs >= 0) {
-            oSpace[3] = 1;
-         }
-         else {
-            oSpace[3] = 2;
-         }
+         oSpace++;
       }
       return oSpace;
-   }
-   
+   }   
+      
    public Vector2f followPlayer(Map map, Entity tar, Vector2f eP, Vector2f pP, float ts) {
       float ex = eP.getX();
       float ey = eP.getY();
