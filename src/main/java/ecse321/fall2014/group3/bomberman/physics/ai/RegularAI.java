@@ -9,6 +9,8 @@ import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 import java.util.Random;
 import java.util.LinkedList;
@@ -21,225 +23,296 @@ public class RegularAI extends AI {
     public Vector2f nextPosition(Entity target, long dt, Map map, Player player) {
       float timeSec = dt / TO_SECS;
       Vector2f enemyPos = target.getPosition();
-      Vector2f eVelocity = target.getVelocity();
       Vector2f playPos = player.getPosition();
       
-      if (eVelocity.length() == 0) {
-         if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
-            target.setVelocity(new Vector2f(1f, 0f));
-            return enemyPos.add(1f * timeSec, 0f);
-         }
-         else if (map.isTile(enemyPos.sub(1f, 0f), Air.class)) {
-            target.setVelocity(new Vector2f(-1f, 0f));
-            return enemyPos.sub(1f * timeSec, 0f);
-         }
-         else if (map.isTile(enemyPos.add(0f, 1f), Air.class)) {
-            target.setVelocity(new Vector2f(0f, 1f));
-            return enemyPos.add(0f, 1f * timeSec);
-         }
-         else {
-            target.setVelocity(new Vector2f(0f, -1f));
-            return enemyPos.sub(0f, 1f * timeSec);
-         }
+      if ((target.getVelocity()).length() == 0) {
+         return setInitial(map, target, enemyPos, timeSec);
       } 
       else {
-         if (enemyPos.distance(playPos) <= 1.5f) {
-            float ex = enemyPos.getX();
-            float ey = enemyPos.getY();
-            float px = playPos.getX();
-            float py = playPos.getY();
-         
-            if (ex == px) {
-               if (ey > py) {
-                  target.setVelocity(new Vector2f(0f, -1f));
-                  return enemyPos.add(0f, -1f * timeSec);
-               }
-               else {
-                  target.setVelocity(new Vector2f(0f, 1f));
-                  return enemyPos.add(0f, 1f * timeSec);
-               }
+         if (enemyPos.distance((double)playPos.getX(), (double)playPos.getY()) <= 1.5f) {
+            return followPlayer(map, target, enemyPos, playPos, timeSec);
+         }
+         else {
+            return returnPosition(map, target, enemyPos, playPos, timeSec);
+         }
+      }
+     // return enemyPos;
+   }
+
+   public Vector2f setInitial(Map map, Entity target, Vector2f enemyPos, float timeSec) {
+      if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
+         target.setVelocity(new Vector2f(1f, 0f));
+         return enemyPos.add(1f * timeSec, 0f);
+      }
+      else if (map.isTile(enemyPos.sub(1f, 0f), Air.class)) {
+         target.setVelocity(new Vector2f(-1f, 0f));
+         return enemyPos.sub(1f * timeSec, 0f);
+      }
+      else if (map.isTile(enemyPos.add(0f, 1f), Air.class)) {
+         target.setVelocity(new Vector2f(0f, 1f));
+         return enemyPos.add(0f, 1f * timeSec);
+      }
+      else {
+         target.setVelocity(new Vector2f(0f, -1f));
+         return enemyPos.sub(0f, 1f * timeSec);
+      }
+   }
+    
+   public Vector2f returnPosition(Map map, Entity tar, Vector2f eP, Vector2f playPos, float ts) {
+      Random r = new Random();
+      int choice = r.nextInt(100);
+      Vector2f v = tar.getVelocity();
+      float xs = v.getX();
+      float ys = v.getY();
+      int[] openSpace = fillArray(map, eP, v, ts);
+      int count = 0, forward = 0;
+      
+      for(int i : openSpace) {
+         if (openSpace[i] != 2) {
+            count += openSpace[i];
+         }
+         else {
+            forward = i;
+         }
+      }
+      
+      if (count >= 2) {
+         if (forward == 0) {
+            if ((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
+                 (choice < 10)) {
+               return chooseDirPosition(openSpace, map, tar, ts);
+            }
+            else if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
+               return eP.add(0f, 1f * ts);
             }
             else {
-               if (ex > px) {
-                  target.setVelocity(new Vector2f(-1f, 0f));
-                  return enemyPos.add(-1f * timeSec, 0f);
-               }
-               else {
-                  target.setVelocity(new Vector2f(1f, 0f));
-                  return enemyPos.add(1f * timeSec, 0f);
-               }
+               tar.setVelocity(new Vector2f(0f, -1f));
+               return eP.add(0f, -1f * ts);
+            }
+         }
+         else if (forward == 1) {
+            if ((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
+                 (choice < 10)) {
+               return chooseDirPosition(openSpace, map, tar, ts);
+            }
+            else if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
+               return eP.add(1f * ts, 0f);
+            }
+            else {
+               tar.setVelocity(new Vector2f(-1f, 0f));
+               return eP.add(-1f * ts, 0f);
+            }
+         }
+         else if (forward == 2) {
+            if ((map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) &&
+                 (choice < 10)) {
+               return chooseDirPosition(openSpace, map, tar, ts);
+            }
+            else if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
+               return eP.add(0f, -1f * ts);
+            }
+            else {
+               tar.setVelocity(new Vector2f(0f, 1f));
+               return eP.add(0f, 1f * ts);
             }
          }
          else {
-            LinkedList intersection = returnIntersections(map, enemyPos, timeSec);
-            
-            if (checkForAir(map, enemyPos, eVelocity, timeSec)) {
-               String direction = returnDir(intersection);
-               return returnPosition(map, target, direction, enemyPos, eVelocity, timeSec);
+            if ((map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) &&
+                 (choice < 10)) {
+               return chooseDirPosition(openSpace, map, tar, ts);
+            }
+            else if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
+               return eP.add(-1f * ts, 0f);
             }
             else {
-               String direction = returnDir(intersection);
-               return returnPosition(map, target, direction, enemyPos, eVelocity, timeSec);
+               tar.setVelocity(new Vector2f(1f, 0f));
+               return eP.add(1f * ts, 0f);
             }
-         }
-      } 
-   }
-   
-   public LinkedList returnIntersections(Map map, Vector2f eP, float ts) {
-      LinkedList i = new LinkedList();
-      if (map.isTile(eP.add(1f, 0f), Air.class)) {
-         i.add("right");
-      }
-      if (map.isTile(eP.add(0f, 1f), Air.class)) {
-         i.add("up");
-      }
-      if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
-         i.add("left");
-      }
-      if (map.isTile(eP.add(0f, -1f * ts), Air.class)) {
-         i.add("down");
-      }
-      return i;
-   }
-   
-   public boolean checkForAir(Map map, Vector2f eP, Vector2f vel, float ts) {
-      float xs = vel.getX();
-      float ys = vel.getY();
-   
-      if (xs == 0) {
-         if (ys < 0 && map.isTile(eP.add(0f, ts * ys), Air.class)) {
-            return true;
-         }
-         else if (ys > 0 && map.isTile(eP.add(0f, ys), Air.class)) {
-            return true;
          }
       }
       else {
-         if (xs < 0 && map.isTile(eP.add(xs * ts, 0f), Air.class)) {
-            return true;
+         if (forward == 0) {
+            if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
+               return eP.add(0f, 1f * ts);
+            }
+            else {
+               tar.setVelocity(new Vector2f(0f, -1f));
+               return eP.add(0f, -1f * ts);
+            }
          }
-         else if (xs > 0 && map.isTile(eP.add(xs, 0f), Air.class)) {
-            return true;
+         else if (forward == 1) {
+            if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
+               return eP.add(1f * ts, 0f);
+            }
+            else {
+               tar.setVelocity(new Vector2f(-1f, 0f));
+               return eP.add(-1f * ts, 0f);
+            }
          }
+         else if (forward == 2) {
+            if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
+               return eP.add(0f, -1f * ts);
+            }
+            else {
+               tar.setVelocity(new Vector2f(0f, 1f));
+               return eP.add(0f, 1f * ts);
+            }
+         }
+         else {
+            if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
+               return eP.add(-1f * ts, 0f);
+            }
+            else {
+               tar.setVelocity(new Vector2f(1f, 0f));
+               return eP.add(1f * ts, 0f);
+            }
+         }  
       }
-      return false;
-   }  
+   }
    
-   public Vector2f returnPosition(Map map, Entity tar, String d, Vector2f eP, Vector2f vel, float ts) {
-      if (d.equals("left")) {
-         if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
-            tar.setVelocity(new Vector2f(-1f, 0f));
-            return eP.add(-1f * ts, 0f);
-         }
-         else if (map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
-            tar.setVelocity(new Vector2f(-1f, 0f));
-            return eP.add(-1f * ts, 0f);
-         }
+   public Vector2f chooseDirPosition(int[] oSpace, Map map, Entity tar, float ts) {
+      Random ran = new Random();
+      Vector2f eP = tar.getPosition();
+      int dir = ran.nextInt(oSpace.length);
+      
+      while (oSpace[dir] == 0) {
+         dir = ran.nextInt(oSpace.length);
       }
-      else if (d.equals("right")) {
-         if (map.isTile(eP.add(1f, 0f), Air.class)) {
-            tar.setVelocity(new Vector2f(1f, 0f));
-            return eP.add(1f * ts, 0f);
-         }
-         else if (map.isTile(eP.add(1f, 0f), Fire.class)) {
-            tar.setVelocity(new Vector2f(1f, 0f));
-            return eP.add(1f * ts, 0f);
-         }
-      }
-      else if (d.equals("up")) {
-         if (map.isTile(eP.add(0f, 1f), Air.class)) {
-            tar.setVelocity(new Vector2f(0f, 1f));
+      
+      if (dir == 0) {
+         if(map.isTile(eP.add(0f, 1f * (1f + ts)), Air.class) || map.isTile(eP.add(0f, 1f * (1f + ts)), Fire.class)) {
             return eP.add(0f, 1f * ts);
          }
-         else if (map.isTile(eP.add(0f, 1f), Fire.class)) {
-            tar.setVelocity(new Vector2f(0f, 1f));
-            return eP.add(0f, 1f * ts);
-         }
-      }
-      else if (d.equals("down")) {
-         if (map.isTile(eP.add(0f, -1f * ts), Air.class)) {
+         else {
             tar.setVelocity(new Vector2f(0f, -1f));
             return eP.add(0f, -1f * ts);
          }
-         else if (map.isTile(eP.add(0f, -1f * ts), Air.class)) {
-            tar.setVelocity(new Vector2f(0f, -1f));
+      }
+      else if (dir == 1) {
+         if(map.isTile(eP.add(1f * (1f + ts), 0f), Air.class) || map.isTile(eP.add(1f * (1f + ts), 0f), Fire.class)) {
+            return eP.add(1f * ts, 0f);
+         }
+         else {
+            tar.setVelocity(new Vector2f(-1f, 0f));
+            return eP.add(-1f * ts, 0f);
+         }
+      }
+      else if (dir == 2) {
+         if(map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) {
             return eP.add(0f, -1f * ts);
+         }
+         else {
+            tar.setVelocity(new Vector2f(0f, 1f));
+            return eP.add(0f, 1f * ts);
          }
       }
       else {
-         float xs = vel.getX();
-         float ys = vel.getY();
+         if(map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
+            return eP.add(-1f * ts, 0f);
+         }
+         else {
+            tar.setVelocity(new Vector2f(1f, 0f));
+            return eP.add(1f * ts, 0f);
+         }
+      }  
+   
+   }
+   
+   public int[] fillArray(Map map, Vector2f eP, Vector2f v, float ts) {
+      int[] oSpace = new int[]{0,0,0,0};
+      float xs = v.getX();
+      float ys = v.getY();
+      
+      if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class) &&
+         !map.isTile(eP.add(0f, 1f), Unbreakable.class)) {
+         if (ys <= 0) {
+            oSpace[0] = 1;
+         }
+         else {
+            oSpace[0] = 2;
+         }
+      }
+      if(map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class) &&
+         !map.isTile(eP.add(0f, -1f *ts), Unbreakable.class)) {
+         if (ys >= 0) {
+            oSpace[2] = 1;
+         }
+         else {
+            oSpace[2] = 2;
+         }
+      }
+      if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class) &&
+         !map.isTile(eP.add(1f, 0f), Unbreakable.class)) {
+         if (xs <= 0) {
+            oSpace[1] = 1;
+         }
+         else {
+            oSpace[1] = 2;
+         }
+      }
+      if(map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class) &&
+         !map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class)) {
+         if (xs >= 0) {
+            oSpace[3] = 1;
+         }
+         else {
+            oSpace[3] = 2;
+         }
+      }
+      
+      return oSpace;
+   }
+   
+   public Vector2f followPlayer(Map map, Entity tar, Vector2f eP, Vector2f pP, float ts) {
+      float ex = eP.getX();
+      float ey = eP.getY();
+      float px = pP.getX();
+      float py = pP.getY();
          
-         if (xs == 0f) {
-            if (ys < 0) {
-               if (map.isTile(eP.add(0f, ts * ys), Air.class)) {
-                  return eP.add(0f, ys * ts);
-               }
-               else if (map.isTile(eP.add(0f, ts * ys), Fire.class)) {
-                  return eP.add(0f, ys * ts);
-               }
-               else {
-                  tar.setVelocity(new Vector2f(0f, 1f));
-                  return eP.add(0f, 1f * ts);
-               }
+      if (ex == px) {
+         if (ey > py) {
+            if(map.isTile(eP.add(0f, -1f * ts), Air.class)) {
+               tar.setVelocity(new Vector2f(0f, -1f));
+               return eP.add(0f, -1f * ts);
             }
-            else {
-               if (map.isTile(eP.add(0f, ys), Air.class)) {
-                  return eP.add(0f, ys * ts);
-               }
-               else if (map.isTile(eP.add(0f, ys), Fire.class)) {
-                  return eP.add(0f, ys * ts);
-               }
-               else {
-                  tar.setVelocity(new Vector2f(0f, -1f));
-                  return eP.add(0f, -1f * ts);
-               }
+            else if (map.isTile(eP.add(0f, -1f * ts), Fire.class)) {
+               tar.setVelocity(new Vector2f(0f, -1f));
+               return eP.add(0f, -1f * ts);
             }
          }
          else {
-            if (xs < 0) {
-               if (map.isTile(eP.add(xs * ts, 0f), Air.class)) {
-                  return eP.add(xs * ts, 0f);
-               }
-               else if (map.isTile(eP.add(xs * ts, 0f), Fire.class)) {
-                  return eP.add(xs * ts, 0f);
-               }
-               else {
-                  tar.setVelocity(new Vector2f(1f, 0f));
-                  return eP.add(1f * ts, 0f);
-               }
+            if(map.isTile(eP.add(0f, 1f), Air.class)) {
+               tar.setVelocity(new Vector2f(0f, 1f));
+               return eP.add(0f, 1f * ts);
             }
-            else {
-               if (map.isTile(eP.add(xs, 0f), Air.class)) {
-                  return eP.add(xs * ts, 0f);
-               }
-               else if (map.isTile(eP.add(xs, 0f), Fire.class)) {
-                  return eP.add(xs * ts, 0f);
-               }
-               else {
-                  tar.setVelocity(new Vector2f(-1f, 0f));
-                  return eP.add(-1f * ts, 0f);
-               }
+            else if(map.isTile(eP.add(0f, 1f), Fire.class)) {
+               tar.setVelocity(new Vector2f(0f, 1f));
+               return eP.add(0f, 1f * ts);
+            }
+         }
+      }
+      else {
+         if (ex > px) {
+            if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
+               tar.setVelocity(new Vector2f(-1f, 0f));
+               return eP.add(-1f * ts, 0f);
+            }
+            else if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
+               tar.setVelocity(new Vector2f(-1f, 0f));
+               return eP.add(-1f * ts, 0f);
+            }
+         }
+         else {
+            if (map.isTile(eP.add(1f * ts, 0f), Air.class)) {
+               tar.setVelocity(new Vector2f(1f, 0f));
+               return eP.add(1f * ts, 0f);
+            }
+            else if (map.isTile(eP.add(1f * ts, 0f), Air.class)) {
+               tar.setVelocity(new Vector2f(1f, 0f));
+               return eP.add(1f * ts, 0f);
             }
          }
       }
       return eP;
-   }
-   
-   public String returnDir(LinkedList ll) {
-      Random r = new Random();
-   
-      if (r.nextInt(10) == 0) {
-         String str;
-         int choice = r.nextInt(ll.size());
-         do {
-            str = ll.poll().toString();
-            choice--;
-         } while ( choice > 0);
-         return str;
-      }
-      else {
-         return "same";
-      }
    }
 }
