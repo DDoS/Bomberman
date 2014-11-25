@@ -128,7 +128,7 @@ public class World extends TickingElement {
         }
         if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <= 0) {
             score -= 10;
-            score += (game.getSession().getScore() + game.getPhysics().getEnemyScore());
+            score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
             game.getSession().setScore(score);
             score = 0;
             timer = 500;

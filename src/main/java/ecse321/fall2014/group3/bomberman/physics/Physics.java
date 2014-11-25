@@ -57,7 +57,7 @@ public class Physics extends TickingElement {
     private long mapVersion = 0;
     private boolean powerUPCollected = false;
     private TextBoxEntity levelStateText;
-    private static int enemyScore;
+    private int enemyScore;
 
     public Physics(Game game) {
         super("Physics", 60);
@@ -302,7 +302,7 @@ public class Physics extends TickingElement {
         // Update UI
         final World world = game.getWorld();
         levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                + " | Score " + world.getScore() + " |  Timer " + world.getTimer());
+                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer());
     }
 
     private Vector2f getInputVector() {
@@ -353,7 +353,7 @@ public class Physics extends TickingElement {
         return free;
     }
 
-    public static int getEnemyScore(){
+    public int getEnemyScore(){
         return enemyScore;
     }
 
