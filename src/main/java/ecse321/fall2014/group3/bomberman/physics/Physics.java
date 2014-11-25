@@ -57,10 +57,12 @@ public class Physics extends TickingElement {
     private long mapVersion = 0;
     private boolean powerUPCollected = false;
     private TextBoxEntity levelStateText;
+    private static int enemyScore;
 
     public Physics(Game game) {
         super("Physics", 60);
         this.game = game;
+        enemyScore = 0;
     }
 
     @Override
@@ -204,6 +206,9 @@ public class Physics extends TickingElement {
             collisionDetection.add(pontan);
         }
         powerUPCollected = false;
+
+        //Set enemy score to 0
+        enemyScore = 0;
     }
 
     private void doGameTick(long dt) {
@@ -283,6 +288,8 @@ public class Physics extends TickingElement {
             if (entity instanceof Enemy) {
                 if (entity.isCollidingWith(Fire.class)) {
                     iterator.remove();
+                    //Adding the enemy score (Unique to each enemy) to the total enemy score
+                    enemyScore += ((Enemy) entity).getScore();
                     collisionDetection.remove(entity);
                 }
                 final Enemy enemy = (Enemy) entity;
@@ -344,6 +351,10 @@ public class Physics extends TickingElement {
             }
         }
         return free;
+    }
+
+    public static int getEnemyScore(){
+        return enemyScore;
     }
 
     /**
