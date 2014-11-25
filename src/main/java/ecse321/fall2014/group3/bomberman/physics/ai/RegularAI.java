@@ -24,6 +24,7 @@ public class RegularAI extends AI {
       float timeSec = dt / TO_SECS;
       Vector2f enemyPos = target.getPosition();
       Vector2f playPos = player.getPosition();
+      Random random = new Random();
       
       if ((target.getVelocity()).length() == 0) {
          return setInitial(map, target, enemyPos, timeSec);
@@ -33,7 +34,12 @@ public class RegularAI extends AI {
             return followPlayer(map, target, enemyPos, playPos, timeSec);
          }
          else {
-            return returnPosition(map, target, enemyPos, playPos, timeSec);
+            if (random.nextInt(100) < 10) {
+               return intersection(map, target, enemyPos, timeSec);
+            }
+            else {
+               return returnPosition(map, target, enemyPos, playPos, timeSec);
+            }
          }
       }
    }
@@ -57,137 +63,106 @@ public class RegularAI extends AI {
       }
    }
     
-   public Vector2f returnPosition(Map map, Entity tar, Vector2f eP, Vector2f playPos, float ts) {
-      Random r = new Random();
-      int choice = r.nextInt(100);
+   public Vector2f intersection(Map map, Entity tar, Vector2f eP, float ts) {
       Vector2f v = tar.getVelocity();
       float xs = v.getX();
       float ys = v.getY();
       int[] openSpace = fillArray(map, eP, v, ts);
-      int count = 0, forward = 0;
+      int count = 0;
       
       for(int i : openSpace) {
-         if (openSpace[i] != 2) {
-            count += openSpace[i];
-         }
-         else {
-            forward = i;
+         if (openSpace[i] != 0) {
+            count ++;
          }
       }
-      
-      if (forward == 0) {
-         if ((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
-                 (choice < 10) && (count >= 2)) {
-            return chooseDirPosition(openSpace, map, tar, ts);
-         }
-         else if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
-            return eP.add(0f, 1f * ts);
-         }
-         else {
-            tar.setVelocity(new Vector2f(0f, -1f));
-            return eP.add(0f, -1f * ts);
+   
+      if (count >= 3) {
+         boolean choseDir = false;
+         Random r = new Random();
+         while (!choseDir) {
+            switch (r.nextInt(4)) {
+               case 0: 
+                  if (openSpace[0] >= 1) {
+                     tar.setVelocity(new Vector2f(1f, 0f));
+                     return eP.add(1f * ts, 0f);
+                  }
+                  break;
+               case 1: 
+                  if (openSpace[1] >= 1) {
+                     tar.setVelocity(new Vector2f(1f, 0f));
+                     return eP.add(1f * ts, 0f);
+                  }
+                  break;
+               case 2: 
+                  if (openSpace[2] >= 1) {
+                     tar.setVelocity(new Vector2f(1f, 0f));
+                     return eP.add(1f * ts, 0f);
+                  }
+                  break;
+               case 3: 
+                  if (openSpace[3] >= 1) {
+                     tar.setVelocity(new Vector2f(1f, 0f));
+                     return eP.add(1f * ts, 0f);
+                  }
+                  break;
+            }
          }
       }
-      else if (forward == 1) {
-         if ((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
-                 (choice < 10) && (count >= 2)) {
-            return chooseDirPosition(openSpace, map, tar, ts);
-         }
-         else if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
-            return eP.add(1f * ts, 0f);
-         }
-         else {
-            tar.setVelocity(new Vector2f(-1f, 0f));
-            return eP.add(-1f * ts, 0f);
-         }
-      }
-      else if (forward == 2) {
-         if ((map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) &&
-                 (choice < 10) && (count >= 2)) {
-            return chooseDirPosition(openSpace, map, tar, ts);
-         }
-         else if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
-            return eP.add(0f, -1f * ts);
+      return eP;
+   }
+   
+   public Vector2f returnPosition(Map map, Entity tar, Vector2f eP, Vector2f playPos, float ts) {
+      float xs = tar.getVelocity().getX();
+      float ys = tar.getVelocity().getY();
+         
+      if (xs == 0f) {
+         if (ys < 0) {
+            if (!map.isTile(eP.add(0f, ts * ys), Unbreakable.class) && !map.isTile(eP.add(0f, ts * ys), Breakable.class)) {
+               return eP.add(0f, ys * ts);
+            }
+            else {
+               tar.setVelocity(new Vector2f(0f, 1f));
+               return eP.add(0f, 1f * ts);
+            }
          }
          else {
-            tar.setVelocity(new Vector2f(0f, 1f));
-            return eP.add(0f, 1f * ts);
+            if (!map.isTile(eP.add(0f, ys), Unbreakable.class) && !map.isTile(eP.add(0f, ys), Breakable.class)) {
+               return eP.add(0f, ys * ts);
+            }
+            else {
+               tar.setVelocity(new Vector2f(0f, -1f));
+               return eP.add(0f, -1f * ts);
+            }
          }
       }
       else {
-         if ((map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) &&
-                 (choice < 10) && (count >= 2)) {
-            return chooseDirPosition(openSpace, map, tar, ts);
-         }
-         else if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
-            return eP.add(-1f * ts, 0f);
+         if (xs < 0) {
+            if (!map.isTile(eP.add(xs * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(xs * ts, 0f), Breakable.class)) {
+               return eP.add(xs * ts, 0f);
+            }
+            else {
+               tar.setVelocity(new Vector2f(1f, 0f));
+               return eP.add(1f * ts, 0f);
+            }
          }
          else {
-            tar.setVelocity(new Vector2f(1f, 0f));
-            return eP.add(1f * ts, 0f);
+            if (!map.isTile(eP.add(xs, 0f), Unbreakable.class) && !map.isTile(eP.add(xs, 0f), Breakable.class)) {
+               return eP.add(xs * ts, 0f);
+            }
+            else {
+               tar.setVelocity(new Vector2f(-1f, 0f));
+               return eP.add(-1f * ts, 0f);
+            }
          }
       }
    }
-   
-   public Vector2f chooseDirPosition(int[] oSpace, Map map, Entity tar, float ts) {
-      Random ran = new Random();
-      Vector2f eP = tar.getPosition();
-      int dir = ran.nextInt(oSpace.length);
       
-      while (oSpace[dir] == 0) {
-         dir = ran.nextInt(oSpace.length);
-      }
-      
-      if (dir == 0) {
-         if((map.isTile(eP.add(0f, 1f * (1f + ts)), Air.class) || map.isTile(eP.add(0f, 1f * (1f + ts)), Fire.class)) &&
-             !map.isTile(eP.add(0f, 1f * (1f + ts)), Unbreakable.class) && !map.isTile(eP.add(0f, 1f * (1f + ts)), Breakable.class)) {
-            return eP.add(0f, 1f * ts);
-         }
-         else {
-            tar.setVelocity(new Vector2f(0f, -1f));
-            return eP.add(0f, -1f * ts);
-         }
-      }
-      else if (dir == 1) {
-         if((map.isTile(eP.add(1f * (1f + ts), 0f), Air.class) || map.isTile(eP.add(1f * (1f + ts), 0f), Fire.class)) &&
-            !map.isTile(eP.add(1f * (1f + ts), 0f), Unbreakable.class) && !map.isTile(eP.add(1f * (1f + ts), 0f), Breakable.class)) {
-            return eP.add(1f * ts, 0f);
-         }
-         else {
-            tar.setVelocity(new Vector2f(-1f, 0f));
-            return eP.add(-1f * ts, 0f);
-         }
-      }
-      else if (dir == 2) {
-         if((map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) &&
-             !map.isTile(eP.add(0f, -1f * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f * ts), Breakable.class)) {
-            return eP.add(0f, -1f * ts);
-         }
-         else {
-            tar.setVelocity(new Vector2f(0f, 1f));
-            return eP.add(0f, 1f * ts);
-         }
-      }
-      else {
-         if((map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) &&
-             !map.isTile(eP.add(-1f * ts, 0f), Air.class) && !map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
-            return eP.add(-1f * ts, 0f);
-         }
-         else {
-            tar.setVelocity(new Vector2f(1f, 0f));
-            return eP.add(1f * ts, 0f);
-         }
-      }  
-   
-   }
-   
    public int[] fillArray(Map map, Vector2f eP, Vector2f v, float ts) {
       int[] oSpace = new int[]{0,0,0,0};
       float xs = v.getX();
       float ys = v.getY();
       
-      if((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
-         !map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+      if(!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
          if (ys <= 0) {
             oSpace[0] = 1;
          }
@@ -195,8 +170,7 @@ public class RegularAI extends AI {
             oSpace[0] = 2;
          }
       }
-      if((map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) &&
-         !map.isTile(eP.add(0f, -1f *ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f *ts), Breakable.class)) {
+      if(!map.isTile(eP.add(0f, -1f *ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f *ts), Breakable.class)) {
          if (ys >= 0) {
             oSpace[2] = 1;
          }
@@ -204,8 +178,7 @@ public class RegularAI extends AI {
             oSpace[2] = 2;
          }
       }
-      if((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
-         !map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
+      if(!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
          if (xs <= 0) {
             oSpace[1] = 1;
          }
@@ -213,8 +186,7 @@ public class RegularAI extends AI {
             oSpace[1] = 2;
          }
       }
-      if((map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) &&
-         !map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-1f * ts, 0f), Breakable.class)) {
+      if(!map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-1f * ts, 0f), Breakable.class)) {
          if (xs >= 0) {
             oSpace[3] = 1;
          }
@@ -222,7 +194,6 @@ public class RegularAI extends AI {
             oSpace[3] = 2;
          }
       }
-      
       return oSpace;
    }
    
