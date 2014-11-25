@@ -36,7 +36,6 @@ public class RegularAI extends AI {
             return returnPosition(map, target, enemyPos, playPos, timeSec);
          }
       }
-     // return enemyPos;
    }
 
    public Vector2f setInitial(Map map, Entity target, Vector2f enemyPos, float timeSec) {
@@ -76,97 +75,57 @@ public class RegularAI extends AI {
          }
       }
       
-      if (count >= 2) {
-         if (forward == 0) {
-            if ((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
-                 (choice < 10)) {
-               return chooseDirPosition(openSpace, map, tar, ts);
-            }
-            else if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
-               return eP.add(0f, 1f * ts);
-            }
-            else {
-               tar.setVelocity(new Vector2f(0f, -1f));
-               return eP.add(0f, -1f * ts);
-            }
+      if (forward == 0) {
+         if ((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
+                 (choice < 10) && (count >= 2)) {
+            return chooseDirPosition(openSpace, map, tar, ts);
          }
-         else if (forward == 1) {
-            if ((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
-                 (choice < 10)) {
-               return chooseDirPosition(openSpace, map, tar, ts);
-            }
-            else if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
-               return eP.add(1f * ts, 0f);
-            }
-            else {
-               tar.setVelocity(new Vector2f(-1f, 0f));
-               return eP.add(-1f * ts, 0f);
-            }
-         }
-         else if (forward == 2) {
-            if ((map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) &&
-                 (choice < 10)) {
-               return chooseDirPosition(openSpace, map, tar, ts);
-            }
-            else if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
-               return eP.add(0f, -1f * ts);
-            }
-            else {
-               tar.setVelocity(new Vector2f(0f, 1f));
-               return eP.add(0f, 1f * ts);
-            }
+         else if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
+            return eP.add(0f, 1f * ts);
          }
          else {
-            if ((map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) &&
-                 (choice < 10)) {
-               return chooseDirPosition(openSpace, map, tar, ts);
-            }
-            else if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
-               return eP.add(-1f * ts, 0f);
-            }
-            else {
-               tar.setVelocity(new Vector2f(1f, 0f));
-               return eP.add(1f * ts, 0f);
-            }
+            tar.setVelocity(new Vector2f(0f, -1f));
+            return eP.add(0f, -1f * ts);
+         }
+      }
+      else if (forward == 1) {
+         if ((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
+                 (choice < 10) && (count >= 2)) {
+            return chooseDirPosition(openSpace, map, tar, ts);
+         }
+         else if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
+            return eP.add(1f * ts, 0f);
+         }
+         else {
+            tar.setVelocity(new Vector2f(-1f, 0f));
+            return eP.add(-1f * ts, 0f);
+         }
+      }
+      else if (forward == 2) {
+         if ((map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) &&
+                 (choice < 10) && (count >= 2)) {
+            return chooseDirPosition(openSpace, map, tar, ts);
+         }
+         else if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
+            return eP.add(0f, -1f * ts);
+         }
+         else {
+            tar.setVelocity(new Vector2f(0f, 1f));
+            return eP.add(0f, 1f * ts);
          }
       }
       else {
-         if (forward == 0) {
-            if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
-               return eP.add(0f, 1f * ts);
-            }
-            else {
-               tar.setVelocity(new Vector2f(0f, -1f));
-               return eP.add(0f, -1f * ts);
-            }
+         if ((map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) &&
+                 (choice < 10) && (count >= 2)) {
+            return chooseDirPosition(openSpace, map, tar, ts);
          }
-         else if (forward == 1) {
-            if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
-               return eP.add(1f * ts, 0f);
-            }
-            else {
-               tar.setVelocity(new Vector2f(-1f, 0f));
-               return eP.add(-1f * ts, 0f);
-            }
-         }
-         else if (forward == 2) {
-            if(map.isTile(eP.add(0f, -1f), Air.class) || map.isTile(eP.add(0f, -1f), Fire.class)) {
-               return eP.add(0f, -1f * ts);
-            }
-            else {
-               tar.setVelocity(new Vector2f(0f, 1f));
-               return eP.add(0f, 1f * ts);
-            }
+         else if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
+            return eP.add(-1f * ts, 0f);
          }
          else {
-            if(map.isTile(eP.add(-1f, 0f), Air.class) || map.isTile(eP.add(-1f, 0f), Fire.class)) {
-               return eP.add(-1f * ts, 0f);
-            }
-            else {
-               tar.setVelocity(new Vector2f(1f, 0f));
-               return eP.add(1f * ts, 0f);
-            }
-         }  
+            tar.setVelocity(new Vector2f(1f, 0f));
+            return eP.add(1f * ts, 0f);
+         }
       }
    }
    
@@ -180,7 +139,8 @@ public class RegularAI extends AI {
       }
       
       if (dir == 0) {
-         if(map.isTile(eP.add(0f, 1f * (1f + ts)), Air.class) || map.isTile(eP.add(0f, 1f * (1f + ts)), Fire.class)) {
+         if((map.isTile(eP.add(0f, 1f * (1f + ts)), Air.class) || map.isTile(eP.add(0f, 1f * (1f + ts)), Fire.class)) &&
+             !map.isTile(eP.add(0f, 1f * (1f + ts)), Unbreakable.class) && !map.isTile(eP.add(0f, 1f * (1f + ts)), Breakable.class)) {
             return eP.add(0f, 1f * ts);
          }
          else {
@@ -189,7 +149,8 @@ public class RegularAI extends AI {
          }
       }
       else if (dir == 1) {
-         if(map.isTile(eP.add(1f * (1f + ts), 0f), Air.class) || map.isTile(eP.add(1f * (1f + ts), 0f), Fire.class)) {
+         if((map.isTile(eP.add(1f * (1f + ts), 0f), Air.class) || map.isTile(eP.add(1f * (1f + ts), 0f), Fire.class)) &&
+            !map.isTile(eP.add(1f * (1f + ts), 0f), Unbreakable.class) && !map.isTile(eP.add(1f * (1f + ts), 0f), Breakable.class)) {
             return eP.add(1f * ts, 0f);
          }
          else {
@@ -198,7 +159,8 @@ public class RegularAI extends AI {
          }
       }
       else if (dir == 2) {
-         if(map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) {
+         if((map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) &&
+             !map.isTile(eP.add(0f, -1f * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f * ts), Breakable.class)) {
             return eP.add(0f, -1f * ts);
          }
          else {
@@ -207,7 +169,8 @@ public class RegularAI extends AI {
          }
       }
       else {
-         if(map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
+         if((map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) &&
+             !map.isTile(eP.add(-1f * ts, 0f), Air.class) && !map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
             return eP.add(-1f * ts, 0f);
          }
          else {
@@ -223,8 +186,8 @@ public class RegularAI extends AI {
       float xs = v.getX();
       float ys = v.getY();
       
-      if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class) &&
-         !map.isTile(eP.add(0f, 1f), Unbreakable.class)) {
+      if((map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) &&
+         !map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
          if (ys <= 0) {
             oSpace[0] = 1;
          }
@@ -232,8 +195,8 @@ public class RegularAI extends AI {
             oSpace[0] = 2;
          }
       }
-      if(map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class) &&
-         !map.isTile(eP.add(0f, -1f *ts), Unbreakable.class)) {
+      if((map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) &&
+         !map.isTile(eP.add(0f, -1f *ts), Unbreakable.class) && !map.isTile(eP.add(0f, -1f *ts), Breakable.class)) {
          if (ys >= 0) {
             oSpace[2] = 1;
          }
@@ -241,8 +204,8 @@ public class RegularAI extends AI {
             oSpace[2] = 2;
          }
       }
-      if(map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class) &&
-         !map.isTile(eP.add(1f, 0f), Unbreakable.class)) {
+      if((map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) &&
+         !map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
          if (xs <= 0) {
             oSpace[1] = 1;
          }
@@ -250,8 +213,8 @@ public class RegularAI extends AI {
             oSpace[1] = 2;
          }
       }
-      if(map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class) &&
-         !map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class)) {
+      if((map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) &&
+         !map.isTile(eP.add(-1f * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-1f * ts, 0f), Breakable.class)) {
          if (xs >= 0) {
             oSpace[3] = 1;
          }
@@ -271,21 +234,13 @@ public class RegularAI extends AI {
          
       if (ex == px) {
          if (ey > py) {
-            if(map.isTile(eP.add(0f, -1f * ts), Air.class)) {
-               tar.setVelocity(new Vector2f(0f, -1f));
-               return eP.add(0f, -1f * ts);
-            }
-            else if (map.isTile(eP.add(0f, -1f * ts), Fire.class)) {
+            if(map.isTile(eP.add(0f, -1f * ts), Air.class) || map.isTile(eP.add(0f, -1f * ts), Fire.class)) {
                tar.setVelocity(new Vector2f(0f, -1f));
                return eP.add(0f, -1f * ts);
             }
          }
          else {
-            if(map.isTile(eP.add(0f, 1f), Air.class)) {
-               tar.setVelocity(new Vector2f(0f, 1f));
-               return eP.add(0f, 1f * ts);
-            }
-            else if(map.isTile(eP.add(0f, 1f), Fire.class)) {
+            if(map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
                tar.setVelocity(new Vector2f(0f, 1f));
                return eP.add(0f, 1f * ts);
             }
@@ -293,21 +248,13 @@ public class RegularAI extends AI {
       }
       else {
          if (ex > px) {
-            if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
-               tar.setVelocity(new Vector2f(-1f, 0f));
-               return eP.add(-1f * ts, 0f);
-            }
-            else if (map.isTile(eP.add(-1f * ts, 0f), Air.class)) {
+            if (map.isTile(eP.add(-1f * ts, 0f), Air.class) || map.isTile(eP.add(-1f * ts, 0f), Fire.class)) {
                tar.setVelocity(new Vector2f(-1f, 0f));
                return eP.add(-1f * ts, 0f);
             }
          }
          else {
-            if (map.isTile(eP.add(1f * ts, 0f), Air.class)) {
-               tar.setVelocity(new Vector2f(1f, 0f));
-               return eP.add(1f * ts, 0f);
-            }
-            else if (map.isTile(eP.add(1f * ts, 0f), Air.class)) {
+            if (map.isTile(eP.add(1f * ts, 0f), Air.class) || map.isTile(eP.add(1f * ts, 0f), Fire.class)) {
                tar.setVelocity(new Vector2f(1f, 0f));
                return eP.add(1f * ts, 0f);
             }
