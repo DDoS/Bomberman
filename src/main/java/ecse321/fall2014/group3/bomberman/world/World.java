@@ -181,9 +181,9 @@ public class World extends TickingElement {
         final int bombPlaceInput = keyboardState.getAndClearPressCount(Key.PLACE);
         final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
         for (int i = 0; i < bombsToPlace; i++) {
-            final Vector2f inFront = player.getPosition().round().add(player.getDirection().getUnit());
-            if (map.isTile(inFront, Air.class)) {
-                map.setTile(inFront, Bomb.class);
+            final Vector2f position = player.getPosition().add(0.5f, 0.5f);
+            if (map.isTile(position, Air.class)) {
+                map.setTile(position, Bomb.class);
                 updatedMap = true;
                 activeBombs++;
             }
