@@ -57,7 +57,7 @@ public class Physics extends TickingElement {
     private long mapVersion = 0;
     private boolean powerUPCollected = false;
     private TextBoxEntity levelStateText;
-    private int enemyScore;
+    private volatile int enemyScore;
 
     public Physics(Game game) {
         super("Physics", 60);
