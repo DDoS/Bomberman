@@ -141,7 +141,7 @@ public class Physics extends TickingElement {
     private void setupGame() {
         // Add player
         entities.add(player);
-        player.setPosition(Vector2f.ONE);
+        player.setPosition(new Vector2f(1, 11));
         collisionDetection.add(player);
         // Add UI
         final World world = game.getWorld();
@@ -346,7 +346,7 @@ public class Physics extends TickingElement {
         for (Air freeTile : freeTiles) {
             final Vector2f position = freeTile.getPosition();
             // Reject player starting positions
-            if ((position.getFloorX() != 1 || position.getFloorY() != 1 && position.getFloorY() != 2) && (position.getFloorX() != 2 || position.getFloorY() != 1)) {
+            if ((position.getFloorX() != 1 || position.getFloorY() != 11 && position.getFloorY() != 10) && (position.getFloorX() != 2 || position.getFloorY() != 11)) {
                 free.add(position);
             }
         }

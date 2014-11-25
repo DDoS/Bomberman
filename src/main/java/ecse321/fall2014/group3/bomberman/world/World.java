@@ -299,9 +299,9 @@ public class World extends TickingElement {
             }
         }
         // Make the starting position air
-        map.setTile(1, 1, Air.class);
-        map.setTile(2, 1, Air.class);
-        map.setTile(1, 2, Air.class);
+        map.setTile(1, 11, Air.class);
+        map.setTile(2, 11, Air.class);
+        map.setTile(1, 10, Air.class);
         // Select a random tile for the exitway
         final List<Breakable> possibleTiles = map.getTiles(Breakable.class);
         exitwayTile = possibleTiles.get(new Random().nextInt(possibleTiles.size())).getPosition();
