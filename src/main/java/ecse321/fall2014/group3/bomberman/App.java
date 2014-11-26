@@ -104,7 +104,7 @@ public class App {
         JButton createButton = new JButton("New");
         panel.add(createButton);
 
-        final JLabel error = new JLabel("user already exists or missing password");
+        final JLabel error = new JLabel("User Already Exists");
         error.setForeground(Color.RED);
         error.setVisible(false);
         panel.add(error);
@@ -117,7 +117,7 @@ public class App {
                 } else {
                     passwordText.setText("");
                     verifyText.setText("");
-                    error.setText("wrong username or password");
+                    error.setText("Wrong Username or Password");
                     error.setVisible(true);
                 }
             }
@@ -135,17 +135,16 @@ public class App {
                 else if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
                     newPasswordText.setText("");
                     verifyText.setText("");
-                    error.setText("passwords don't match");
+                    error.setText("Passwords Don't Match!");
                     error.setVisible(true);
                 } else {
                     if ((session = Session.create(database, newUserText.getText(), String.valueOf(newPasswordText.getPassword()), realNameText.getText())) != null) {
                         loginWait.release();
                     } else {
-                        realNameText.setText("");
                         userText.setText("");
                         passwordText.setText("");
                         verifyText.setText("");
-                        error.setText("user already exist");
+                        error.setText("User Already Exists");
                         error.setVisible(true);
                     }
                 }
