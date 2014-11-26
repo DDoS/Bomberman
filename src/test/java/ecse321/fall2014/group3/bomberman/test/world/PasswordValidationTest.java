@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by Marco Manglaviti on 23/11/2014.
+ * @author Marco
  */
 public class PasswordValidationTest {
 
