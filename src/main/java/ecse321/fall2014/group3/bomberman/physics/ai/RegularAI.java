@@ -30,10 +30,24 @@ public class RegularAI extends AI {
             if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 1.5f) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
             } else {
-                if (random.nextInt(100) < 10) {
+                float threshold = target.getSpeed() * timeSec;
+                boolean inThreshold = false;
+                boolean atInteger = false;
+                
+                if((target.getVelocity()).getX() == 0) {
+                    if(enemyPos.getY() % 1f < threshold) {
+                        inThreshold = true;
+                    }
+                } else {
+                    if(enemyPos.getX() % 1f < threshold) {
+                        inThreshold = true;
+                    }
+                }
+                
+                if (inThreshold && random.nextInt(100) < 10) {
                     return intersection(map, target, enemyPos, timeSec);
                 } else {
-                    return returnPosition(map, target, enemyPos, playPos, timeSec);
+                    return returnPosition(map, target, enemyPos, timeSec);
                 }
             }
         }
@@ -98,7 +112,7 @@ public class RegularAI extends AI {
         return eP;
     }
 
-    public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, Vector2f playPos, float ts) {
+    public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
 
