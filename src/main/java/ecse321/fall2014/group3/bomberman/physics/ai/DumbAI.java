@@ -17,20 +17,21 @@ public class DumbAI extends AI {
         float timeSec = dt / TO_SECS;
         Vector2f enemyPos = target.getPosition();
         Vector2f eVelocity = target.getVelocity();
+        float eSpeed = target.getSpeed();
 
         if (eVelocity.length() == 0) {
             if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
-                target.setVelocity(new Vector2f(1f, 0f));
+                target.setVelocity(new Vector2f(eSpeed, 0f));
                 return enemyPos.add(1f * timeSec, 0f);
             } else if (map.isTile(enemyPos.add(-1f * timeSec, 0f), Air.class)) {
-                target.setVelocity(new Vector2f(-1f, 0f));
-                return enemyPos.sub(1f * timeSec, 0f);
+                target.setVelocity(new Vector2f(-eSpeed, 0f));
+                return enemyPos.sub(eSpeed * timeSec, 0f);
             } else if (map.isTile(enemyPos.add(0f, 1f), Air.class)) {
-                target.setVelocity(new Vector2f(0f, 1f));
-                return enemyPos.add(0f, 1f * timeSec);
+                target.setVelocity(new Vector2f(0f, eSpeed));
+                return enemyPos.add(0f, eSpeed * timeSec);
             } else {
-                target.setVelocity(new Vector2f(0f, -1f));
-                return enemyPos.sub(0f, 1f * timeSec);
+                target.setVelocity(new Vector2f(0f, -eSpeed));
+                return enemyPos.sub(0f, eSpeed * timeSec);
             }
         } else {
             float xs = eVelocity.getX();
@@ -43,8 +44,8 @@ public class DumbAI extends AI {
                     } else if (map.isTile(enemyPos.add(0f, timeSec * ys), Fire.class)) {
                         return enemyPos.add(0f, ys * timeSec);
                     } else {
-                        target.setVelocity(new Vector2f(0f, 1f));
-                        return enemyPos.add(0f, 1f * timeSec);
+                        target.setVelocity(new Vector2f(0f, eSpeed));
+                        return enemyPos.add(0f, eSpeed * timeSec);
                     }
                 } else {
                     if (map.isTile(enemyPos.add(0f, ys), Air.class)) {
@@ -52,8 +53,8 @@ public class DumbAI extends AI {
                     } else if (map.isTile(enemyPos.add(0f, ys), Fire.class)) {
                         return enemyPos.add(0f, ys * timeSec);
                     } else {
-                        target.setVelocity(new Vector2f(0f, -1f));
-                        return enemyPos.add(0f, -1f * timeSec);
+                        target.setVelocity(new Vector2f(0f, -eSpeed));
+                        return enemyPos.add(0f, -eSpeed * timeSec);
                     }
                 }
             } else {
@@ -63,8 +64,8 @@ public class DumbAI extends AI {
                     } else if (map.isTile(enemyPos.add(xs * timeSec, 0f), Fire.class)) {
                         return enemyPos.add(xs * timeSec, 0f);
                     } else {
-                        target.setVelocity(new Vector2f(1f, 0f));
-                        return enemyPos.add(1f * timeSec, 0f);
+                        target.setVelocity(new Vector2f(eSpeed, 0f));
+                        return enemyPos.add(eSpeed * timeSec, 0f);
                     }
                 } else {
                     if (map.isTile(enemyPos.add(xs, 0f), Air.class)) {
@@ -72,8 +73,8 @@ public class DumbAI extends AI {
                     } else if (map.isTile(enemyPos.add(xs, 0f), Fire.class)) {
                         return enemyPos.add(xs * timeSec, 0f);
                     } else {
-                        target.setVelocity(new Vector2f(-1f, 0f));
-                        return enemyPos.add(-1f * timeSec, 0f);
+                        target.setVelocity(new Vector2f(-eSpeed, 0f));
+                        return enemyPos.add(-eSpeed * timeSec, 0f);
                     }
                 }
             }
