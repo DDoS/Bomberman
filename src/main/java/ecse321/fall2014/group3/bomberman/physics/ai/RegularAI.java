@@ -180,24 +180,24 @@ public class RegularAI extends AI {
 
         if (ex == px) {
             if (ey > py) {
-                if (map.isTile(eP.add(0f, -spd * ts), Air.class) || map.isTile(eP.add(0f, -spd * ts), Fire.class)) {
+                if (!map.isTile(eP.add(0f, -spd * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -spd * ts), Breakable.class)) {
                     tar.setVelocity(new Vector2f(0f, -spd));
                     return eP.add(0f, -spd * ts);
                 }
             } else {
-                if (map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
+                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
                     tar.setVelocity(new Vector2f(0f, 1f));
                     return eP.add(0f, 1f * ts);
                 }
             }
         } else {
             if (ex > px) {
-                if (map.isTile(eP.add(-spd * ts, 0f), Air.class) || map.isTile(eP.add(-spd * ts, 0f), Fire.class)) {
+                if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Breakable.class)) {
                     tar.setVelocity(new Vector2f(-spd, 0f));
                     return eP.add(-spd * ts, 0f);
                 }
             } else {
-                if (map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
+                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) || !map.isTile(eP.add(1f, 0f), Breakable.class)) {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }
