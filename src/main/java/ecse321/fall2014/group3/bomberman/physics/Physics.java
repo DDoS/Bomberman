@@ -46,6 +46,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 public class Physics extends TickingElement {
     private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
     private static final float SLIDING_CONTACT_THRESHOLD = 0.9f;
+    private static final float OVERLAP_CONTACT_THRESHOLD = 0.7f;
     private final Game game;
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
@@ -260,6 +261,10 @@ public class Physics extends TickingElement {
             if (intersection.size.dot(direction.getPerpendicularUnit()) < PERPENDICULAR_CONTACT_THRESHOLD) {
                 continue;
             }
+            // When the most of the player is intersecting, ignore the collision to prevent him from getting stuck
+            if (intersection.area / player.getCollisionBox().getArea() >= OVERLAP_CONTACT_THRESHOLD) {
+                continue;
+            }
             // Block the movement in the direction if sufficient contact
             movement = blockDirection(movement, direction.getUnit());
             // Attempt to shift the player to the nearest free tile when close to one to ease motion in tight spaces
@@ -287,7 +292,7 @@ public class Physics extends TickingElement {
             if (entity instanceof Enemy) {
                 if (entity.isCollidingWith(Fire.class)) {
                     iterator.remove();
-                    //Adding the enemy score (Unique to each enemy) to the total enemy score
+                    // Adding the enemy score (unique to each enemy) to the total enemy score
                     enemyScore += ((Enemy) entity).getScore();
                     collisionDetection.remove(entity);
                 }
@@ -363,7 +368,7 @@ public class Physics extends TickingElement {
      * @param unitDirection The unit direction to block. Must be a unit to function correctly!
      * @return The new movement but with all motion in the given direction removed
      */
-    public static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
+    private static Vector2f blockDirection(Vector2f movement, Vector2f unitDirection) {
         // Check if we have movement in the direction
         if (movement.dot(unitDirection) > 0) {
             // Get motion in the direction and subtracted from total movement
@@ -381,7 +386,7 @@ public class Physics extends TickingElement {
      * @param other The object that was collided
      * @return The direction of the collision
      */
-    public static Direction getCollisionDirection(Intersection intersection, Collidable other) {
+    private static Direction getCollisionDirection(Intersection intersection, Collidable other) {
         final Vector2f offset = other.getPosition().sub(intersection.center);
         return Direction.fromUnit(offset);
     }
@@ -393,7 +398,7 @@ public class Physics extends TickingElement {
      * @param other The second object of the collision
      * @return An intersection object containing the collision information
      */
-    public static Intersection getIntersection(Collidable object, Collidable other) {
+    private static Intersection getIntersection(Collidable object, Collidable other) {
         final Vector2f intersectMax = object.getBoxMaxPoint().min(other.getBoxMaxPoint());
         final Vector2f intersectMin = object.getBoxMinPoint().max(other.getBoxMinPoint());
         return new Intersection(intersectMax, intersectMin);
@@ -402,29 +407,24 @@ public class Physics extends TickingElement {
     /**
      * Represents an intersection between two colliding objects.
      */
-    public static class Intersection {
-        /**
-         * The max point of the intersection box.
-         */
-        public final Vector2f max;
-        /**
-         * The min point of the intersection box.
-         */
-        public final Vector2f min;
+    private static class Intersection {
         /**
          * The size of the intersection box as the diagonal vector.
          */
-        public final Vector2f size;
+        private final Vector2f size;
         /**
          * The center of the intersection box (halfway up the diagonal).
          */
-        public final Vector2f center;
+        private final Vector2f center;
+        /**
+         * The area of the intersection box
+         */
+        private final float area;
 
         private Intersection(Vector2f max, Vector2f min) {
-            this.max = max;
-            this.min = min;
             size = max.sub(min);
             center = min.add(size.div(2));
+            area = size.getX() * size.getY();
         }
     }
 }
