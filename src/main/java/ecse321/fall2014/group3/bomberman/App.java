@@ -30,20 +30,18 @@ public class App {
     private static volatile Session session;
 
     //1 Digit, 1 Upper, 1 Lower, 1 Special, Minimum length of 8
-    private static final Pattern pattern =
-            Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$&%!^*()-_=+]).{8,})");
+    private static final Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$&%!^*()-_=+]).{8,})");
 
     public static void main(String[] args) {
         LWJGLUtil.deployNatives(null);
+        database = new Database("accounts.db");
 
-        database = new Database();
         createLoginScreen();
-
         loginWait.acquireUninterruptibly();
-
         launcherScreen.dispose();
-
         new Game(session, new Leaderboard(database)).open();
+
+        database.disconnect();
     }
 
     private static void createLoginScreen() {
