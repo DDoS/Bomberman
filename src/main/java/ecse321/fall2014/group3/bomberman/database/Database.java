@@ -18,10 +18,10 @@ public class Database {
     public static final String LEVEL_KEY = "LEVEL";
     private final Connection connection;
 
-    public Database() {
+    public Database(String file) {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:accounts.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + file);
             connection.setAutoCommit(false);
         } catch (ClassNotFoundException | SQLException exception) {
             throw new RuntimeException("Couldn't open database connection", exception);

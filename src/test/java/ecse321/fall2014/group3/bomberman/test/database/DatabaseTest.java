@@ -1,50 +1,68 @@
 package ecse321.fall2014.group3.bomberman.test.database;
 
+import java.io.File;
+import java.io.IOException;
+
 import ecse321.fall2014.group3.bomberman.database.Database;
 import ecse321.fall2014.group3.bomberman.database.Session;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Marco
  */
 public class DatabaseTest {
-    Database testDB = new Database();
+    @Rule
+    public final TemporaryFolder testFolder = new TemporaryFolder();
+    private Database testDB;
 
-    @Test
-    public void testQueries(){
-
-
-        //Inserting some accounts for test cases
-        Database testDB = new Database();
-        String username = "test";
-        String real = "test real name";
-        String pass = "pass";
-        Session session = Session.create(testDB, username, pass, real);
-
-        //Retrieving values for test cases
-        String user = testDB.getString("test", testDB.USERNAME_KEY);
-        real = testDB.getString("test", testDB.REALNAME_KEY);
-        pass = testDB.getString("test", testDB.PASSWORD_KEY);
-        int score = testDB.getInt("test", testDB.SCORE_KEY);
-        int level = testDB.getInt("test", testDB.LEVEL_KEY);
-
-
-        //test when it should equal true
-        Assert.assertEquals("test", user);
-        Assert.assertEquals("test real name", real);
-        Assert.assertEquals("test password", pass);
-        Assert.assertEquals(score, 10);
-        Assert.assertEquals(level, 2);
-
-
+    @Before
+    public void openDB() throws IOException {
+        final File tempFile = testFolder.newFile("test.db");
+        testDB = new Database(tempFile.getAbsolutePath());
     }
 
-    //Invalid SQL Queries
     @Test
-    public void testSQL(){
+    public void testQueries() {
+        // Inserting some accounts for test cases
+        String username = "test";
+        String realneam = "test real name";
+        String password = "pass";
+        int score = 10;
+        int level = 2;
+        final Session session = Session.create(testDB, username, password, realneam);
+        session.setScore(score);
+        session.setLevel(level);
 
-        Assert.assertEquals(0,testDB.getInt("test", testDB.USERNAME_KEY));
+        // Retrieving values for test cases
+        String dbUsername = session.getUserName();
+        String dbRealname = session.getRealName();
+        String dbPassword = session.getPassword();
+        int dbScore = session.getScore();
+        int dbLevel = session.getLevel();
 
+        // Test when it should equal true
+        Assert.assertEquals(username, dbUsername);
+        Assert.assertEquals(realneam, dbRealname);
+        Assert.assertEquals(password, dbPassword);
+        Assert.assertEquals(score, dbScore);
+        Assert.assertEquals(level, dbLevel);
+    }
+
+    @Test
+    public void testSQL() {
+        // Invalid SQL Queries
+        // TODO: what is this even trying to do? Getting a string using get int?
+        //       We don't need to test the obviously wrong...
+        //Assert.assertEquals(0, testDB.getInt("test", Database.USERNAME_KEY));
+    }
+
+    @After
+    public void closeDB() {
+        testDB.disconnect();
     }
 }
