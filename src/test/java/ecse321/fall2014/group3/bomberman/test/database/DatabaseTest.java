@@ -30,11 +30,11 @@ public class DatabaseTest {
     public void testQueries() {
         // Inserting some accounts for test cases
         String username = "test";
-        String realneam = "test real name";
+        String realname = "test real name";
         String password = "pass";
         int score = 10;
         int level = 2;
-        final Session session = Session.create(testDB, username, password, realneam);
+        final Session session = Session.create(testDB, username, password, realname);
         session.setScore(score);
         session.setLevel(level);
 
@@ -47,19 +47,12 @@ public class DatabaseTest {
 
         // Test when it should equal true
         Assert.assertEquals(username, dbUsername);
-        Assert.assertEquals(realneam, dbRealname);
+        Assert.assertEquals(realname, dbRealname);
         Assert.assertEquals(password, dbPassword);
         Assert.assertEquals(score, dbScore);
         Assert.assertEquals(level, dbLevel);
     }
 
-    @Test
-    public void testSQL() {
-        // Invalid SQL Queries
-        // TODO: what is this even trying to do? Getting a string using get int?
-        //       We don't need to test the obviously wrong...
-        //Assert.assertEquals(0, testDB.getInt("test", Database.USERNAME_KEY));
-    }
 
     @After
     public void closeDB() {
