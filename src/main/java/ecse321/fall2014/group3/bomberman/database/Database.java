@@ -49,7 +49,9 @@ public class Database {
                     " PASSWORD  TEXT  NOT NULL," +
                     " REALNAME  TEXT  NOT NULL," +
                     " SCORE     INT   NOT NULL," +
-                    " LEVEL     INT   NOT NULL)";
+                    " LEVEL     INT   NOT NULL," +
+                    " SAVE      CLOB," +
+                    " POWERUPS  CLOB)";
             statement.executeUpdate(sql);
             connection.commit();
         } catch (SQLException exception) {
