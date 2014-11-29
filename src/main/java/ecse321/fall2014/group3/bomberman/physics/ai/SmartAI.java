@@ -18,7 +18,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
  */
 public class SmartAI extends AI {
     @Override
-     public Vector2f nextPosition(Enemy target, long dt, Map map, Player player) {
+    public Vector2f nextPosition(Enemy target, long dt, Map map, Player player) {
         float timeSec = dt / TO_SECS;
         Vector2f enemyPos = target.getPosition();
         Vector2f playPos = player.getPosition();
@@ -32,7 +32,6 @@ public class SmartAI extends AI {
             } else {
                 float threshold = target.getSpeed() * timeSec;
                 boolean inThreshold = false;
-                boolean atInteger = false;
                 
                 if((target.getVelocity()).getX() == 0) {
                     if(enemyPos.getY() % 1f < threshold) {
@@ -91,7 +90,7 @@ public class SmartAI extends AI {
                     case 1:
                         if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
                             tar.setVelocity(new Vector2f(spd, 0f));
-                            return eP.add(1f * ts, 0f);
+                            return eP.add(spd * ts, 0f);
                         }
                         break;
                     case 2:
@@ -180,24 +179,24 @@ public class SmartAI extends AI {
 
         if (ex == px) {
             if (ey > py) {
-                if (map.isTile(eP.add(0f, -spd * ts), Air.class) || map.isTile(eP.add(0f, -spd * ts), Fire.class)) {
+                if (!map.isTile(eP.add(0f, -spd * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -spd * ts), Breakable.class)) {
                     tar.setVelocity(new Vector2f(0f, -spd));
                     return eP.add(0f, -spd * ts);
                 }
             } else {
-                if (map.isTile(eP.add(0f, 1f), Air.class) || map.isTile(eP.add(0f, 1f), Fire.class)) {
-                    tar.setVelocity(new Vector2f(0f, 1f));
-                    return eP.add(0f, 1f * ts);
+                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+                    tar.setVelocity(new Vector2f(0f, spd));
+                    return eP.add(0f, spd * ts);
                 }
             }
         } else {
             if (ex > px) {
-                if (map.isTile(eP.add(-spd * ts, 0f), Air.class) || map.isTile(eP.add(-spd * ts, 0f), Fire.class)) {
+                if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Breakable.class)) {
                     tar.setVelocity(new Vector2f(-spd, 0f));
                     return eP.add(-spd * ts, 0f);
                 }
             } else {
-                if (map.isTile(eP.add(1f, 0f), Air.class) || map.isTile(eP.add(1f, 0f), Fire.class)) {
+                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }

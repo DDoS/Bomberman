@@ -1,6 +1,7 @@
 package ecse321.fall2014.group3.bomberman.physics.ai;
 
 import java.util.Random;
+import java.lang.Math;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -27,7 +28,7 @@ public class RegularAI extends AI {
         if ((target.getVelocity()).length() == 0) {
             return setInitial(map, target, enemyPos, timeSec);
         } else {
-            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 1.5f) {
+            if (Math.abs(enemyPos.getX() - playPos.getX()) <= 1.5f || Math.abs(enemyPos.get() - playPos.getY()) <= 1.5) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
             } else {
                 float threshold = target.getSpeed() * timeSec;
