@@ -22,13 +22,6 @@ public class KeyboardState {
     public int getAndClearPressCount(Key key) {
         return pressCounts.getAndSet(key.ordinal(), 0);
     }
-
-    public void clearAll() {
-        for (int i = 0; i < Key.getCount(); i++) {
-            pressTimes.set(i, 0);
-            pressCounts.set(i, 0);
-        }
-    }
 }
 
 

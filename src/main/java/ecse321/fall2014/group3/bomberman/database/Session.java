@@ -16,6 +16,10 @@ public class Session {
         return username;
     }
 
+    public String getRealName() {
+        return database.getString(username, Database.REALNAME_KEY);
+    }
+
     public String getPassword() {
         return database.getString(username, Database.PASSWORD_KEY);
     }

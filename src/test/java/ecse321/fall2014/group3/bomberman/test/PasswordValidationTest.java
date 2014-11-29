@@ -1,4 +1,4 @@
-package ecse321.fall2014.group3.bomberman.test.world;
+package ecse321.fall2014.group3.bomberman.test;
 
 import ecse321.fall2014.group3.bomberman.App;
 import org.junit.Assert;

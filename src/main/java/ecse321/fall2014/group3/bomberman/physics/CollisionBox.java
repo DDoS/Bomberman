@@ -7,6 +7,7 @@ import com.flowpowered.math.vector.Vector2f;
  */
 public class CollisionBox {
     private final Vector2f size;
+    private final float area;
     private final Vector2f halfSize;
 
     public CollisionBox(Vector2f size) {
@@ -14,11 +15,16 @@ public class CollisionBox {
             throw new IllegalArgumentException("Size must be greater than zero");
         }
         this.size = size;
+        this.area = size.getX() * size.getY();
         halfSize = size.div(2);
     }
 
     public Vector2f getSize() {
         return size;
+    }
+
+    public float getArea() {
+        return area;
     }
 
     Vector2f getMaxPoint(Vector2f position) {

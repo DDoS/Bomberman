@@ -64,17 +64,21 @@ public class World extends TickingElement {
     @Override
     public void onTick(long dt) {
         if (level.isMenu()) {
-            menuTick(dt);
+            doMenuTick(dt);
         } else {
-            gameTick(dt);
+            doGameTick(dt);
         }
-        game.getInput().getKeyboardState().clearAll();
     }
 
-    private void menuTick(long dt) {
-        if (game.getInput().getKeyboardState().getAndClearPressCount(Key.PLACE) <= 0) {
+    private void doMenuTick(long dt) {
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        final int enterCount = keyboardState.getAndClearPressCount(Key.PLACE);
+        // Don't remove even if unused, this is to reset the state after each tick
+        final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
+        if (enterCount <= 0) {
             return;
         }
+
         final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
         final String[] action = selectedButton.getAction();
         switch (action[0]) {
@@ -121,12 +125,17 @@ public class World extends TickingElement {
         }
     }
 
-    private void gameTick(long dt) {
+    private void doGameTick(long dt) {
+        final KeyboardState keyboardState = game.getInput().getKeyboardState();
+        final int placeCount = keyboardState.getAndClearPressCount(Key.PLACE);
+        final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
+
         final Player player = game.getPhysics().getPlayer();
         if (System.currentTimeMillis() - last > 1000) {
             last = System.currentTimeMillis();
             timer--;
         }
+
         if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <= 0) {
             score -= 10;
             score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
@@ -166,8 +175,7 @@ public class World extends TickingElement {
             map.incrementVersion();
             return;
         }
-        final KeyboardState keyboardState = game.getInput().getKeyboardState();
-        if (keyboardState.getAndClearPressCount(Key.EXIT) > 0) {
+        if (exitCount > 0) {
             score = 0;
             timer = 500;
             level = Level.MAIN_MENU;
@@ -178,8 +186,7 @@ public class World extends TickingElement {
 
         boolean updatedMap = false;
         // Do bomb placement
-        final int bombPlaceInput = keyboardState.getAndClearPressCount(Key.PLACE);
-        final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, bombPlaceInput);
+        final int bombsToPlace = Math.min(player.getBombPlacementCount() - activeBombs, placeCount);
         for (int i = 0; i < bombsToPlace; i++) {
             final Vector2f position = player.getPosition().add(0.5f, 0.5f);
             if (map.isTile(position, Air.class)) {
