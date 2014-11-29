@@ -28,7 +28,7 @@ public class RegularAI extends AI {
         if ((target.getVelocity()).length() == 0) {
             return setInitial(map, target, enemyPos, timeSec);
         } else {
-            if (Math.abs(enemyPos.getX() - playPos.getX()) <= 1.5f || Math.abs(enemyPos.get() - playPos.getY()) <= 1.5) {
+            if (Math.abs(enemyPos.getX() - playPos.getX()) <= 1.5f && Math.abs(enemyPos.getX() - playPos.getY()) <= 1.5f) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
             } else {
                 float threshold = target.getSpeed() * timeSec;
@@ -179,26 +179,26 @@ public class RegularAI extends AI {
         float py = pP.getY();
         float spd = tar.getSpeed();
 
-        if (ex == px) {
+        if (Math.abs(ex - px) > Math.abs(ey - py)) {
             if (ey > py) {
-                if (!map.isTile(eP.add(0f, -spd * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -spd * ts), Breakable.class)) {
+                if (map.isTile(eP.add(0f, -spd * ts), Air.class) && map.isTile(eP.add(0f, -spd * ts), Fire.class)) {
                     tar.setVelocity(new Vector2f(0f, -spd));
                     return eP.add(0f, -spd * ts);
                 }
             } else {
-                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+                if (map.isTile(eP.add(0f, 1f), Air.class) && map.isTile(eP.add(0f, 1f), Fire.class)) {
                     tar.setVelocity(new Vector2f(0f, spd));
                     return eP.add(0f, spd * ts);
                 }
             }
         } else {
             if (ex > px) {
-                if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Breakable.class)) {
+                if (map.isTile(eP.add(-spd * ts, 0f), Air.class) && map.isTile(eP.add(-spd * ts, 0f), Fire.class)) {
                     tar.setVelocity(new Vector2f(-spd, 0f));
                     return eP.add(-spd * ts, 0f);
                 }
             } else {
-                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
+                if (map.isTile(eP.add(1f, 0f), Air.class) && map.isTile(eP.add(1f, 0f), Fire.class)) {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }
