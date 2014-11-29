@@ -48,6 +48,14 @@ public class Session {
         database.setInt(username, Database.SCORE_KEY, score);
     }
 
+    public int getLives() {
+        return database.getInt(username, Database.LIVES_KEY);
+    }
+
+    public void setLives(int lives) {
+        database.setInt(username, Database.LIVES_KEY, lives);
+    }
+
     public static Session open(Database database, String username, String password) {
         if (database.getString(username, Database.USERNAME_KEY) == null) {
             return null;

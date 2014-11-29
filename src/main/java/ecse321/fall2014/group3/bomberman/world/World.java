@@ -108,6 +108,7 @@ public class World extends TickingElement {
                 generateLevel(nextLevel);
                 map.incrementVersion();
                 activeBombs = 0;
+                lives = game.getSession().getLives();
                 level = nextLevel;
                 break;
             }
@@ -149,23 +150,22 @@ public class World extends TickingElement {
             timer--;
         }
 
-        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)) {
+        final Session session = game.getSession();
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)
+                || player.isCollidingWith(Enemy.class)
+                || timer <= 0) {
             lives--;
             events.add(new PlayerLostLifeEvent());
+            session.setLives(lives);
         }
-        if (player.isCollidingWith(Enemy.class)) {
-            lives--;
-            events.add(new PlayerLostLifeEvent());
-        }
-        if (timer <= 0) {
-            lives--;
-            events.add(new PlayerLostLifeEvent());
-        }
+        // Game over
         if (lives <= 0) {
             lives = 3;
-            score -= 10;
-            score += game.getSession().getScore();
-            game.getSession().setScore(score);
+            if (level.getNumber() != 1) {
+                score += session.getScore();
+            }
+            session.setScore(score);
+            session.setLives(lives);
             score = 0;
             timer = 500;
             level = Level.GAME_OVER;
@@ -173,17 +173,17 @@ public class World extends TickingElement {
             map.incrementVersion();
             return;
         }
-
+        // Game win
         if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
             if (level.isBonus()) {
-                score += (150 * Math.abs(level.getNumber())) + timer;
+                score += 150 * Math.abs(level.getNumber()) + timer;
             } else {
-                score += (50 * level.getNumber()) + timer;
+                score += 50 * level.getNumber() + timer;
             }
             if (level.getNumber() != 1) {
-                score += game.getSession().getScore();
+                score += session.getScore();
             }
-            game.getSession().setScore(score);
+            session.setScore(score);
             score = 0;
             timer = 500;
             if (level.getNumber() == 50) {
@@ -193,7 +193,6 @@ public class World extends TickingElement {
                 return;
             }
             final Level nextLevel = level.next();
-            final Session session = game.getSession();
             if (session.getLevel() < nextLevel.getNumber()) {
                 session.setLevel(nextLevel.getNumber());
             }
@@ -202,6 +201,7 @@ public class World extends TickingElement {
             level = nextLevel;
             return;
         }
+        // Game exit
         if (exitCount > 0) {
             score = 0;
             timer = 500;
