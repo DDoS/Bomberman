@@ -22,6 +22,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
@@ -53,8 +54,8 @@ public class World extends TickingElement {
         score = 0;
         last = System.currentTimeMillis();
         timer = 500;
-        lives =3;
-        
+        lives = 3;
+
     }
 
     @Override
@@ -140,22 +141,31 @@ public class World extends TickingElement {
             timer--;
         }
 
-        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <= 0) {
-            lives --;
-            lostLife=true;
-            if (lives <= 0){
-                lives = 3;
-                score -= 10;
-                score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
-                game.getSession().setScore(score);
-                score = 0;
-                timer = 500;
-                level = Level.GAME_OVER;
-                generateMenuBackground();
-                map.incrementVersion();
-            }
-            return;
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)) {
+            lives--;
+            lostLife = true;
         }
+        if (player.isCollidingWith(Enemy.class)) {
+            lives--;
+            lostLife = true;
+        }
+       if (timer <= 0) {
+           lives--;
+           lostLife = true; 
+       }
+       if (lives <= 0) {
+           lives = 3;
+           score -= 10;
+           score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
+           game.getSession().setScore(score);
+           score = 0;
+           timer = 500;
+           level = Level.GAME_OVER;
+           generateMenuBackground();
+           map.incrementVersion();
+           return;
+       }
+       
         if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
             if (level.isBonus()) {
                 score += (150 * Math.abs(level.getNumber())) + timer;
@@ -285,16 +295,16 @@ public class World extends TickingElement {
     public int getTimer() {
         return timer;
     }
-    
-    public int getLives(){
+
+    public int getLives() {
         return lives;
     }
-    
-    public boolean isLostLife(){
+
+    public boolean isLostLife() {
         return lostLife;
     }
-    
-    public void setLostLife(boolean b){
+
+    public void setLostLife(boolean b) {
         lostLife = b;
     }
 
@@ -323,8 +333,7 @@ public class World extends TickingElement {
         // Generate the breakable and unbreakable walls
         for (int y = 0; y < Map.HEIGHT; y++) {
             for (int x = 0; x < Map.WIDTH; x++) {
-                if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
-                        || y % 2 == 0 && x % 2 == 0) {
+                if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1 || y % 2 == 0 && x % 2 == 0) {
                     map.setTile(x, y, Unbreakable.class);
                 } else {
                     // Normalize the value from (-1, 1) to (0, 1)
