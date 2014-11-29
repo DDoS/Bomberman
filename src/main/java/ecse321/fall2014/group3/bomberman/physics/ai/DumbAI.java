@@ -89,8 +89,6 @@ public class DumbAI extends AI {
                         map.isTile(enemyPos.add(0f, timeSec * ys), Breakable.class) ||
                         map.isTile(enemyPos.add(0f, timeSec * ys), Fire.class)) {
                         return enemyPos.add(0f, ys * timeSec);
-                    /*} /*else if (map.isTile(enemyPos.add(0f, timeSec * ys), Fire.class)) {
-                        return enemyPos.add(0f, ys * timeSec);*/
                     } else {
                         target.setVelocity(new Vector2f(0f, eSpeed));
                         return enemyPos.add(0f, eSpeed * timeSec);
@@ -100,8 +98,6 @@ public class DumbAI extends AI {
                         map.isTile(enemyPos.add(0f, 1f), Breakable.class) ||
                         map.isTile(enemyPos.add(0f, 1f), Fire.class)) {
                         return enemyPos.add(0f, ys * timeSec);
-                    /*} /*else if (map.isTile(enemyPos.add(0f, 1f), Fire.class)) {
-                        return enemyPos.add(0f, ys * timeSec);*/
                     } else {
                         target.setVelocity(new Vector2f(0f, -eSpeed));
                         return enemyPos.add(0f, -eSpeed * timeSec);
@@ -113,8 +109,6 @@ public class DumbAI extends AI {
                         map.isTile(enemyPos.add(xs * timeSec, 0f), Breakable.class) ||
                         map.isTile(enemyPos.add(xs * timeSec, 0f), Fire.class)) {
                         return enemyPos.add(xs * timeSec, 0f);
-                    /*} else if (map.isTile(enemyPos.add(xs * timeSec, 0f), Fire.class)) {
-                        return enemyPos.add(xs * timeSec, 0f);*/
                     } else {
                         target.setVelocity(new Vector2f(eSpeed, 0f));
                         return enemyPos.add(eSpeed * timeSec, 0f);
@@ -124,8 +118,6 @@ public class DumbAI extends AI {
                         map.isTile(enemyPos.add(1f, 0f), Breakable.class) ||
                         map.isTile(enemyPos.add(1f, 0f), Fire.class)) {
                         return enemyPos.add(xs * timeSec, 0f);
-                    /*} else if (map.isTile(enemyPos.add(1f, 0f), Fire.class)) {
-                        return enemyPos.add(xs * timeSec, 0f);*/
                     } else {
                         target.setVelocity(new Vector2f(-eSpeed, 0f));
                         return enemyPos.add(-eSpeed * timeSec, 0f);

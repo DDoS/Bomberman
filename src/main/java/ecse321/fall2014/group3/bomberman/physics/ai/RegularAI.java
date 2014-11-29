@@ -28,7 +28,7 @@ public class RegularAI extends AI {
         if ((target.getVelocity()).length() == 0) {
             return setInitial(map, target, enemyPos, timeSec);
         } else {
-            if (Math.abs(enemyPos.getX() - playPos.getX()) <= 1.5f && Math.abs(enemyPos.getX() - playPos.getY()) <= 1.5f) {
+            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 1.5f) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
             } else {
                 float threshold = target.getSpeed() * timeSec;
@@ -48,7 +48,11 @@ public class RegularAI extends AI {
                 if (inThreshold && random.nextInt(100) < 10) {
                     return intersection(map, target, enemyPos, timeSec);
                 } else {
-                    return returnPosition(map, target, enemyPos, timeSec);
+                    if (target.isWallPass()) {
+                        return returnWallPos(map, target, enemyPos, timeSec);
+                    } else {
+                        return returnPosition(map, target, enemyPos, timeSec);
+                    }
                 }
             }
         }
@@ -111,6 +115,53 @@ public class RegularAI extends AI {
             }
         }
         return eP;
+    }
+
+    public Vector2f returnWallPos(Map map, Enemy tar, Vector2f eP, float ts) {
+        float xs = tar.getVelocity().getX();
+        float ys = tar.getVelocity().getY();
+
+        if (xs == 0f) {
+            if (ys < 0) {
+                if (map.isTile(eP.add(0f, ts * ys), Air.class) ||
+                    map.isTile(eP.add(0f, ts * ys), Breakable.class) ||
+                    map.isTile(eP.add(0f, ts * ys), Fire.class)) {
+                    return eP.add(0f, ys * ts);
+                } else {
+                    tar.setVelocity(new Vector2f(0f, -ys));
+                    return eP.add(0f, -ys * ts);
+                }
+            } else {
+                if (map.isTile(eP.add(0f, 1f), Air.class) ||
+                    map.isTile(eP.add(0f, 1f), Breakable.class) ||
+                    map.isTile(eP.add(0f, 1f), Fire.class)) {
+                    return eP.add(0f, ys * ts);
+                } else {
+                    tar.setVelocity(new Vector2f(0f, -ys));
+                    return eP.add(0f, -ys * ts);
+                }
+            }
+        } else {
+            if (xs < 0) {
+                if (map.isTile(eP.add(xs * ts, 0f), Air.class) ||
+                    map.isTile(eP.add(xs * ts, 0f), Breakable.class) ||
+                    map.isTile(eP.add(xs * ts, 0f), Fire.class)) {
+                    return eP.add(xs * ts, 0f);
+                } else {
+                    tar.setVelocity(new Vector2f(-xs, 0f));
+                    return eP.add(-xs * ts, 0f);
+                }
+            } else {
+                if (map.isTile(eP.add(1f, 0f), Air.class) ||
+                    map.isTile(eP.add(1f, 0f), Breakable.class) ||
+                    map.isTile(eP.add(1f, 0f), Fire.class)) {
+                    return eP.add(xs * ts, 0f);
+                } else {
+                    tar.setVelocity(new Vector2f(-xs, 0f));
+                    return eP.add(-xs * ts, 0f);
+                }
+            }
+        }
     }
 
     public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
