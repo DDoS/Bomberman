@@ -35,7 +35,7 @@ public class Balloom extends Enemy {
     }
 
     @Override
-    public float getScore() {
+    public int getScore() {
         return 100;
     }
 }
