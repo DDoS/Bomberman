@@ -312,8 +312,7 @@ public class Physics extends TickingElement {
         if (lives> world.getLives() ){
             player.setPosition(new Vector2f(1, 11));
             lives = world.getLives();
-            System.out.println(lives);
-        }else if (world.getLives() ==3){
+        }else {
             lives = world.getLives();
         }
         
