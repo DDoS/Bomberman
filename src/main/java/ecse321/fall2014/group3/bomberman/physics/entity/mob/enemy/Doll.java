@@ -35,7 +35,7 @@ public class Doll extends Enemy {
     }
 
     @Override
-    public float getScore() {
+    public int getScore() {
         return 400;
     }
 }

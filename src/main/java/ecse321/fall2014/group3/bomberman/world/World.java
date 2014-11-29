@@ -1,13 +1,17 @@
 package ecse321.fall2014.group3.bomberman.world;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Session;
+import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
+import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
@@ -18,10 +22,13 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
+import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
+import ecse321.fall2014.group3.bomberman.event.Event;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
@@ -36,6 +43,7 @@ import net.royawesome.jlibnoise.module.source.Perlin;
  */
 public class World extends TickingElement {
     private final Game game;
+    private final SubscribableQueue<Event> events = new SubscribableQueue<>(false);
     private final Map map = new Map();
     private volatile Level level = Level.MAIN_MENU;
     private int activeBombs;
@@ -43,18 +51,21 @@ public class World extends TickingElement {
     private Vector2f powerUPTile;
     private volatile int score;
     private volatile int timer;
-    private long last = 0;
+    private long lastTime = 0;
+    private int lives;
 
     public World(Game game) {
         super("World", 20);
         this.game = game;
         score = 0;
-        last = System.currentTimeMillis();
         timer = 500;
+        lives = 3;
     }
 
     @Override
     public void onStart() {
+        events.becomePublisher();
+        game.getPhysics().subscribeToEvents();
         level = Level.MAIN_MENU;
         generateMenuBackground();
         // Signal a new map version to the physics and rendering
@@ -75,10 +86,10 @@ public class World extends TickingElement {
         final int enterCount = keyboardState.getAndClearPressCount(Key.PLACE);
         // Don't remove even if unused, this is to reset the state after each tick
         final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
+
         if (enterCount <= 0) {
             return;
         }
-
         final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
         final String[] action = selectedButton.getAction();
         switch (action[0]) {
@@ -126,19 +137,34 @@ public class World extends TickingElement {
     }
 
     private void doGameTick(long dt) {
+        processGameEvents();
+
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int placeCount = keyboardState.getAndClearPressCount(Key.PLACE);
         final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
 
         final Player player = game.getPhysics().getPlayer();
-        if (System.currentTimeMillis() - last > 1000) {
-            last = System.currentTimeMillis();
+        if (System.currentTimeMillis() - lastTime > 1000) {
+            lastTime = System.currentTimeMillis();
             timer--;
         }
 
-        if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <= 0) {
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)) {
+            lives--;
+            events.add(new PlayerLostLifeEvent());
+        }
+        if (player.isCollidingWith(Enemy.class)) {
+            lives--;
+            events.add(new PlayerLostLifeEvent());
+        }
+        if (timer <= 0) {
+            lives--;
+            events.add(new PlayerLostLifeEvent());
+        }
+        if (lives <= 0) {
+            lives = 3;
             score -= 10;
-            score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
+            score += game.getSession().getScore();
             game.getSession().setScore(score);
             score = 0;
             timer = 500;
@@ -147,6 +173,7 @@ public class World extends TickingElement {
             map.incrementVersion();
             return;
         }
+
         if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
             if (level.isBonus()) {
                 score += (150 * Math.abs(level.getNumber())) + timer;
@@ -156,7 +183,6 @@ public class World extends TickingElement {
             if (level.getNumber() != 1) {
                 score += game.getSession().getScore();
             }
-            score += game.getPhysics().getEnemyScore();
             game.getSession().setScore(score);
             score = 0;
             timer = 500;
@@ -166,13 +192,14 @@ public class World extends TickingElement {
                 map.incrementVersion();
                 return;
             }
-            level = level.next();
+            final Level nextLevel = level.next();
             final Session session = game.getSession();
-            if (session.getLevel() < level.getNumber()) {
-                session.setLevel(level.getNumber());
+            if (session.getLevel() < nextLevel.getNumber()) {
+                session.setLevel(nextLevel.getNumber());
             }
-            generateLevel(level);
+            generateLevel(nextLevel);
             map.incrementVersion();
+            level = nextLevel;
             return;
         }
         if (exitCount > 0) {
@@ -212,12 +239,23 @@ public class World extends TickingElement {
         for (Collidable tile : player.getCollisionList()) {
             if (tile instanceof PowerUP) {
                 map.setTile(tile.getPosition(), Air.class);
+                events.add(new PowerUPCollectedEvent((PowerUP) tile));
                 updatedMap = true;
             }
         }
         // Update new map version if needed
         if (updatedMap) {
             map.incrementVersion();
+        }
+    }
+
+    private void processGameEvents() {
+        final Queue<Event> physicsEvents = game.getPhysics().getEvents();
+        while (!physicsEvents.isEmpty()) {
+            final Event event = physicsEvents.poll();
+            if (event instanceof EnemyDeathEvent) {
+                score += ((EnemyDeathEvent) event).getEnemy().getScore();
+            }
         }
     }
 
@@ -259,6 +297,15 @@ public class World extends TickingElement {
 
     @Override
     public void onStop() {
+        events.unsubscribeAll();
+    }
+
+    public void subscribeToEvents() {
+        events.subscribe();
+    }
+
+    public Queue<Event> getEvents() {
+        return events;
     }
 
     public Map getMap() {
@@ -275,6 +322,10 @@ public class World extends TickingElement {
 
     public int getTimer() {
         return timer;
+    }
+
+    public int getLives() {
+        return lives;
     }
 
     private void generateMenuBackground() {
@@ -302,8 +353,7 @@ public class World extends TickingElement {
         // Generate the breakable and unbreakable walls
         for (int y = 0; y < Map.HEIGHT; y++) {
             for (int x = 0; x < Map.WIDTH; x++) {
-                if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1
-                        || y % 2 == 0 && x % 2 == 0) {
+                if (y == 0 || y == Map.HEIGHT - 1 || x == 0 || x == Map.WIDTH - 1 || y % 2 == 0 && x % 2 == 0) {
                     map.setTile(x, y, Unbreakable.class);
                 } else {
                     // Normalize the value from (-1, 1) to (0, 1)

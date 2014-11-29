@@ -5,7 +5,6 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.ai.AI;
 import ecse321.fall2014.group3.bomberman.physics.ai.DumbAI;
-import ecse321.fall2014.group3.bomberman.physics.ai.RegularAI;
 
 public class Ovapi extends Enemy {
     private static final SpriteInfo OVAPI_ENEMY_SPRITE = new SpriteInfo("Sprite", 37, Vector2f.ONE);
@@ -36,7 +35,7 @@ public class Ovapi extends Enemy {
     }
 
     @Override
-    public float getScore() {
+    public int getScore() {
         return 2000;
     }
 }

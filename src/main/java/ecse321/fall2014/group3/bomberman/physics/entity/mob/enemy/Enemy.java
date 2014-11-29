@@ -24,7 +24,7 @@ public abstract class Enemy extends Mob {
 
     public abstract boolean isWallPass();
 
-    public abstract float getScore();
+    public abstract int getScore();
 
     @Override
     public Vector2f getModelSize() {

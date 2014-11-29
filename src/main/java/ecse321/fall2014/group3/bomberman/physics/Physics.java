@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +13,12 @@ import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
+import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
+import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
+import ecse321.fall2014.group3.bomberman.event.Event;
+import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
+import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
@@ -37,7 +43,6 @@ import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.World;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
-import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 
 /**
@@ -48,6 +53,7 @@ public class Physics extends TickingElement {
     private static final float SLIDING_CONTACT_THRESHOLD = 0.9f;
     private static final float OVERLAP_CONTACT_THRESHOLD = 0.7f;
     private final Game game;
+    private final SubscribableQueue<Event> events = new SubscribableQueue<>(false);
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.newSetFromMap(new ConcurrentHashMap<Entity, Boolean>());
@@ -56,18 +62,17 @@ public class Physics extends TickingElement {
     private volatile int selectedButtonIndex;
     private Level currentLevel;
     private long mapVersion = 0;
-    private boolean powerUPCollected = false;
     private TextBoxEntity levelStateText;
-    private volatile int enemyScore;
 
     public Physics(Game game) {
         super("Physics", 60);
         this.game = game;
-        enemyScore = 0;
     }
 
     @Override
     public void onStart() {
+        events.becomePublisher();
+        game.getWorld().subscribeToEvents();
     }
 
     @Override
@@ -147,7 +152,7 @@ public class Physics extends TickingElement {
         final World world = game.getWorld();
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                        + " | Score " + world.getScore() + " |  Timer " + world.getTimer();
+                        + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "| Lives " + world.getLives();
         levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
@@ -205,13 +210,11 @@ public class Physics extends TickingElement {
             entities.add(pontan);
             collisionDetection.add(pontan);
         }
-        powerUPCollected = false;
-
-        //Set enemy score to 0
-        enemyScore = 0;
     }
 
     private void doGameTick(long dt) {
+        processGameEvents();
+
         final Map map = game.getWorld().getMap();
         final long newVersion = map.getVersion();
 
@@ -234,15 +237,6 @@ public class Physics extends TickingElement {
         }
 
         collisionDetection.update();
-
-        if (!powerUPCollected) {
-            for (Collidable tile : player.getCollisionList()) {
-                if (tile instanceof PowerUP) {
-                    player.addPowerUP((PowerUP) tile);
-                    powerUPCollected = true;
-                }
-            }
-        }
 
         final float timeSeconds = dt / 1e9f;
         // Process player input
@@ -293,7 +287,7 @@ public class Physics extends TickingElement {
                 if (entity.isCollidingWith(Fire.class)) {
                     iterator.remove();
                     // Adding the enemy score (unique to each enemy) to the total enemy score
-                    enemyScore += ((Enemy) entity).getScore();
+                    events.add(new EnemyDeathEvent((Enemy) entity));
                     collisionDetection.remove(entity);
                 }
                 final Enemy enemy = (Enemy) entity;
@@ -303,10 +297,23 @@ public class Physics extends TickingElement {
                 enemy.setVelocity(nextPosition.sub(currentPosition).div(timeSeconds));
             }
         }
+
         // Update UI
         final World world = game.getWorld();
         levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer());
+                + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
+    }
+
+    private void processGameEvents() {
+        final Queue<Event> worldEvents = game.getWorld().getEvents();
+        while (!worldEvents.isEmpty()) {
+            final Event event = worldEvents.poll();
+            if (event instanceof PlayerLostLifeEvent) {
+                player.setPosition(new Vector2f(1, 11));
+            } else if (event instanceof PowerUPCollectedEvent) {
+                player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
+            }
+        }
     }
 
     private Vector2f getInputVector() {
@@ -326,7 +333,16 @@ public class Physics extends TickingElement {
     @Override
     public void onStop() {
         clearEntities();
+        events.unsubscribeAll();
         mapVersion = 0;
+    }
+
+    public void subscribeToEvents() {
+        events.subscribe();
+    }
+
+    public Queue<Event> getEvents() {
+        return events;
     }
 
     public Player getPlayer() {
@@ -355,10 +371,6 @@ public class Physics extends TickingElement {
             }
         }
         return free;
-    }
-
-    public int getEnemyScore(){
-        return enemyScore;
     }
 
     /**
