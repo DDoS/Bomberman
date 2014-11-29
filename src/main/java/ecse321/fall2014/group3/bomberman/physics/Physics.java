@@ -147,7 +147,7 @@ public class Physics extends TickingElement {
         final World world = game.getWorld();
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                        + " | Score " + world.getScore() + " |  Timer " + world.getTimer();
+                        + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "| Lives " + world.getLives();
         levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
@@ -303,10 +303,16 @@ public class Physics extends TickingElement {
                 enemy.setVelocity(nextPosition.sub(currentPosition).div(timeSeconds));
             }
         }
+        
         // Update UI
         final World world = game.getWorld();
         levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer());
+                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
+      //update lives
+        if (world.isLostLife()){
+            player.setPosition(new Vector2f(1, 11));
+            world.setLostLife(false);
+        }
     }
 
     private Vector2f getInputVector() {

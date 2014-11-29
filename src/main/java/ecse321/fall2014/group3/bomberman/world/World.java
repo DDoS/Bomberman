@@ -44,6 +44,8 @@ public class World extends TickingElement {
     private volatile int score;
     private volatile int timer;
     private long last = 0;
+    private int lives;
+    private boolean lostLife;
 
     public World(Game game) {
         super("World", 20);
@@ -51,6 +53,8 @@ public class World extends TickingElement {
         score = 0;
         last = System.currentTimeMillis();
         timer = 500;
+        lives =3;
+        
     }
 
     @Override
@@ -137,14 +141,19 @@ public class World extends TickingElement {
         }
 
         if (player.isCollidingWith(Fire.class) || player.isCollidingWith(Enemy.class) || timer <= 0) {
-            score -= 10;
-            score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
-            game.getSession().setScore(score);
-            score = 0;
-            timer = 500;
-            level = Level.GAME_OVER;
-            generateMenuBackground();
-            map.incrementVersion();
+            lives --;
+            lostLife=true;
+            if (lives <= 0){
+                lives = 3;
+                score -= 10;
+                score += game.getSession().getScore() + game.getPhysics().getEnemyScore();
+                game.getSession().setScore(score);
+                score = 0;
+                timer = 500;
+                level = Level.GAME_OVER;
+                generateMenuBackground();
+                map.incrementVersion();
+            }
             return;
         }
         if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
@@ -275,6 +284,18 @@ public class World extends TickingElement {
 
     public int getTimer() {
         return timer;
+    }
+    
+    public int getLives(){
+        return lives;
+    }
+    
+    public boolean isLostLife(){
+        return lostLife;
+    }
+    
+    public void setLostLife(boolean b){
+        lostLife = b;
     }
 
     private void generateMenuBackground() {
