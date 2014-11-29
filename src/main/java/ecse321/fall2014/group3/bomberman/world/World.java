@@ -46,7 +46,6 @@ public class World extends TickingElement {
     private volatile int timer;
     private long last = 0;
     private int lives;
-    private boolean lostLife;
 
     public World(Game game) {
         super("World", 20);
@@ -143,15 +142,12 @@ public class World extends TickingElement {
 
         if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)) {
             lives--;
-            lostLife = true;
         }
         if (player.isCollidingWith(Enemy.class)) {
             lives--;
-            lostLife = true;
         }
        if (timer <= 0) {
            lives--;
-           lostLife = true; 
        }
        if (lives <= 0) {
            lives = 3;
@@ -300,13 +296,6 @@ public class World extends TickingElement {
         return lives;
     }
 
-    public boolean isLostLife() {
-        return lostLife;
-    }
-
-    public void setLostLife(boolean b) {
-        lostLife = b;
-    }
 
     private void generateMenuBackground() {
         for (int y = 0; y < Interface.VIEW_HEIGHT_TILE; y++) {

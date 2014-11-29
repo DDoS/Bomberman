@@ -59,11 +59,13 @@ public class Physics extends TickingElement {
     private boolean powerUPCollected = false;
     private TextBoxEntity levelStateText;
     private volatile int enemyScore;
+    private int lives;
 
     public Physics(Game game) {
         super("Physics", 60);
         this.game = game;
         enemyScore = 0;
+        lives=3;
     }
 
     @Override
@@ -306,13 +308,17 @@ public class Physics extends TickingElement {
         
         // Update UI
         final World world = game.getWorld();
-        levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
-                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
-      //update lives
-        if (world.isLostLife()){
+        //update lives
+        if (lives> world.getLives() ){
             player.setPosition(new Vector2f(1, 11));
-            world.setLostLife(false);
+            lives = world.getLives();
+            System.out.println(lives);
+        }else if (world.getLives() ==3){
+            lives = world.getLives();
         }
+        
+        levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
+                + " | Score " + (world.getScore() + enemyScore) + " |  Timer " + world.getTimer() + "|  Lives " + lives);
     }
 
     private Vector2f getInputVector() {
