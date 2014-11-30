@@ -10,7 +10,9 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.CollidableTile;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
@@ -170,14 +172,14 @@ public class RegularAI extends AI {
 
         if (xs == 0f) {
             if (ys < 0) {
-                if (!map.isTile(eP.add(0f, ts * ys), Unbreakable.class) && !map.isTile(eP.add(0f, ts * ys), Breakable.class)) {
+                if (!map.isTile(eP.add(0f, ts * ys), CollidableTile.class) && !map.isTile(eP.add(0f, ts * ys), Bomb.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
                     return eP.add(0f, -ys * ts);
                 }
             } else {
-                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+                if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
@@ -186,14 +188,14 @@ public class RegularAI extends AI {
             }
         } else {
             if (xs < 0) {
-                if (!map.isTile(eP.add(xs * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(xs * ts, 0f), Breakable.class)) {
+                if (!map.isTile(eP.add(xs * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(xs * ts, 0f), Bomb.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
                     return eP.add(-xs * ts, 0f);
                 }
             } else {
-                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
+                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
@@ -228,32 +230,28 @@ public class RegularAI extends AI {
         float ey = eP.getY();
         float px = pP.getX();
         float py = pP.getY();
-        float spd = tar.getSpeed();
+        float spd = Math.abs(tar.getSpeed());
 
-        if (Math.abs(ex - px) > Math.abs(ey - py)) {
-            if (ey > py) {
-                if (map.isTile(eP.add(0f, -spd * ts), Air.class) && map.isTile(eP.add(0f, -spd * ts), Fire.class)) {
-                    tar.setVelocity(new Vector2f(0f, -spd));
-                    return eP.add(0f, -spd * ts);
-                }
-            } else {
-                if (map.isTile(eP.add(0f, 1f), Air.class) && map.isTile(eP.add(0f, 1f), Fire.class)) {
-                    tar.setVelocity(new Vector2f(0f, spd));
-                    return eP.add(0f, spd * ts);
-                }
+        if (Math.abs(ex - px) < spd * ts && ey > py) {
+            if (!map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, -spd));
+                return eP.add(0f, -spd * ts);
             }
-        } else {
-            if (ex > px) {
-                if (map.isTile(eP.add(-spd * ts, 0f), Air.class) && map.isTile(eP.add(-spd * ts, 0f), Fire.class)) {
-                    tar.setVelocity(new Vector2f(-spd, 0f));
-                    return eP.add(-spd * ts, 0f);
-                }
-            } else {
-                if (map.isTile(eP.add(1f, 0f), Air.class) && map.isTile(eP.add(1f, 0f), Fire.class)) {
+        } else if (Math.abs(ex - px) < spd * ts && ey < py){
+            if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, spd));
+                return eP.add(0f, spd * ts);
+            }
+        } else if (Math.abs(ey - py) < spd * ts && ex > px) {
+            if (!map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(-spd, 0f));
+                return eP.add(-spd * ts, 0f);
+            }
+        } else if (Math.abs(ey - py) < spd * ts && ex < px) {
+                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }
-            }
         }
         return eP;
     }
