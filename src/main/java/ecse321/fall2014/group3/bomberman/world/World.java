@@ -163,6 +163,7 @@ public class World extends TickingElement {
         // Game over
         if (lives <= 0) {
             lives = 3;
+            player.clearPowerUPs();
             if (level.getNumber() != 1) {
                 score += session.getScore();
             }
@@ -273,6 +274,7 @@ public class World extends TickingElement {
                 }
                 if (flamePosition.equals(exitwayTile)) {
                     map.setTile(flamePosition, ExitWay.class);
+                    exitwayTile = null;
                 } else if (flamePosition.equals(powerUPTile)) {
                     map.setTile(flamePosition, level.getPowerUPForLevel());
                     powerUPTile = null;
@@ -281,6 +283,10 @@ public class World extends TickingElement {
                 }
                 if (tile instanceof Breakable) {
                     score += 5;
+                }
+                if ((tile instanceof ExitWay ) || (tile instanceof PowerUP)){
+                   //TODO: place 8 of the highest enemies from this level on the map
+                   
                 }
                 if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
