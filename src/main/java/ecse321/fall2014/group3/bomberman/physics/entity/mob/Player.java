@@ -90,15 +90,13 @@ public class Player extends Mob {
     public void clearPowerUPs() {
         powerUPs.clear();
     }
-    
-    public void death(){
+
+    public void onDeath() {
         powerUPs.remove(Detonator.class);
         powerUPs.remove(BombPass.class);
         powerUPs.remove(WallPass.class);
         powerUPs.remove(FlamePass.class);
     }
-    
-    
 
     @Override
     public SpriteInfo getSpriteInfo() {

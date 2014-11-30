@@ -250,25 +250,19 @@ public class Physics extends TickingElement {
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
             // ghost collidables only report collisions, but don't actually collide
-
             if (collidable.isGhost()) {
                 continue;
             }
-            
-            if ((collidable instanceof Bomb) && (player.hasPowerUP(BombPass.class)))
-            {
+            // Powerup collision exceptions
+            if (collidable instanceof Bomb && player.hasPowerUP(BombPass.class)) {
                 continue;
             }
-            
-            if ((collidable  instanceof Breakable ) && (player.hasPowerUP(WallPass.class)))
-            {
+            if (collidable instanceof Breakable && player.hasPowerUP(WallPass.class)) {
                 continue;
             }
-            if ((collidable instanceof Fire) && (player.hasPowerUP(FlamePass.class)))
-            {
+            if (collidable instanceof Fire && player.hasPowerUP(FlamePass.class)) {
                 continue;
             }
-           
             // Find the intersection of the collision (a box) and the direction
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);
@@ -330,7 +324,7 @@ public class Physics extends TickingElement {
             final Event event = worldEvents.poll();
             if (event instanceof PlayerLostLifeEvent) {
                 player.setPosition(new Vector2f(1, 11));
-                player.death();
+                player.onDeath();
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
             }

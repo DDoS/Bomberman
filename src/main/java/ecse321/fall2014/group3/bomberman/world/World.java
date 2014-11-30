@@ -152,7 +152,7 @@ public class World extends TickingElement {
         }
 
         final Session session = game.getSession();
-        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && (!level.isBonus())
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && !level.isBonus()
                 || player.isCollidingWith(Enemy.class)
                 || timer <= 0) {
             lives--;
@@ -282,9 +282,8 @@ public class World extends TickingElement {
                 if (tile instanceof Breakable) {
                     score += 5;
                 }
-                if ((tile instanceof ExitWay ) || (tile instanceof PowerUP)){
-                   //TODO: place 8 of the highest enemies from this level on the map
-                   
+                if (tile instanceof ExitWay || tile instanceof PowerUP) {
+                    //TODO: place 8 of the highest enemies from this level on the map
                 }
                 if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
