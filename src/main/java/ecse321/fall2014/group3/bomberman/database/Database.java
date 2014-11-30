@@ -17,6 +17,7 @@ public class Database {
     public static final String SCORE_KEY = "SCORE";
     public static final String LEVEL_KEY = "LEVEL";
     public static final String LIVES_KEY = "LIVES";
+    public static final String POWERUPS_KEY = "POWERUPS";
     private final Connection connection;
 
     public Database(String file) {
@@ -52,7 +53,7 @@ public class Database {
                     " SCORE     INT   NOT NULL," +
                     " LEVEL     INT   NOT NULL," +
                     " LIVES     INT   NOT NULL," +
-                    " POWERUPS  CLOB)";
+                    " POWERUPS  INT   NOT NULL)";
             statement.executeUpdate(sql);
             connection.commit();
         } catch (SQLException exception) {
@@ -63,7 +64,7 @@ public class Database {
 
     public void setString(String username, String column, String value) {
         if (column.equals(USERNAME_KEY)) {
-            final String sql = "INSERT INTO USERS (USERNAME, PASSWORD, REALNAME, SCORE, LEVEL, LIVES) VALUES (?, ?, ?, ?, ?, ?)";
+            final String sql = "INSERT INTO USERS (USERNAME, PASSWORD, REALNAME, SCORE, LEVEL, LIVES, POWERUPS) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, username);
                 statement.setString(2, "");
@@ -71,6 +72,7 @@ public class Database {
                 statement.setInt(4, 0);
                 statement.setInt(5, 1);
                 statement.setInt(6, 3);
+                statement.setInt(7, 0);
                 statement.executeUpdate();
                 connection.commit();
             } catch (SQLException exception) {

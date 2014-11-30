@@ -19,7 +19,7 @@ import org.junit.rules.TemporaryFolder;
 public class DatabaseTest {
     @Rule
     public final TemporaryFolder testFolder = new TemporaryFolder();
-    protected Database testDB;
+    private Database testDB;
 
     @Before
     public void openDB() throws IOException {

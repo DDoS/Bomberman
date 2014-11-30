@@ -1,5 +1,9 @@
 package ecse321.fall2014.group3.bomberman.database;
 
+import java.util.Map;
+
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
+
 /**
  * @author Marco
  */
@@ -54,6 +58,16 @@ public class Session {
 
     public void setLives(int lives) {
         database.setInt(username, Database.LIVES_KEY, lives);
+    }
+
+    public void getPowerUPs(Map<Class<? extends PowerUP>, Integer> powerUPs) {
+        final int serialized = database.getInt(username, Database.POWERUPS_KEY);
+        PowerUP.deserialize(serialized, powerUPs);
+    }
+
+    public void setPowerUPs(Map<Class<? extends PowerUP>, Integer> powerUPs) {
+        final int serialized = PowerUP.serialize(powerUPs);
+        database.setInt(username, Database.POWERUPS_KEY, serialized);
     }
 
     public static Session open(Database database, String username, String password) {
