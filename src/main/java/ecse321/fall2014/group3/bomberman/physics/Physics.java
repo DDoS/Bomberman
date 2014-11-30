@@ -17,6 +17,7 @@ import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
 import ecse321.fall2014.group3.bomberman.event.Event;
+import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
 import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
@@ -250,25 +251,19 @@ public class Physics extends TickingElement {
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
             // ghost collidables only report collisions, but don't actually collide
-
             if (collidable.isGhost()) {
                 continue;
             }
-            
-            if ((collidable instanceof Bomb) && (player.hasPowerUP(BombPass.class)))
-            {
+            // Powerup collision exceptions
+            if (collidable instanceof Bomb && player.hasPowerUP(BombPass.class)) {
                 continue;
             }
-            
-            if ((collidable  instanceof Breakable ) && (player.hasPowerUP(WallPass.class)))
-            {
+            if (collidable instanceof Breakable && player.hasPowerUP(WallPass.class)) {
                 continue;
             }
-            if ((collidable instanceof Fire) && (player.hasPowerUP(FlamePass.class)))
-            {
+            if (collidable instanceof Fire && player.hasPowerUP(FlamePass.class)) {
                 continue;
             }
-           
             // Find the intersection of the collision (a box) and the direction
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);
@@ -330,9 +325,11 @@ public class Physics extends TickingElement {
             final Event event = worldEvents.poll();
             if (event instanceof PlayerLostLifeEvent) {
                 player.setPosition(new Vector2f(1, 11));
-                player.death();
+                player.onDeath();
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
+            } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
+                // TODO: remove all enemies and replace with 8 of the highest enemies from this level on the map
             }
         }
     }
