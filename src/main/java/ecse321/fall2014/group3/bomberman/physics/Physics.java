@@ -57,7 +57,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 public class Physics extends TickingElement {
     private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
     private static final float SLIDING_CONTACT_THRESHOLD = 0.9f;
-    private static final float OVERLAP_CONTACT_THRESHOLD = 0.7f;
+    private static final float OVERLAP_CONTACT_THRESHOLD = 0.5f;
     private final Game game;
     private final SubscribableQueue<Event> events = new SubscribableQueue<>(false);
     private final SweepAndPruneAlgorithm collisionDetection = new SweepAndPruneAlgorithm();
@@ -183,7 +183,6 @@ public class Physics extends TickingElement {
             Doll doll = new Doll(freePositions.get(i));
             entities.add(doll);
             collisionDetection.add(doll);
-            i++;
         }
         // add minvo
         for (int j = 0; j < enemies[3] && i < freePositions.size(); j++, i++) {
@@ -330,13 +329,14 @@ public class Physics extends TickingElement {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
             } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
                 // TODO: remove all enemies
-                
+
                 //get highest enemies
                 int[] enemies = currentLevel.getEnemyForLevel();
-                int highestEnemy=0;
-                for (int i = 0; i< enemies.length; i++){
-                    if (enemies[i] > 0)
+                int highestEnemy = 0;
+                for (int i = 0; i < enemies.length; i++) {
+                    if (enemies[i] > 0) {
                         highestEnemy = i;
+                    }
                 }
                 //get free positions 
                 final World world = game.getWorld();
@@ -344,16 +344,16 @@ public class Physics extends TickingElement {
                 Collections.shuffle(freePositions);
                 int i = 0;
                 //add 8 of the highest enemy
-                switch (highestEnemy){
-                    case (0):
+                switch (highestEnemy) {
+                    case 0:
                         //add ballom
                         for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Balloom balloom = new Balloom(freePositions.get(i));
                             entities.add(balloom);
                             collisionDetection.add(balloom);
                         }
-                            break;
-                    case (1):
+                        break;
+                    case 1:
                         // add oneal
                         for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Oneal oneal = new Oneal(freePositions.get(i));
@@ -361,16 +361,15 @@ public class Physics extends TickingElement {
                             collisionDetection.add(oneal);
                         }
                         break;
-                    case (2):
+                    case 2:
                         // add doll
                         for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Doll doll = new Doll(freePositions.get(i));
                             entities.add(doll);
                             collisionDetection.add(doll);
-                            i++;
                         }
                         break;
-                    case (3):
+                    case 3:
                         // add minvo
                         for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Minvo minvo = new Minvo(freePositions.get(i));
@@ -378,33 +377,33 @@ public class Physics extends TickingElement {
                             collisionDetection.add(minvo);
                         }
                         break;
-                    case (4):
+                    case 4:
                         // add kondoria
-                        for (int j = 0; j < enemies[4] && i < freePositions.size(); j++, i++) {
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Kondoria kondoria = new Kondoria(freePositions.get(i));
                             entities.add(kondoria);
                             collisionDetection.add(kondoria);
                         }
                         break;
-                    case (5):
-                     // add ovapi
-                        for (int j = 0; j < enemies[5] && i < freePositions.size(); j++, i++) {
+                    case 5:
+                        // add ovapi
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Ovapi ovapi = new Ovapi(freePositions.get(i));
                             entities.add(ovapi);
                             collisionDetection.add(ovapi);
                         }
                         break;
-                    case (6):
+                    case 6:
                         // add pass
-                        for (int j = 0; j < enemies[6] && i < freePositions.size(); j++, i++) {
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Pass pass = new Pass(freePositions.get(i));
                             entities.add(pass);
                             collisionDetection.add(pass);
                         }
                         break;
-                    case (7):
+                    case 7:
                         // add pontan
-                        for (int j = 0; j < enemies[7] && i < freePositions.size(); j++, i++) {
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
                             Pontan pontan = new Pontan(freePositions.get(i));
                             entities.add(pontan);
                             collisionDetection.add(pontan);
@@ -467,7 +466,6 @@ public class Physics extends TickingElement {
             // Reject player starting positions
             if ((position.getFloorX() != 1 || position.getFloorY() != 11 && position.getFloorY() != 10) && (position.getFloorX() != 2 || position.getFloorY() != 11)) {
                 free.add(position);
-               
             }
         }
         return free;
