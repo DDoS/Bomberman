@@ -329,7 +329,88 @@ public class Physics extends TickingElement {
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
             } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
-                // TODO: remove all enemies and replace with 8 of the highest enemies from this level on the map
+                // TODO: remove all enemies
+                
+                //get highest enemies
+                int[] enemies = currentLevel.getEnemyForLevel();
+                int highestEnemy=0;
+                for (int i = 0; i< enemies.length; i++){
+                    if (enemies[i] > 0)
+                        highestEnemy = i;
+                }
+                //get free positions 
+                final World world = game.getWorld();
+                final List<Vector2f> freePositions = getFreePositions(world.getMap());
+                Collections.shuffle(freePositions);
+                int i = 0;
+                //add 8 of the highest enemy
+                switch (highestEnemy){
+                    case (0):
+                        //add ballom
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Balloom balloom = new Balloom(freePositions.get(i));
+                            entities.add(balloom);
+                            collisionDetection.add(balloom);
+                        }
+                            break;
+                    case (1):
+                        // add oneal
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Oneal oneal = new Oneal(freePositions.get(i));
+                            entities.add(oneal);
+                            collisionDetection.add(oneal);
+                        }
+                        break;
+                    case (2):
+                        // add doll
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Doll doll = new Doll(freePositions.get(i));
+                            entities.add(doll);
+                            collisionDetection.add(doll);
+                            i++;
+                        }
+                        break;
+                    case (3):
+                        // add minvo
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Minvo minvo = new Minvo(freePositions.get(i));
+                            entities.add(minvo);
+                            collisionDetection.add(minvo);
+                        }
+                        break;
+                    case (4):
+                        // add kondoria
+                        for (int j = 0; j < enemies[4] && i < freePositions.size(); j++, i++) {
+                            Kondoria kondoria = new Kondoria(freePositions.get(i));
+                            entities.add(kondoria);
+                            collisionDetection.add(kondoria);
+                        }
+                        break;
+                    case (5):
+                     // add ovapi
+                        for (int j = 0; j < enemies[5] && i < freePositions.size(); j++, i++) {
+                            Ovapi ovapi = new Ovapi(freePositions.get(i));
+                            entities.add(ovapi);
+                            collisionDetection.add(ovapi);
+                        }
+                        break;
+                    case (6):
+                        // add pass
+                        for (int j = 0; j < enemies[6] && i < freePositions.size(); j++, i++) {
+                            Pass pass = new Pass(freePositions.get(i));
+                            entities.add(pass);
+                            collisionDetection.add(pass);
+                        }
+                        break;
+                    case (7):
+                        // add pontan
+                        for (int j = 0; j < enemies[7] && i < freePositions.size(); j++, i++) {
+                            Pontan pontan = new Pontan(freePositions.get(i));
+                            entities.add(pontan);
+                            collisionDetection.add(pontan);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -386,6 +467,7 @@ public class Physics extends TickingElement {
             // Reject player starting positions
             if ((position.getFloorX() != 1 || position.getFloorY() != 11 && position.getFloorY() != 10) && (position.getFloorX() != 2 || position.getFloorY() != 11)) {
                 free.add(position);
+               
             }
         }
         return free;
