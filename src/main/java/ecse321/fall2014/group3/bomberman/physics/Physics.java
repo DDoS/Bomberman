@@ -43,7 +43,12 @@ import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.World;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombPass;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.WallPass;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 /**
  *
@@ -245,9 +250,25 @@ public class Physics extends TickingElement {
         Vector2f movement = inputVector;
         for (Collidable collidable : player.getCollisionList()) {
             // ghost collidables only report collisions, but don't actually collide
+
             if (collidable.isGhost()) {
                 continue;
             }
+            
+            if ((collidable.getClass() == Bomb.class) && (player.hasPowerUP(BombPass.class)))
+            {
+                continue;
+            }
+            
+            if ((collidable.getClass() == Breakable.class) && (player.hasPowerUP(WallPass.class)))
+            {
+                continue;
+            }
+            if ((collidable.getClass() == Fire.class) && (player.hasPowerUP(FlamePass.class)))
+            {
+                continue;
+            }
+           
             // Find the intersection of the collision (a box) and the direction
             final Intersection intersection = getIntersection(player, collidable);
             final Direction direction = getCollisionDirection(intersection, collidable);

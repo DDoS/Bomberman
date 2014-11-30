@@ -87,6 +87,8 @@ public class Player extends Mob {
     public void clearPowerUPs() {
         powerUPs.clear();
     }
+    
+    
 
     @Override
     public SpriteInfo getSpriteInfo() {
