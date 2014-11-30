@@ -33,10 +33,10 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Oneal;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Ovapi;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pass;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pontan;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBox;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBox;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
@@ -58,11 +58,11 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.newSetFromMap(new ConcurrentHashMap<Entity, Boolean>());
     private final Player player = new Player(Vector2f.ZERO);
-    private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
+    private final List<Button> buttonOrder = Collections.synchronizedList(new ArrayList<Button>());
     private volatile int selectedButtonIndex;
     private Level currentLevel;
     private long mapVersion = 0;
-    private TextBoxEntity levelStateText;
+    private TextBox levelStateText;
 
     public Physics(Game game) {
         super("Physics", 60);
@@ -105,11 +105,11 @@ public class Physics extends TickingElement {
 
     private void setupMenu() {
         // Add UI entities
-        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
+        final List<UIBox> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
         entities.addAll(uiEntities);
-        for (UIBoxEntity uiEntity : uiEntities) {
-            if (uiEntity instanceof ButtonEntity) {
-                buttonOrder.add((ButtonEntity) uiEntity);
+        for (UIBox uiEntity : uiEntities) {
+            if (uiEntity instanceof Button) {
+                buttonOrder.add((Button) uiEntity);
             }
         }
         selectedButtonIndex = 0;
@@ -117,7 +117,7 @@ public class Physics extends TickingElement {
         if (currentLevel == Level.LEADER_BOARD) {
             final Leader[] top = game.getLeaderboard().getTop(10);
             for (int i = 0; i < top.length && top[i] != null; i++) {
-                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
+                entities.add(new TextBox(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
             }
         } else if (currentLevel == Level.GAME_OVER) {
             // Remove all powerups on game over
@@ -137,9 +137,9 @@ public class Physics extends TickingElement {
             buttonOrder.get(newSelected).setSelected(true);
         }
         selectedButtonIndex = newSelected;
-        final ButtonEntity selectedButton = getSelectedButton();
-        if (selectedButton instanceof SliderEntity) {
-            ((SliderEntity) selectedButton).add(sliderShift);
+        final Button selectedButton = getSelectedButton();
+        if (selectedButton instanceof Slider) {
+            ((Slider) selectedButton).add(sliderShift);
         }
     }
 
@@ -153,7 +153,7 @@ public class Physics extends TickingElement {
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                         + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "| Lives " + world.getLives();
-        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
+        levelStateText = new TextBox(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
         final List<Vector2f> freePositions = getFreePositions(world.getMap());
@@ -353,7 +353,7 @@ public class Physics extends TickingElement {
         return entities;
     }
 
-    public ButtonEntity getSelectedButton() {
+    public Button getSelectedButton() {
         if (buttonOrder.size() <= selectedButtonIndex) {
             return null;
         }

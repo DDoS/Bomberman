@@ -19,8 +19,8 @@ import ecse321.fall2014.group3.bomberman.physics.Collidable;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.Event;
@@ -90,7 +90,7 @@ public class World extends TickingElement {
         if (enterCount <= 0) {
             return;
         }
-        final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
+        final Button selectedButton = game.getPhysics().getSelectedButton();
         final String[] action = selectedButton.getAction();
         switch (action[0]) {
             case "levelload": {
@@ -100,7 +100,7 @@ public class World extends TickingElement {
                         nextLevel = Level.fromNumber(game.getSession().getLevel());
                         break;
                     case "number":
-                        nextLevel = Level.fromNumber(((SliderEntity) selectedButton).getValue());
+                        nextLevel = Level.fromNumber(((Slider) selectedButton).getValue());
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);
