@@ -17,6 +17,7 @@ import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
 import ecse321.fall2014.group3.bomberman.event.Event;
+import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
 import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
@@ -327,6 +328,8 @@ public class Physics extends TickingElement {
                 player.onDeath();
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
+            } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
+                // TODO: remove all enemies and replace with 8 of the highest enemies from this level on the map
             }
         }
     }

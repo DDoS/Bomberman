@@ -12,6 +12,7 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
+import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
@@ -281,11 +282,9 @@ public class World extends TickingElement {
                 }
                 if (tile instanceof Breakable) {
                     score += 5;
-                }
-                if (tile instanceof ExitWay || tile instanceof PowerUP) {
-                    //TODO: place 8 of the highest enemies from this level on the map
-                }
-                if (i > 0 && tile instanceof Bomb) {
+                } else if (tile instanceof ExitWay || tile instanceof PowerUP) {
+                    events.add(new ExitWayOrPowerUPDestroyedEvent(tile));
+                } else if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
                     activeBombs--;
                 }
