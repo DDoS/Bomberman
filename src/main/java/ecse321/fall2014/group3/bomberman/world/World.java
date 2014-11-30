@@ -1,5 +1,6 @@
 package ecse321.fall2014.group3.bomberman.world;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
@@ -29,6 +30,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.Detonator;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
@@ -54,6 +56,7 @@ public class World extends TickingElement {
     private volatile int timer;
     private long lastTime = 0;
     private int lives;
+    private List<Vector2f> bombLocations = new ArrayList <Vector2f>();
 
     public World(Game game) {
         super("World", 20);
@@ -221,6 +224,7 @@ public class World extends TickingElement {
             final Vector2f position = player.getPosition().add(0.5f, 0.5f);
             if (map.isTile(position, Air.class)) {
                 map.setTile(position, Bomb.class);
+                bombLocations.add(position);
                 updatedMap = true;
                 activeBombs++;
             }
@@ -230,6 +234,7 @@ public class World extends TickingElement {
         for (TimedTile timed : map.getTiles(TimedTile.class)) {
             if (timed.hasExpired()) {
                 if (timed instanceof Bomb) {
+                    bombLocations.remove(timed.getPosition());
                     generateFlames(timed.getPosition(), blastRadius);
                     activeBombs--;
                 } else {
@@ -343,6 +348,16 @@ public class World extends TickingElement {
             }
         }
         map.incrementVersion();
+    }
+    
+    public void detonate(){
+        Player player = game.getPhysics().getPlayer();
+        if (player.hasPowerUP(Detonator.class)){
+           for (Vector2f position : bombLocations) {
+                generateFlames(position, player.getBlastRadius());
+            }
+            
+        }
     }
 
     private void generateLevel(Level level) {
