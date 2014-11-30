@@ -156,6 +156,7 @@ public class World extends TickingElement {
                 || player.isCollidingWith(Enemy.class)
                 || timer <= 0) {
             lives--;
+            player.death();
             events.add(new PlayerLostLifeEvent());
             session.setLives(lives);
         }

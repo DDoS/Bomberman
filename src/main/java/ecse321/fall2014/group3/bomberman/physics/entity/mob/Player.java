@@ -8,10 +8,14 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombPass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombUpgrade;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.Detonator;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlameUpgrade;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.SpeedUpgrade;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.WallPass;
 
 public class Player extends Mob {
     private static final Vector2f SIZE = Vector2f.ONE;
@@ -85,6 +89,13 @@ public class Player extends Mob {
 
     public void clearPowerUPs() {
         powerUPs.clear();
+    }
+    
+    public void death(){
+        powerUPs.remove(Detonator.class);
+        powerUPs.remove(BombPass.class);
+        powerUPs.remove(WallPass.class);
+        powerUPs.remove(FlamePass.class);
     }
     
     
