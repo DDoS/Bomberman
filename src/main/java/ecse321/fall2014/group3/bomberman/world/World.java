@@ -1,19 +1,22 @@
 package ecse321.fall2014.group3.bomberman.world;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
 import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2i;
 
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
+import ecse321.fall2014.group3.bomberman.event.Event;
 import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
+import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
@@ -25,8 +28,6 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
 import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
-import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
-import ecse321.fall2014.group3.bomberman.event.Event;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
@@ -57,7 +58,7 @@ public class World extends TickingElement {
     private volatile int timer;
     private long lastTime = 0;
     private int lives;
-    private List<Vector2f> bombLocations = new ArrayList <Vector2f>();
+    private final Queue<Vector2i> bombLocations = new LinkedList<>();
 
     public World(Game game) {
         super("World", 20);
@@ -91,6 +92,7 @@ public class World extends TickingElement {
         final int enterCount = keyboardState.getAndClearPressCount(Key.PLACE);
         // Don't remove even if unused, this is to reset the state after each tick
         final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
+        final int detonateCount = keyboardState.getAndClearPressCount(Key.DETONATE);
 
         if (enterCount <= 0) {
             return;
@@ -148,6 +150,7 @@ public class World extends TickingElement {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int placeCount = keyboardState.getAndClearPressCount(Key.PLACE);
         final int exitCount = keyboardState.getAndClearPressCount(Key.EXIT);
+        final int detonateCount = keyboardState.getAndClearPressCount(Key.DETONATE);
 
         final Player player = game.getPhysics().getPlayer();
         if (System.currentTimeMillis() - lastTime > 1000) {
@@ -225,21 +228,30 @@ public class World extends TickingElement {
             final Vector2f position = player.getPosition().add(0.5f, 0.5f);
             if (map.isTile(position, Air.class)) {
                 map.setTile(position, Bomb.class);
-                bombLocations.add(position);
-                updatedMap = true;
+                bombLocations.add(position.toInt());
                 activeBombs++;
+                updatedMap = true;
             }
         }
-        // Explode expired bombs and remove dead flames
+        // Explode bombs and remove dead flames
         final int blastRadius = player.getBlastRadius();
+        final boolean detonator = player.hasPowerUP(Detonator.class);
+        if (detonator) {
+            for (int i = 0; i < detonateCount && activeBombs > 0; i++, activeBombs--) {
+                generateFlames(bombLocations.poll().toFloat(), blastRadius);
+                updatedMap = true;
+            }
+        }
         for (TimedTile timed : map.getTiles(TimedTile.class)) {
-            if (timed.hasExpired()) {
-                if (timed instanceof Bomb) {
-                    bombLocations.remove(timed.getPosition());
-                    generateFlames(timed.getPosition(), blastRadius);
+            final boolean isBomb = timed instanceof Bomb;
+            if (timed.hasExpired() && (!detonator || !isBomb)) {
+                final Vector2f position = timed.getPosition();
+                if (isBomb) {
+                    generateFlames(position, blastRadius);
+                    bombLocations.remove(position.toInt());
                     activeBombs--;
                 } else {
-                    map.setTile(timed.getPosition(), Air.class);
+                    map.setTile(position, Air.class);
                 }
                 updatedMap = true;
             }
@@ -290,6 +302,7 @@ public class World extends TickingElement {
                     events.add(new ExitWayOrPowerUPDestroyedEvent(tile));
                 } else if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
+                    bombLocations.remove(flamePosition.toInt());
                     activeBombs--;
                 }
             }
@@ -345,16 +358,6 @@ public class World extends TickingElement {
             }
         }
         map.incrementVersion();
-    }
-    
-    public void detonate(){
-        Player player = game.getPhysics().getPlayer();
-        if (player.hasPowerUP(Detonator.class)){
-           for (Vector2f position : bombLocations) {
-                generateFlames(position, player.getBlastRadius());
-            }
-            
-        }
     }
 
     private void generateLevel(Level level) {
