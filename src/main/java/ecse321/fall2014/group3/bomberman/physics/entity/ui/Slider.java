@@ -5,11 +5,11 @@ import com.flowpowered.math.vector.Vector2f;
 /**
  *
  */
-public class SliderEntity extends ButtonEntity {
+public class Slider extends Button {
     private final int min, range;
     private volatile int value;
 
-    public SliderEntity(Vector2f position, Vector2f size, String text, String action, int minValue, int maxValue) {
+    public Slider(Vector2f position, Vector2f size, String text, String action, int minValue, int maxValue) {
         super(position, size, text, action);
         min = minValue;
         range = maxValue - min + 1;

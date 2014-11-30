@@ -1,5 +1,7 @@
 package ecse321.fall2014.group3.bomberman.world;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -11,6 +13,7 @@ import ecse321.fall2014.group3.bomberman.Game;
 import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Session;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
+import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
 import ecse321.fall2014.group3.bomberman.input.KeyboardState;
@@ -19,8 +22,8 @@ import ecse321.fall2014.group3.bomberman.physics.Collidable;
 import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.Event;
@@ -28,6 +31,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.ExitWay;
 import ecse321.fall2014.group3.bomberman.world.tile.MenuBackground;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.Detonator;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
@@ -53,6 +57,7 @@ public class World extends TickingElement {
     private volatile int timer;
     private long lastTime = 0;
     private int lives;
+    private List<Vector2f> bombLocations = new ArrayList <Vector2f>();
 
     public World(Game game) {
         super("World", 20);
@@ -90,7 +95,7 @@ public class World extends TickingElement {
         if (enterCount <= 0) {
             return;
         }
-        final ButtonEntity selectedButton = game.getPhysics().getSelectedButton();
+        final Button selectedButton = game.getPhysics().getSelectedButton();
         final String[] action = selectedButton.getAction();
         switch (action[0]) {
             case "levelload": {
@@ -100,7 +105,7 @@ public class World extends TickingElement {
                         nextLevel = Level.fromNumber(game.getSession().getLevel());
                         break;
                     case "number":
-                        nextLevel = Level.fromNumber(((SliderEntity) selectedButton).getValue());
+                        nextLevel = Level.fromNumber(((Slider) selectedButton).getValue());
                         break;
                     default:
                         throw new IllegalStateException("Unknown button action: " + action[1]);
@@ -108,6 +113,7 @@ public class World extends TickingElement {
                 generateLevel(nextLevel);
                 map.incrementVersion();
                 activeBombs = 0;
+                lives = game.getSession().getLives();
                 level = nextLevel;
                 break;
             }
@@ -149,23 +155,23 @@ public class World extends TickingElement {
             timer--;
         }
 
-        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)) {
+        final Session session = game.getSession();
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && !level.isBonus()
+                || player.isCollidingWith(Enemy.class)
+                || timer <= 0) {
             lives--;
             events.add(new PlayerLostLifeEvent());
+            session.setLives(lives);
         }
-        if (player.isCollidingWith(Enemy.class)) {
-            lives--;
-            events.add(new PlayerLostLifeEvent());
-        }
-        if (timer <= 0) {
-            lives--;
-            events.add(new PlayerLostLifeEvent());
-        }
+        // Game over
         if (lives <= 0) {
             lives = 3;
-            score -= 10;
-            score += game.getSession().getScore();
-            game.getSession().setScore(score);
+            if (level.getNumber() != 1) {
+                score += session.getScore();
+            }
+            session.setScore(score);
+            session.setLives(lives);
+            session.setPowerUPs(Collections.EMPTY_MAP);
             score = 0;
             timer = 500;
             level = Level.GAME_OVER;
@@ -173,17 +179,18 @@ public class World extends TickingElement {
             map.incrementVersion();
             return;
         }
-
+        // Game win
         if (player.isCollidingWith(ExitWay.class) && enemiesAllDead()) {
             if (level.isBonus()) {
-                score += (150 * Math.abs(level.getNumber())) + timer;
+                score += 150 * Math.abs(level.getNumber()) + timer;
             } else {
-                score += (50 * level.getNumber()) + timer;
+                score += 50 * level.getNumber() + timer;
             }
             if (level.getNumber() != 1) {
-                score += game.getSession().getScore();
+                score += session.getScore();
             }
-            game.getSession().setScore(score);
+            session.setScore(score);
+            session.setPowerUPs(player.getPowerUPs());
             score = 0;
             timer = 500;
             if (level.getNumber() == 50) {
@@ -193,7 +200,6 @@ public class World extends TickingElement {
                 return;
             }
             final Level nextLevel = level.next();
-            final Session session = game.getSession();
             if (session.getLevel() < nextLevel.getNumber()) {
                 session.setLevel(nextLevel.getNumber());
             }
@@ -202,6 +208,7 @@ public class World extends TickingElement {
             level = nextLevel;
             return;
         }
+        // Game exit
         if (exitCount > 0) {
             score = 0;
             timer = 500;
@@ -218,6 +225,7 @@ public class World extends TickingElement {
             final Vector2f position = player.getPosition().add(0.5f, 0.5f);
             if (map.isTile(position, Air.class)) {
                 map.setTile(position, Bomb.class);
+                bombLocations.add(position);
                 updatedMap = true;
                 activeBombs++;
             }
@@ -227,6 +235,7 @@ public class World extends TickingElement {
         for (TimedTile timed : map.getTiles(TimedTile.class)) {
             if (timed.hasExpired()) {
                 if (timed instanceof Bomb) {
+                    bombLocations.remove(timed.getPosition());
                     generateFlames(timed.getPosition(), blastRadius);
                     activeBombs--;
                 } else {
@@ -277,8 +286,9 @@ public class World extends TickingElement {
                 }
                 if (tile instanceof Breakable) {
                     score += 5;
-                }
-                if (i > 0 && tile instanceof Bomb) {
+                } else if (tile instanceof ExitWay || tile instanceof PowerUP) {
+                    events.add(new ExitWayOrPowerUPDestroyedEvent(tile));
+                } else if (i > 0 && tile instanceof Bomb) {
                     generateFlames(flamePosition, blastRadius);
                     activeBombs--;
                 }
@@ -335,6 +345,16 @@ public class World extends TickingElement {
             }
         }
         map.incrementVersion();
+    }
+    
+    public void detonate(){
+        Player player = game.getPhysics().getPlayer();
+        if (player.hasPowerUP(Detonator.class)){
+           for (Vector2f position : bombLocations) {
+                generateFlames(position, player.getBlastRadius());
+            }
+            
+        }
     }
 
     private void generateLevel(Level level) {

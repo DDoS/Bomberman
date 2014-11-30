@@ -1,6 +1,5 @@
 package ecse321.fall2014.group3.bomberman.physics.entity.mob;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,10 +8,14 @@ import com.flowpowered.math.vector.Vector2f;
 import ecse321.fall2014.group3.bomberman.Direction;
 import ecse321.fall2014.group3.bomberman.nterface.SpriteInfo;
 import ecse321.fall2014.group3.bomberman.physics.CollisionBox;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombPass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombUpgrade;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.Detonator;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlameUpgrade;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.SpeedUpgrade;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.WallPass;
 
 public class Player extends Mob {
     private static final Vector2f SIZE = Vector2f.ONE;
@@ -58,8 +61,8 @@ public class Player extends Mob {
         return 1 + getPowerUPLevel(BombUpgrade.class);
     }
 
-    public Collection<Class<? extends PowerUP>> getPowerUPs() {
-        return powerUPs.keySet();
+    public Map<Class<? extends PowerUP>, Integer> getPowerUPs() {
+        return powerUPs;
     }
 
     public boolean hasPowerUP(Class<? extends PowerUP> powerUP) {
@@ -88,15 +91,22 @@ public class Player extends Mob {
         powerUPs.clear();
     }
 
+    public void onDeath() {
+        powerUPs.remove(Detonator.class);
+        powerUPs.remove(BombPass.class);
+        powerUPs.remove(WallPass.class);
+        powerUPs.remove(FlamePass.class);
+    }
+
     @Override
     public SpriteInfo getSpriteInfo() {
         switch (direction) {
             case UP:
                 return UP_SPRITE;
             case DOWN:
-               return DOWN_SPRITE;
+                return DOWN_SPRITE;
             case LEFT:
-               return LEFT_SPRITE;
+                return LEFT_SPRITE;
             case RIGHT:
                 return RIGHT_SPRITE;
             default:

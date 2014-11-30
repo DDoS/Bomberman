@@ -5,11 +5,11 @@ import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.util.CausticUtil;
 
-public class TextBoxEntity extends UIBoxEntity {
+public class TextBox extends UIBox {
     private volatile Vector4f textColor = CausticUtil.WHITE;
     private volatile String text;
 
-    public TextBoxEntity(Vector2f position, Vector2f size, String text) {
+    public TextBox(Vector2f position, Vector2f size, String text) {
         super(position, size);
         this.text = text;
     }

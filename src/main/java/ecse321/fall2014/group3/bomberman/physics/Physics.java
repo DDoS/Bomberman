@@ -17,6 +17,7 @@ import ecse321.fall2014.group3.bomberman.SubscribableQueue;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard.Leader;
 import ecse321.fall2014.group3.bomberman.event.EnemyDeathEvent;
 import ecse321.fall2014.group3.bomberman.event.Event;
+import ecse321.fall2014.group3.bomberman.event.ExitWayOrPowerUPDestroyedEvent;
 import ecse321.fall2014.group3.bomberman.event.PlayerLostLifeEvent;
 import ecse321.fall2014.group3.bomberman.event.PowerUPCollectedEvent;
 import ecse321.fall2014.group3.bomberman.input.Key;
@@ -33,17 +34,22 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Oneal;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Ovapi;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pass;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Pontan;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBox;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBox;
 import ecse321.fall2014.group3.bomberman.ticking.TickingElement;
 import ecse321.fall2014.group3.bomberman.world.Level;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.World;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.BombPass;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.FlamePass;
+import ecse321.fall2014.group3.bomberman.world.tile.powerup.WallPass;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 /**
  *
@@ -58,11 +64,11 @@ public class Physics extends TickingElement {
     private final Set<Tile> collidableTiles = new HashSet<>();
     private final Set<Entity> entities = Collections.newSetFromMap(new ConcurrentHashMap<Entity, Boolean>());
     private final Player player = new Player(Vector2f.ZERO);
-    private final List<ButtonEntity> buttonOrder = Collections.synchronizedList(new ArrayList<ButtonEntity>());
+    private final List<Button> buttonOrder = Collections.synchronizedList(new ArrayList<Button>());
     private volatile int selectedButtonIndex;
     private Level currentLevel;
     private long mapVersion = 0;
-    private TextBoxEntity levelStateText;
+    private TextBox levelStateText;
 
     public Physics(Game game) {
         super("Physics", 60);
@@ -105,11 +111,11 @@ public class Physics extends TickingElement {
 
     private void setupMenu() {
         // Add UI entities
-        final List<UIBoxEntity> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
+        final List<UIBox> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
         entities.addAll(uiEntities);
-        for (UIBoxEntity uiEntity : uiEntities) {
-            if (uiEntity instanceof ButtonEntity) {
-                buttonOrder.add((ButtonEntity) uiEntity);
+        for (UIBox uiEntity : uiEntities) {
+            if (uiEntity instanceof Button) {
+                buttonOrder.add((Button) uiEntity);
             }
         }
         selectedButtonIndex = 0;
@@ -117,11 +123,8 @@ public class Physics extends TickingElement {
         if (currentLevel == Level.LEADER_BOARD) {
             final Leader[] top = game.getLeaderboard().getTop(10);
             for (int i = 0; i < top.length && top[i] != null; i++) {
-                entities.add(new TextBoxEntity(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
+                entities.add(new TextBox(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
             }
-        } else if (currentLevel == Level.GAME_OVER) {
-            // Remove all powerups on game over
-            player.clearPowerUPs();
         }
     }
 
@@ -137,9 +140,9 @@ public class Physics extends TickingElement {
             buttonOrder.get(newSelected).setSelected(true);
         }
         selectedButtonIndex = newSelected;
-        final ButtonEntity selectedButton = getSelectedButton();
-        if (selectedButton instanceof SliderEntity) {
-            ((SliderEntity) selectedButton).add(sliderShift);
+        final Button selectedButton = getSelectedButton();
+        if (selectedButton instanceof Slider) {
+            ((Slider) selectedButton).add(sliderShift);
         }
     }
 
@@ -147,13 +150,15 @@ public class Physics extends TickingElement {
         // Add player
         entities.add(player);
         player.setPosition(new Vector2f(1, 11));
+        player.clearPowerUPs();
+        game.getSession().getPowerUPs(player.getPowerUPs());
         collisionDetection.add(player);
         // Add UI
         final World world = game.getWorld();
         final String levelString =
                 currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                         + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "| Lives " + world.getLives();
-        levelStateText = new TextBoxEntity(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
+        levelStateText = new TextBox(new Vector2f(Map.WIDTH / 6f, Map.HEIGHT - 1.25f), new Vector2f(2, 2), levelString);
         entities.add(levelStateText);
         // Add enemies
         final List<Vector2f> freePositions = getFreePositions(world.getMap());
@@ -215,7 +220,8 @@ public class Physics extends TickingElement {
     private void doGameTick(long dt) {
         processGameEvents();
 
-        final Map map = game.getWorld().getMap();
+        final World world = game.getWorld();
+        final Map map = world.getMap();
         final long newVersion = map.getVersion();
 
         if (mapVersion < newVersion) {
@@ -246,6 +252,16 @@ public class Physics extends TickingElement {
         for (Collidable collidable : player.getCollisionList()) {
             // ghost collidables only report collisions, but don't actually collide
             if (collidable.isGhost()) {
+                continue;
+            }
+            // Powerup collision exceptions
+            if (collidable instanceof Bomb && player.hasPowerUP(BombPass.class)) {
+                continue;
+            }
+            if (collidable instanceof Breakable && player.hasPowerUP(WallPass.class)) {
+                continue;
+            }
+            if (collidable instanceof Fire && player.hasPowerUP(FlamePass.class)) {
                 continue;
             }
             // Find the intersection of the collision (a box) and the direction
@@ -299,7 +315,6 @@ public class Physics extends TickingElement {
         }
 
         // Update UI
-        final World world = game.getWorld();
         levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                 + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
     }
@@ -310,8 +325,92 @@ public class Physics extends TickingElement {
             final Event event = worldEvents.poll();
             if (event instanceof PlayerLostLifeEvent) {
                 player.setPosition(new Vector2f(1, 11));
+                player.onDeath();
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
+            } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
+                // TODO: remove all enemies
+                
+                //get highest enemies
+                int[] enemies = currentLevel.getEnemyForLevel();
+                int highestEnemy=0;
+                for (int i = 0; i< enemies.length; i++){
+                    if (enemies[i] > 0)
+                        highestEnemy = i;
+                }
+                //get free positions 
+                final World world = game.getWorld();
+                final List<Vector2f> freePositions = getFreePositions(world.getMap());
+                Collections.shuffle(freePositions);
+                int i = 0;
+                //add 8 of the highest enemy
+                switch (highestEnemy){
+                    case (0):
+                        //add ballom
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Balloom balloom = new Balloom(freePositions.get(i));
+                            entities.add(balloom);
+                            collisionDetection.add(balloom);
+                        }
+                            break;
+                    case (1):
+                        // add oneal
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Oneal oneal = new Oneal(freePositions.get(i));
+                            entities.add(oneal);
+                            collisionDetection.add(oneal);
+                        }
+                        break;
+                    case (2):
+                        // add doll
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Doll doll = new Doll(freePositions.get(i));
+                            entities.add(doll);
+                            collisionDetection.add(doll);
+                            i++;
+                        }
+                        break;
+                    case (3):
+                        // add minvo
+                        for (int j = 0; j < 8 && i < freePositions.size(); j++, i++) {
+                            Minvo minvo = new Minvo(freePositions.get(i));
+                            entities.add(minvo);
+                            collisionDetection.add(minvo);
+                        }
+                        break;
+                    case (4):
+                        // add kondoria
+                        for (int j = 0; j < enemies[4] && i < freePositions.size(); j++, i++) {
+                            Kondoria kondoria = new Kondoria(freePositions.get(i));
+                            entities.add(kondoria);
+                            collisionDetection.add(kondoria);
+                        }
+                        break;
+                    case (5):
+                     // add ovapi
+                        for (int j = 0; j < enemies[5] && i < freePositions.size(); j++, i++) {
+                            Ovapi ovapi = new Ovapi(freePositions.get(i));
+                            entities.add(ovapi);
+                            collisionDetection.add(ovapi);
+                        }
+                        break;
+                    case (6):
+                        // add pass
+                        for (int j = 0; j < enemies[6] && i < freePositions.size(); j++, i++) {
+                            Pass pass = new Pass(freePositions.get(i));
+                            entities.add(pass);
+                            collisionDetection.add(pass);
+                        }
+                        break;
+                    case (7):
+                        // add pontan
+                        for (int j = 0; j < enemies[7] && i < freePositions.size(); j++, i++) {
+                            Pontan pontan = new Pontan(freePositions.get(i));
+                            entities.add(pontan);
+                            collisionDetection.add(pontan);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -353,7 +452,7 @@ public class Physics extends TickingElement {
         return entities;
     }
 
-    public ButtonEntity getSelectedButton() {
+    public Button getSelectedButton() {
         if (buttonOrder.size() <= selectedButtonIndex) {
             return null;
         }
@@ -368,6 +467,7 @@ public class Physics extends TickingElement {
             // Reject player starting positions
             if ((position.getFloorX() != 1 || position.getFloorY() != 11 && position.getFloorY() != 10) && (position.getFloorX() != 2 || position.getFloorY() != 11)) {
                 free.add(position);
+               
             }
         }
         return free;
