@@ -1,5 +1,6 @@
 package ecse321.fall2014.group3.bomberman.world;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -166,6 +167,7 @@ public class World extends TickingElement {
             }
             session.setScore(score);
             session.setLives(lives);
+            session.setPowerUPs(Collections.EMPTY_MAP);
             score = 0;
             timer = 500;
             level = Level.GAME_OVER;
@@ -184,6 +186,7 @@ public class World extends TickingElement {
                 score += session.getScore();
             }
             session.setScore(score);
+            session.setPowerUPs(player.getPowerUPs());
             score = 0;
             timer = 500;
             if (level.getNumber() == 50) {

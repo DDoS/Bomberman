@@ -119,9 +119,6 @@ public class Physics extends TickingElement {
             for (int i = 0; i < top.length && top[i] != null; i++) {
                 entities.add(new TextBox(new Vector2f(4, Interface.VIEW_HEIGHT_TILE - (6 + i * 0.5f)), Vector2f.ONE, top[i].getFormatted()));
             }
-        } else if (currentLevel == Level.GAME_OVER) {
-            // Remove all powerups on game over
-            player.clearPowerUPs();
         }
     }
 
@@ -147,6 +144,8 @@ public class Physics extends TickingElement {
         // Add player
         entities.add(player);
         player.setPosition(new Vector2f(1, 11));
+        player.clearPowerUPs();
+        game.getSession().getPowerUPs(player.getPowerUPs());
         collisionDetection.add(player);
         // Add UI
         final World world = game.getWorld();
@@ -215,7 +214,8 @@ public class Physics extends TickingElement {
     private void doGameTick(long dt) {
         processGameEvents();
 
-        final Map map = game.getWorld().getMap();
+        final World world = game.getWorld();
+        final Map map = world.getMap();
         final long newVersion = map.getVersion();
 
         if (mapVersion < newVersion) {
@@ -299,7 +299,6 @@ public class Physics extends TickingElement {
         }
 
         // Update UI
-        final World world = game.getWorld();
         levelStateText.setText(currentLevel.isBonus() ? "Bonus level " + -currentLevel.getNumber() : "Level " + currentLevel.getNumber()
                 + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
     }
