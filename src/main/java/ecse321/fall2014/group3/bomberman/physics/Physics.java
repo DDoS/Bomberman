@@ -255,16 +255,16 @@ public class Physics extends TickingElement {
                 continue;
             }
             
-            if ((collidable.getClass() == Bomb.class) && (player.hasPowerUP(BombPass.class)))
+            if ((collidable instanceof Bomb) && (player.hasPowerUP(BombPass.class)))
             {
                 continue;
             }
             
-            if ((collidable.getClass() == Breakable.class) && (player.hasPowerUP(WallPass.class)))
+            if ((collidable  instanceof Breakable ) && (player.hasPowerUP(WallPass.class)))
             {
                 continue;
             }
-            if ((collidable.getClass() == Fire.class) && (player.hasPowerUP(FlamePass.class)))
+            if ((collidable instanceof Fire) && (player.hasPowerUP(FlamePass.class)))
             {
                 continue;
             }
@@ -330,6 +330,7 @@ public class Physics extends TickingElement {
             final Event event = worldEvents.poll();
             if (event instanceof PlayerLostLifeEvent) {
                 player.setPosition(new Vector2f(1, 11));
+                player.death();
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
             }

@@ -156,14 +156,12 @@ public class World extends TickingElement {
                 || player.isCollidingWith(Enemy.class)
                 || timer <= 0) {
             lives--;
-            player.death();
             events.add(new PlayerLostLifeEvent());
             session.setLives(lives);
         }
         // Game over
         if (lives <= 0) {
             lives = 3;
-            player.clearPowerUPs();
             if (level.getNumber() != 1) {
                 score += session.getScore();
             }
