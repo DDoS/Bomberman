@@ -5,12 +5,12 @@ import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.util.CausticUtil;
 
-public class ButtonEntity extends TextBoxEntity {
+public class Button extends TextBox {
     private final String[] action;
     private volatile boolean selected = false;
     private volatile Vector4f selectedColor = CausticUtil.YELLOW;
 
-    public ButtonEntity(Vector2f position, Vector2f size, String text, String action) {
+    public Button(Vector2f position, Vector2f size, String text, String action) {
         super(position, size, text);
         this.action = action.split("\\.");
         if (this.action.length != 2) {

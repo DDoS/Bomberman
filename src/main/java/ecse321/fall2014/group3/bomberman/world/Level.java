@@ -6,11 +6,10 @@ import java.util.List;
 import com.flowpowered.math.vector.Vector2f;
 
 import ecse321.fall2014.group3.bomberman.nterface.Interface;
-import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.ButtonEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.SliderEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBoxEntity;
-import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBoxEntity;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Button;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.Slider;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBox;
+import ecse321.fall2014.group3.bomberman.physics.entity.ui.UIBox;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.*;
 
 /**
@@ -120,8 +119,8 @@ public enum Level {
         return values()[nextOrdinal];
     }
 
-    public List<UIBoxEntity> buildUI(int maxLevel) {
-        final List<UIBoxEntity> ui = new ArrayList<>();
+    public List<UIBox> buildUI(int maxLevel) {
+        final List<UIBox> ui = new ArrayList<>();
         switch (this) {
             case MAIN_MENU:
                 ui.add(newText(0, 4, "Bomberman"));
@@ -147,16 +146,16 @@ public enum Level {
         return ui;
     }
 
-    private static TextBoxEntity newText(int position, int size, String text) {
-        return new TextBoxEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text);
+    private static TextBox newText(int position, int size, String text) {
+        return new TextBox(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text);
     }
 
-    private static ButtonEntity newButton(int position, int size, String text, String action) {
-        return new ButtonEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text, action);
+    private static Button newButton(int position, int size, String text, String action) {
+        return new Button(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text, action);
     }
 
-    private static SliderEntity newSlider(int position, int size, String text, String action, int min, int max) {
-        return new SliderEntity(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text, action, min, max);
+    private static Slider newSlider(int position, int size, String text, String action, int min, int max) {
+        return new Slider(new Vector2f(3, Interface.VIEW_HEIGHT_TILE - (3 + position)), new Vector2f(size, size), text, action, min, max);
     }
 
     public static Level fromNumber(int i) {

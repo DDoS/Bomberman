@@ -1,6 +1,5 @@
 package ecse321.fall2014.group3.bomberman.physics.entity.mob;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,8 +57,8 @@ public class Player extends Mob {
         return 1 + getPowerUPLevel(BombUpgrade.class);
     }
 
-    public Collection<Class<? extends PowerUP>> getPowerUPs() {
-        return powerUPs.keySet();
+    public Map<Class<? extends PowerUP>, Integer> getPowerUPs() {
+        return powerUPs;
     }
 
     public boolean hasPowerUP(Class<? extends PowerUP> powerUP) {
@@ -96,9 +95,9 @@ public class Player extends Mob {
             case UP:
                 return UP_SPRITE;
             case DOWN:
-               return DOWN_SPRITE;
+                return DOWN_SPRITE;
             case LEFT:
-               return LEFT_SPRITE;
+                return LEFT_SPRITE;
             case RIGHT:
                 return RIGHT_SPRITE;
             default:
