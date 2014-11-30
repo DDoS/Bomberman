@@ -152,7 +152,7 @@ public class World extends TickingElement {
         }
 
         final Session session = game.getSession();
-        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class)
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && (!level.isBonus())
                 || player.isCollidingWith(Enemy.class)
                 || timer <= 0) {
             lives--;
