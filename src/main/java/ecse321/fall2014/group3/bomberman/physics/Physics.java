@@ -338,6 +338,11 @@ public class Physics extends TickingElement {
                         highestEnemy = i;
                     }
                 }
+                
+                //need to get one higher than highest of level
+                if (highestEnemy < 7){
+                    highestEnemy++;
+                }
                 //get free positions 
                 final World world = game.getWorld();
                 final List<Vector2f> freePositions = getFreePositions(world.getMap());
