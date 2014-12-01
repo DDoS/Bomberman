@@ -1,6 +1,3 @@
-/**
-* @author Lianna Yang
-*/
 package ecse321.fall2014.group3.bomberman.physics.ai;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -10,7 +7,9 @@ import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.world.Map;
 
 /**
- * The AI Class
+ * The AI superclass.  Contains the float for conversion of the poll time from seconds to nanoseconds 
+ *
+ * @author 
  */
 public abstract class AI {
     /**
@@ -25,6 +24,7 @@ public abstract class AI {
     * @param long dt
     * @param Map map
     * @param Player player
+    * @return Vector2f The next position of the Enemy
     */
     public abstract Vector2f nextPosition(Enemy target, long dt, Map map, Player player);
 }
