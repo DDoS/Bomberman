@@ -48,7 +48,11 @@ import net.royawesome.jlibnoise.module.source.Perlin;
 
 
 /**
- * The Class World.
+ * The Class World. This class is responsible for instantiating a new world which contains information and methods regarding the timer, score, and player lives.
+ * More precisely, the class runs on its own thread and pulls information from @link {ecse321.fall2014.group3.bomberman.physics.Physics} for collisions.
+ * Also handles menu and game actions.
+ *  Runs at a target refresh rate of 60 FPS
+ *
  */
 public class World extends TickingElement {
     private final Game game;
@@ -65,7 +69,7 @@ public class World extends TickingElement {
     private final Queue<Vector2i> bombLocations = new LinkedList<>();
 
     /**
-     * Instantiates a new world. The 
+     * Constructs and Instantiates a new world.
      *
      * @param game the game
      */
