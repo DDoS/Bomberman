@@ -20,13 +20,15 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
 /**
- * The Class SmartAI
+ * The SmartAI Class
  */
 public class SmartAI extends AI {
     /**
     * Override of the method in the AI superclass
     *
     * AI moves in one direction until it hits a bomb or wall and then turns around.
+    * At an intersection with at least 2 perpendicular directions, the AI has a 10% chance
+    * of changing direction.
     *
     * Sets an initial nonzero velocity to the Enemy.
     * If the enemy has the wall pass ability, check that the next space is Air, Fire, or a Breakable wall.

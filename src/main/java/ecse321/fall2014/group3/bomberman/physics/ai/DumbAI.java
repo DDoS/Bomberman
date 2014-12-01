@@ -13,7 +13,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 /**
- * The Class DumbAI
+ * The DumbAI Class
  */
 public class DumbAI extends AI {
     /**

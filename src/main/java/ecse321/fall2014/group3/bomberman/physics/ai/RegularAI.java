@@ -20,7 +20,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
 /**
- * The Class RegularAI
+ * The RegularAI Class
  */
 public class RegularAI extends AI {
     /**
