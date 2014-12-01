@@ -34,21 +34,12 @@ public abstract class TickingElement {
     private final ThreadGroup group;
     private volatile TPSLimitedThread thread;
 
-    /**
-     * Instantiates a new ticking element.
-     *
-     * @param name the name
-     * @param tps the ticks per second
-     */
     public TickingElement(String name, int tps) {
         this.name = name;
         this.tps = tps;
         this.group = new ThreadGroup(name + " ThreadGroup");
     }
 
-    /**
-     * Start.
-     */
     public final void start() {
         synchronized (this) {
             if (thread == null) {
@@ -58,9 +49,6 @@ public abstract class TickingElement {
         }
     }
 
-    /**
-     * Stop.
-     */
     public final void stop() {
         synchronized (this) {
             if (thread != null) {
@@ -70,47 +58,21 @@ public abstract class TickingElement {
         }
     }
 
-    /**
-     * Checks if is running.
-     *
-     * @return true, if is running
-     */
     public final boolean isRunning() {
         return thread != null && thread.isRunning();
     }
 
-    /**
-     * Gets the thread.
-     *
-     * @return the thread
-     */
     public TPSLimitedThread getThread() {
         return thread;
     }
 
-    /**
-     * Gets the group.
-     *
-     * @return the group
-     */
     public ThreadGroup getGroup() {
         return group;
     }
 
-    /**
-     * On start.
-     */
     public abstract void onStart();
 
-    /**
-     * On tick.
-     *
-     * @param dt the dt
-     */
     public abstract void onTick(long dt);
 
-    /**
-     * On stop.
-     */
     public abstract void onStop();
 }
