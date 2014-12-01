@@ -26,7 +26,7 @@ public class Database {
     private final Connection connection;
 
     /**
-     * Constructs a Database object
+     * Constructs a Database Object
      *
      * @param file The local database file
      */
@@ -81,7 +81,7 @@ public class Database {
     }
 
     /**
-     * Sets a String value in the Users table.
+     * Sets a String value in the Users table in the target column.
      *
      * @param username Player Username
      * @param column Target Column
