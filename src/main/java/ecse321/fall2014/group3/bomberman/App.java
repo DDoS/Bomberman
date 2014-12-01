@@ -1,3 +1,6 @@
+/**
+ * @author Phil Douyon
+ */
 package ecse321.fall2014.group3.bomberman;
 
 import javax.swing.JButton;
@@ -23,6 +26,9 @@ import ecse321.fall2014.group3.bomberman.database.Session;
 
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
+/**
+ * The Class App.
+ */
 public class App {
     private static final Semaphore loginWait = new Semaphore(0);
     private static volatile JFrame launcherScreen;
@@ -32,6 +38,11 @@ public class App {
     //1 Digit, 1 Upper, 1 Lower, 1 Special, Minimum length of 8
     private static final Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$&%!^*()-_=+]).{8,})");
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         LWJGLUtil.deployNatives(null);
         database = new Database("accounts.db");
@@ -44,6 +55,7 @@ public class App {
         database.disconnect();
     }
 
+    //login screen
     private static void createLoginScreen() {
 
         final JFrame frame = new JFrame("Login");
@@ -124,13 +136,12 @@ public class App {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!validatePassword(String.valueOf(newPasswordText.getPassword()))){
+                if (!validatePassword(String.valueOf(newPasswordText.getPassword()))) {
                     newPasswordText.setText("");
                     verifyText.setText("");
                     error.setText("Invalid Password!");
                     error.setVisible(true);
-                }
-                else if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
+                } else if (!Arrays.equals(newPasswordText.getPassword(), verifyText.getPassword())) {
                     newPasswordText.setText("");
                     verifyText.setText("");
                     error.setText("Passwords Don't Match!");
@@ -156,6 +167,12 @@ public class App {
         launcherScreen = frame;
     }
 
+    /**
+     * Validate password.
+     *
+     * @param pass the pass
+     * @return true, if successful
+     */
     public static boolean validatePassword(String pass) {
         Matcher match = pattern.matcher(pass);
         return match.matches();
