@@ -1,3 +1,6 @@
+/**
+ * @author Phil Douyon
+ */
 package ecse321.fall2014.group3.bomberman.input;
 
 import java.util.Map;
@@ -10,7 +13,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 /**
- *
+ * The Class Input.
  */
 public class Input extends TickingElement {
     private final Game game;
@@ -20,15 +23,26 @@ public class Input extends TickingElement {
     private final int[] dtPressCounts = new int[Key.getCount()];
     private final boolean[] pressStates = new boolean[Key.getCount()];
 
+    /**
+     * Instantiates a new input.
+     *
+     * @param game the game
+     */
     public Input(Game game) {
         super("input", 60);
         this.game = game;
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStart()
+     */
     @Override
     public void onStart() {
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onTick(long)
+     */
     @Override
     public void onTick(long dt) {
         if (Display.isCreated() && Display.isCloseRequested()) {
@@ -88,6 +102,9 @@ public class Input extends TickingElement {
         }
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
+     */
     @Override
     public void onStop() {
         game.close();
@@ -97,6 +114,11 @@ public class Input extends TickingElement {
         keyboardCreated = false;
     }
 
+    /**
+     * Gets the keyboard state.
+     *
+     * @return the keyboard state
+     */
     public KeyboardState getKeyboardState() {
         // One keyboard state per thread.
         final long callerID = Thread.currentThread().getId();
