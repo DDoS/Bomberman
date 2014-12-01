@@ -52,7 +52,8 @@ import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 /**
- *
+ * A thread that does physics, AI and other game logic for entities, using the {@link ecse321.fall2014.group3.bomberman.world.World} as the source of the environment. This is also used for UI by
+ * treating the various elements as entities (honestly, that was a stupid idea).
  */
 public class Physics extends TickingElement {
     private static final float PERPENDICULAR_CONTACT_THRESHOLD = 0.05f;
@@ -70,6 +71,11 @@ public class Physics extends TickingElement {
     private long mapVersion = 0;
     private TextBox levelStateText;
 
+    /**
+     * Creates a new physics element for the game.
+     *
+     * @param game The game in need of physics
+     */
     public Physics(Game game) {
         super("Physics", 60);
         this.game = game;
@@ -100,6 +106,7 @@ public class Physics extends TickingElement {
         }
     }
 
+    // Removes all the entities from the physics
     private void clearEntities() {
         // Clear collision detection
         entities.clear();
@@ -109,6 +116,7 @@ public class Physics extends TickingElement {
         buttonOrder.clear();
     }
 
+    // Setup the menu according to the current level
     private void setupMenu() {
         // Add UI entities
         final List<UIBox> uiEntities = game.getWorld().getLevel().buildUI(game.getSession().getLevel());
@@ -128,6 +136,7 @@ public class Physics extends TickingElement {
         }
     }
 
+    // Performs a tick for the menu
     private void doMenuTick(long dt) {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int selectedShift = keyboardState.getAndClearPressCount(Key.DOWN) - keyboardState.getAndClearPressCount(Key.UP);
@@ -146,6 +155,7 @@ public class Physics extends TickingElement {
         }
     }
 
+    // Setup the game for the current level
     private void setupGame() {
         // Add player
         entities.add(player);
@@ -216,6 +226,7 @@ public class Physics extends TickingElement {
         }
     }
 
+    // Process a game tick
     private void doGameTick(long dt) {
         processGameEvents();
 
@@ -223,6 +234,7 @@ public class Physics extends TickingElement {
         final Map map = world.getMap();
         final long newVersion = map.getVersion();
 
+        // Update the map collisions
         if (mapVersion < newVersion) {
             for (Tile tile : collidableTiles) {
                 collisionDetection.remove(tile);
@@ -241,6 +253,7 @@ public class Physics extends TickingElement {
             mapVersion = newVersion;
         }
 
+        // Do the collision for the tick
         collisionDetection.update();
 
         final float timeSeconds = dt / 1e9f;
@@ -318,6 +331,7 @@ public class Physics extends TickingElement {
                 + " | Score " + world.getScore() + " |  Timer " + world.getTimer() + "|  Lives " + world.getLives());
     }
 
+    // Process game event originating from the world thread
     private void processGameEvents() {
         final Queue<Event> worldEvents = game.getWorld().getEvents();
         while (!worldEvents.isEmpty()) {
@@ -335,7 +349,6 @@ public class Physics extends TickingElement {
                         collisionDetection.remove(entity);
                     }
                 }
-
                 //get highest enemies
                 int[] enemies = currentLevel.getEnemyForLevel();
                 int highestEnemy = 0;
@@ -344,9 +357,8 @@ public class Physics extends TickingElement {
                         highestEnemy = i;
                     }
                 }
-                
                 //need to get one higher than highest of level
-                if (highestEnemy < 7){
+                if (highestEnemy < 7) {
                     highestEnemy++;
                 }
                 //get free positions 
@@ -425,6 +437,7 @@ public class Physics extends TickingElement {
         }
     }
 
+    // Computes the motion vector from the player input
     private Vector2f getInputVector() {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         Vector2f input = Vector2f.ZERO;
@@ -446,22 +459,45 @@ public class Physics extends TickingElement {
         mapVersion = 0;
     }
 
+    /**
+     * Allows another thread to read the events from this thread.
+     */
     public void subscribeToEvents() {
         events.subscribe();
     }
 
+    /**
+     * Returns the events for the thread. Only to be used if subscribed using {@link #subscribeToEvents()}. Feel free to edit the queue, it's thread local!
+     *
+     * @return The events generated
+     */
     public Queue<Event> getEvents() {
         return events;
     }
 
+    /**
+     * Returns the player, for reading only.
+     *
+     * @return The player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Returns the entities, including the player. <b>Do not edit!</b>
+     *
+     * @return All the entities, for reading only
+     */
     public Set<Entity> getEntities() {
         return entities;
     }
 
+    /**
+     * Returns the selected button, or null if not in a menu.
+     *
+     * @return The selected button
+     */
     public Button getSelectedButton() {
         if (buttonOrder.size() <= selectedButtonIndex) {
             return null;
@@ -469,6 +505,7 @@ public class Physics extends TickingElement {
         return buttonOrder.get(selectedButtonIndex);
     }
 
+    // Returns a list of all free positions in the map
     private static List<Vector2f> getFreePositions(Map map) {
         final List<Vector2f> free = new ArrayList<>();
         final List<Air> freeTiles = map.getTiles(Air.class);
