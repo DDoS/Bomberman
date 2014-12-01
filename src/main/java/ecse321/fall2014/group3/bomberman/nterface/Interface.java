@@ -44,12 +44,18 @@ import org.spout.renderer.api.util.Rectangle;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * The main class for the interface (aka the view).
+ * The main class for the interface (aka the view). Runs on its own thread and pulls all the information from {@link ecse321.fall2014.group3.bomberman.world.World} and {@link
+ * ecse321.fall2014.group3.bomberman.physics.Physics} to perform the rendering. More precisely, this class can render tiles that are instances of {@link
+ * ecse321.fall2014.group3.bomberman.nterface.SpriteTextured} and entities that are either {@link ecse321.fall2014.group3.bomberman.nterface.SpriteTextured} or {@link
+ * ecse321.fall2014.group3.bomberman.nterface.TextTextured}. Runs at a target refresh rate of 60 FPS. Requires OpenGL 2 or newer.
  *
  * @author Aleksi Sapon
  */
 public class Interface extends TickingElement {
     private static final int SPRITE_SIZE = 64;
+    /**
+     * The view width and height in tiles. This is what's visible at any given time on the screen.
+     */
     public static final int VIEW_WIDTH_TILE = 15, VIEW_HEIGHT_TILE = 13;
     private static final int TILE_PIXEL_SIZE = SPRITE_SIZE;
     private static final int WIDTH = VIEW_WIDTH_TILE * TILE_PIXEL_SIZE, HEIGHT = VIEW_HEIGHT_TILE * TILE_PIXEL_SIZE;
@@ -76,6 +82,11 @@ public class Interface extends TickingElement {
         GLYPHS = alphabetic + alphabetic.toUpperCase() + numeric + special;
     }
 
+    /**
+     * Constructs a new Interface from the game to render.
+     *
+     * @param game The game
+     */
     public Interface(Game game) {
         super("Interface", 60);
         this.game = game;
@@ -214,6 +225,7 @@ public class Interface extends TickingElement {
         pipeline.run(context);
     }
 
+    // Updates the model to match the sprite entity
     private Model updateSpriteEntity(SpriteTextured entity, Model model) {
         final SpriteInfo spriteInfo = entity.getSpriteInfo();
         if (model == null) {
@@ -225,6 +237,7 @@ public class Interface extends TickingElement {
         return model;
     }
 
+    // Generates a new model for the sprite, updating it
     private Model newSpriteModel(SpriteInfo spriteInfo) {
         // Try and load the sprite base model from the sheet name
         Model model = loadSpriteBaseModel(spriteInfo.getSheetName());
@@ -238,6 +251,7 @@ public class Interface extends TickingElement {
         return model;
     }
 
+    // Loads, if needed, a new model to use as a base for other models that use the same sprite sheet.
     private Model loadSpriteBaseModel(String sheetName) {
         // Check if it's already loaded
         Model model = spriteBaseModels.get(sheetName);
@@ -269,6 +283,7 @@ public class Interface extends TickingElement {
         return model;
     }
 
+    // Updates the model to match the text entity
     private StringModel updateTextEntity(TextTextured entity, StringModel model) {
         if (model == null) {
             model = newTextModel(entity.getFontInfo());
@@ -277,6 +292,7 @@ public class Interface extends TickingElement {
         return model;
     }
 
+    // Adds the encoded color to the beginning of the text for use by the text renderer
     private String formatColoredText(String text, Vector4f color) {
         // Scale to [0, 255]
         color = color.mul(255);
@@ -284,6 +300,7 @@ public class Interface extends TickingElement {
         return "#" + Integer.toHexString((color.getFloorW() & 255) << 24 | (color.getFloorX() & 255) << 16 | (color.getFloorY() & 255) << 8 | color.getFloorZ() & 255) + text;
     }
 
+    // Generates a new model for text, updating it
     private StringModel newTextModel(FontInfo fontInfo) {
         // Load the text base model from the font type
         final StringModel model = loadTextBaseModel(fontInfo.getTypeString());
@@ -291,6 +308,7 @@ public class Interface extends TickingElement {
         return model.getInstance();
     }
 
+    // Loads, if needed, a new model to use as a base for other models that use the same font
     private StringModel loadTextBaseModel(String fontType) {
         // Check if it's already loaded
         StringModel model = textBaseModels.get(fontType);
