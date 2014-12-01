@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.event;
 
@@ -26,18 +26,18 @@ public class ExitWayOrPowerUPDestroyedEvent extends Event {
     }
 
     /**
-     * Checks if is exitWay tile.
+     * Checks if a exitWay tile was destroyed.
      *
-     * @return true, if is exitWay tile
+     * @return true, if is exitWay tile was destroyed.
      */
     public boolean isExitWay() {
         return exitWay;
     }
 
     /**
-     * Checks if is powerUP tile.
+     * Checks if a powerUP tile was destroyed.
      *
-     * @return true, if is powerUp tile
+     * @return true, if is powerUp tile was destroyed.
      */
     public boolean isPowerUP() {
         return !isExitWay();

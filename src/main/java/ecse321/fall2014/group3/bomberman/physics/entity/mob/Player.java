@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.physics.entity.mob;
 
@@ -49,9 +49,7 @@ public class Player extends Mob {
         super(position, COLLISION_BOX);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.Entity#setVelocity(Vector2f)
-     */
+
     @Override
     public void setVelocity(Vector2f velocity) {
         this.velocity = velocity;
@@ -156,9 +154,6 @@ public class Player extends Mob {
         powerUPs.remove(FlamePass.class);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
-     */
     @Override
     public SpriteInfo getSpriteInfo() {
         switch (direction) {
@@ -175,9 +170,6 @@ public class Player extends Mob {
         }
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.Textured#getModelSize()
-     */
     @Override
     public Vector2f getModelSize() {
         return SIZE;

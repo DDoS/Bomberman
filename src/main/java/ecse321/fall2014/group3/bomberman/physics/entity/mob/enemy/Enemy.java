@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
 */
 package ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy;
 
@@ -37,29 +37,26 @@ public abstract class Enemy extends Mob {
     public abstract AI getAI();
 
     /**
-     * Gets the speed.
+     * Gets the of the enemy.
      *
      * @return the speed
      */
     public abstract float getSpeed();
 
     /**
-     * Checks if is wall pass.
+     * Checks if enemy can wall pass.
      *
      * @return true, if is wall pass
      */
     public abstract boolean isWallPass();
 
     /**
-     * Gets the score.
+     * Gets the score of the enemy.
      *
      * @return the score
      */
     public abstract int getScore();
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.Textured#getModelSize()
-     */
     @Override
     public Vector2f getModelSize() {
         return SIZE;

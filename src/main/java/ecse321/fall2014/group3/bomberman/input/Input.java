@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.input;
 
@@ -33,16 +33,10 @@ public class Input extends TickingElement {
         this.game = game;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStart()
-     */
     @Override
     public void onStart() {
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onTick(long)
-     */
     @Override
     public void onTick(long dt) {
         if (Display.isCreated() && Display.isCloseRequested()) {
@@ -102,9 +96,6 @@ public class Input extends TickingElement {
         }
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
-     */
     @Override
     public void onStop() {
         game.close();

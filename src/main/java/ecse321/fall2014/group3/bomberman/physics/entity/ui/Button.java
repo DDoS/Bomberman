@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.physics.entity.ui;
 
@@ -69,9 +69,6 @@ public class Button extends TextBox {
         this.selectedColor = selectedColor;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBox#getTextColor()
-     */
     @Override
     public Vector4f getTextColor() {
         if (selected) {

@@ -22,9 +22,6 @@ public class BombPass extends PowerUP {
         super(position, false);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
-     */
     @Override
     public SpriteInfo getSpriteInfo() {
         return BOMBPASS_POWERUP_SPRITE;

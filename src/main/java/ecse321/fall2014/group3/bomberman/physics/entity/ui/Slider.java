@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.physics.entity.ui;
 
@@ -47,9 +47,6 @@ public class Slider extends Button {
         return value;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.ui.TextBox#getText()
-     */
     @Override
     public String getText() {
         return String.format(super.getText(), value);

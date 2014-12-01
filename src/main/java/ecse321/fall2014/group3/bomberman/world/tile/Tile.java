@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world.tile;
 
@@ -27,9 +27,6 @@ public abstract class Tile extends Collidable implements SpriteTextured {
         super(position, collisionBox);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.Textured#getModelSize()
-     */
     @Override
     public Vector2f getModelSize() {
         return SIZE;

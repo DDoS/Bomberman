@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world.tile.powerup;
 
@@ -37,6 +37,15 @@ public abstract class PowerUP extends CollidableTile {
 
     /**
      * Serialize the powerUPS.
+     * Format:
+                0..2: Bomb upgrade level
+                3..5: Flame upgrade level
+                6..8: Speed upgrade level
+                9   : Has bomb pass
+                10  : Has detonator
+                11  : Has flame pass
+                12  : Has mystery
+                13  : Has wall pass
      *
      * @param powerUPs the powerUPs
      * @return the int

@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world;
 
@@ -114,7 +114,7 @@ public class Map {
     }
 
     /**
-     * Checks if is tile.
+     * Checks if there is tile at the position and it has the right type.
      *
      * @param position the position
      * @param type the type

@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.physics.entity.ui;
 
@@ -28,17 +28,11 @@ public class TextBox extends UIBox {
         this.text = text;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.TextTextured#getText()
-     */
     @Override
     public String getText() {
         return text;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.TextTextured#getTextColor()
-     */
     @Override
     public Vector4f getTextColor() {
         return textColor;

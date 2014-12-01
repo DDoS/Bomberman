@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world;
 
@@ -76,9 +76,7 @@ public class World extends TickingElement {
         lives = 3;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStart()
-     */
+
     //start the world
     @Override
     public void onStart() {
@@ -90,9 +88,6 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onTick(long)
-     */
     //updates the world on every tick
     @Override
     public void onTick(long dt) {
@@ -337,9 +332,7 @@ public class World extends TickingElement {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
-     */
+
     //stops the world
     @Override
     public void onStop() {
