@@ -17,7 +17,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
 /**
- *
+ * @author
  */
 public class RegularAI extends AI {
     @Override

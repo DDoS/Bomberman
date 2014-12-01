@@ -10,7 +10,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 
 /**
- *
+ * @author
  */
 public class DumbAI extends AI {
     @Override
