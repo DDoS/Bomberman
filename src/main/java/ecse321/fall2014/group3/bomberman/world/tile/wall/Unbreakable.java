@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world.tile.wall;
 
@@ -23,9 +23,6 @@ public class Unbreakable extends CollidableTile {
         super(position);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
-     */
     @Override
     public SpriteInfo getSpriteInfo() {
         return WALL_SPRITE;

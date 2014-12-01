@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world.tile.timed;
 
@@ -48,7 +48,7 @@ public abstract class TimedTile extends CollidableTile {
     }
 
     /**
-     * Checks for expired.
+     * Checks to see if tile is expired.
      *
      * @return true, if successful
      */

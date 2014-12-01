@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman;
 
@@ -168,7 +168,9 @@ public class App {
     }
 
     /**
-     * Validate password.
+     * Validate password. The password must follow the following structure:
+     * Minimum length: 8 Must contain at least: 1 upper case 1 lower case 1
+     * number 1 special character
      *
      * @param pass the pass
      * @return true, if successful

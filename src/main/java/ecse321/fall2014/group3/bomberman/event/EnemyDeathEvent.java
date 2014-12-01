@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.event;
 
@@ -21,7 +21,7 @@ public class EnemyDeathEvent extends Event {
     }
 
     /**
-     * Gets the enemy.
+     * Gets the enemy that died.
      *
      * @return the enemy
      */

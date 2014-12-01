@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy;
 
@@ -25,41 +25,27 @@ public class Doll extends Enemy {
         super(position);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy#getAI()
-     */
     @Override
     public AI getAI() {
         return DOLL_ENEMY_AI;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
-     */
+
     @Override
     public SpriteInfo getSpriteInfo() {
         return DOLL_ENEMY_SPRITE;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy#getSpeed()
-     */
     @Override
     public float getSpeed() {
         return Enemy.ENEMY_BASE_SPEED + 1;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy#isWallPass()
-     */
     @Override
     public boolean isWallPass() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy#getScore()
-     */
     @Override
     public int getScore() {
         return 400;

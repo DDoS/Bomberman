@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman.world.tile.timed;
 
@@ -23,17 +23,11 @@ public class Fire extends TimedTile {
         super(position, 0.8f, LIFE_TIME);
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.physics.Collidable#isGhost()
-     */
     @Override
     public boolean isGhost() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
-     */
     @Override
     public SpriteInfo getSpriteInfo() {
         return FIRE_SPRITE;

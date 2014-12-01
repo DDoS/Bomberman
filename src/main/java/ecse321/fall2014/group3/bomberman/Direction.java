@@ -1,5 +1,5 @@
 /**
- * @author Phil Douyon
+ * @author Group 3
  */
 package ecse321.fall2014.group3.bomberman;
 
@@ -41,7 +41,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the angle.
+     * Gets the angle of the direction.
      *
      * @return the angle
      */
@@ -50,7 +50,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the rotation.
+     * Gets the rotation of the direction.
      *
      * @return the rotation
      */
@@ -59,7 +59,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the unit vector.
+     * Gets the unit vector of the direction.
      *
      * @return the unit vector
      */
@@ -68,7 +68,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the perpendicular unit vector.
+     * Gets the perpendicular unit vector of the direction.
      *
      * @return the perpendicular unit vector
      */
@@ -77,7 +77,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the key.
+     * Gets the key pressed.
      *
      * @return the key
      */
@@ -88,7 +88,7 @@ public enum Direction {
     /**
      * From unit.
      *
-     * @param unit the unit
+     * @param unit the unit direction.
      * @return the direction
      */
     public static Direction fromUnit(Vector2f unit) {
