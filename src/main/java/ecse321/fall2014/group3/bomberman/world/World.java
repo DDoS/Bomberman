@@ -46,8 +46,9 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
 
+
 /**
- *
+ * The Class World.
  */
 public class World extends TickingElement {
     private final Game game;
@@ -64,7 +65,7 @@ public class World extends TickingElement {
     private final Queue<Vector2i> bombLocations = new LinkedList<>();
 
     /**
-     * Instantiates a new world.
+     * Instantiates a new world. The 
      *
      * @param game the game
      */
@@ -76,8 +77,6 @@ public class World extends TickingElement {
         lives = 3;
     }
 
-
-    //start the world
     @Override
     public void onStart() {
         events.becomePublisher();
@@ -88,7 +87,7 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
-    //updates the world on every tick
+
     @Override
     public void onTick(long dt) {
         if (level.isMenu()) {
@@ -334,6 +333,9 @@ public class World extends TickingElement {
 
 
     //stops the world
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
+     */
     @Override
     public void onStop() {
         events.unsubscribeAll();
