@@ -140,7 +140,7 @@ public class SmartAI extends AI {
     }
     
     //Counts the number of potential pathways at an intersection for an enemy with wall pass and chooses one
-    private Vector2f intersection(Map map, Enemy tar, Vector2f eP, float ts) {
+    private Vector2f intersectionWP(Map map, Enemy tar, Vector2f eP, float ts) {
         Vector2f v = tar.getVelocity();
         float xs = v.getX();
         float ys = v.getY();
