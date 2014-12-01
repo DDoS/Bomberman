@@ -25,7 +25,8 @@ public class DumbAI extends AI {
         Vector2f enemyPos = target.getPosition();
         Vector2f eVelocity = target.getVelocity();
         float eSpeed = target.getSpeed();
-
+        
+        //Set initial velocity of the enemy based on the first direction with a free space
         if (eVelocity.length() == 0) {
             if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
                 target.setVelocity(new Vector2f(eSpeed, 0f));
@@ -41,6 +42,9 @@ public class DumbAI extends AI {
                 return enemyPos.sub(0f, eSpeed * timeSec);
             }
         } else if (!target.isWallPass()) {
+            //If the enemy does not have the wall pass ability
+            //It can only go through tiles that are Air or Fire
+            //Reverse direction if a non-passable tile is encountered
             float xs = eVelocity.getX();
             float ys = eVelocity.getY();
 
@@ -86,6 +90,9 @@ public class DumbAI extends AI {
                 }
             }        
         } else {
+            //If the Enemy does have the wall pass ability
+            //It can go through tiles that are Air, Fire, Breakable
+            //Reverse direction when an unpassable tile is met
             float xs = eVelocity.getX();
             float ys = eVelocity.getY();
 
