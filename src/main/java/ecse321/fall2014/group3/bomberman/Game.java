@@ -34,7 +34,9 @@ import ecse321.fall2014.group3.bomberman.physics.Physics;
 import ecse321.fall2014.group3.bomberman.world.World;
 
 /**
- * The game class. This is based on an implementation used in older project of mine: https://github.com/Spoutcraft/Client/blob/master/src/main/java/org/spoutcraft/client/Game.java
+ * The game class. This is based on an implementation used in older project of
+ * mine: https://github.com/Spoutcraft/Client/blob/master/src/main/java/org/
+ * spoutcraft/client/Game.java
  *
  * @author Aleksi
  */
@@ -49,6 +51,12 @@ public class Game {
     private final Interface nterface;
     private final Input input;
 
+    /**
+     * Instantiates a new game.
+     *
+     * @param session the session
+     * @param leaderboard the leaderboard
+     */
     public Game(Session session, Leaderboard leaderboard) {
         this.session = session;
         this.leaderboard = leaderboard;
@@ -72,33 +80,66 @@ public class Game {
         input.stop();
     }
 
+    /**
+     * Gets the session.
+     *
+     * @return the session
+     */
     public Session getSession() {
         return session;
     }
 
+    /**
+     * Gets the leaderboard.
+     *
+     * @return the leaderboard
+     */
     public Leaderboard getLeaderboard() {
         return leaderboard;
     }
 
+    /**
+     * Gets the world.
+     *
+     * @return the world
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * Gets the physics.
+     *
+     * @return the physics
+     */
     public Physics getPhysics() {
         return physics;
     }
 
+    /**
+     * Gets the interface.
+     *
+     * @return the interface
+     */
     public Interface getInterface() {
         return nterface;
     }
 
+    /**
+     * Gets the input.
+     *
+     * @return the input
+     */
     public Input getInput() {
         return input;
     }
 
     /**
-     * Starts the game and causes the current thread to wait until the {@link #close()} method is called. When this happens, the thread resumes and the game is stopped. Interrupting the thread will
-     * not cause it to close, only calling {@link #close()} will. Calls to {@link #close()} before open() are not counted.
+     * Starts the game and causes the current thread to wait until the
+     * {@link #close()} method is called. When this happens, the thread resumes
+     * and the game is stopped. Interrupting the thread will not cause it to
+     * close, only calling {@link #close()} will. Calls to {@link #close()}
+     * before open() are not counted.
      */
     public void open() {
         // Only start the game if running has a value of false, in which case it's set to true and the if statement passes
@@ -113,7 +154,9 @@ public class Game {
     }
 
     /**
-     * Wakes up the thread that has opened the game (by having called {@link #open()}) and allows it to resume it's activity to trigger the end of the game.
+     * Wakes up the thread that has opened the game (by having called
+     * {@link #open()}) and allows it to resume it's activity to trigger the end
+     * of the game.
      */
     public void close() {
         // Only stop the game if running has a value of true, in which case it's set to false and the if statement passes
