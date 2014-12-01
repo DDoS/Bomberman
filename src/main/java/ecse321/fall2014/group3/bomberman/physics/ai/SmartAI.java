@@ -30,8 +30,10 @@ public class SmartAI extends AI {
         if ((target.getVelocity()).length() == 0) {
             return setInitial(map, target, enemyPos, timeSec);
         } else {
-            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 2f) {
+            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 1.5f) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
+            } else if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 2f) {
+                return aStarSearch(map, target, playPos, timeSec);
             } else {
                 float threshold = target.getSpeed() * timeSec;
                 boolean inThreshold = false;
@@ -252,6 +254,30 @@ public class SmartAI extends AI {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }
+        }
+        return eP;
+    }
+
+    public Vector2f aStarSearch(Map map, Enemy tar, Vector2f pP, float ts) {
+        Vector2f eP = tar.getPosition();
+        float ex = eP.getX();
+        float ey = eP.getY();
+        float px = pP.getX();
+        float py = pP.getY();
+        float spd = Math.abs(tar.getSpeed());
+        
+        if (ex > px && !map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(-spd, 0f));
+            return eP.add(-spd * ts, 0f);
+        } else if (ex < px && !map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(spd, 0f));
+            return eP.add(spd * ts, 0f);
+        } else if (ey > py && !map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+            tar.setVelocity(new Vector2f(0f, -spd));
+            return eP.add(0f, -spd * ts);
+        } else if (ey < py && !map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(0f, spd));
+            return eP.add(0f, spd * ts);
         }
         return eP;
     }
