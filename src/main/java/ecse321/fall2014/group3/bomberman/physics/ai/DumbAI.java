@@ -95,7 +95,11 @@ public class DumbAI extends AI {
             //Reverse direction when an unpassable tile is met
             float xs = eVelocity.getX();
             float ys = eVelocity.getY();
-
+            
+            //If the horizontal component of the velocity is 0
+            //Check the position above if the vertical component is greater than 0
+            //Check the position below if the vertical component is less than 0
+            //If the position is empty, move into it.  Otherwise reverse direction
             if (xs == 0f) {
                 if (ys < 0) {
                     if (map.isTile(enemyPos.add(0f, timeSec * ys), Air.class) ||
@@ -117,6 +121,10 @@ public class DumbAI extends AI {
                     }
                 }
             } else {
+            //If the vertical component of the velocity is 0
+            //Check the position above if the horizontal component is greater than 0
+            //Check the position below if the horizontal component is less than 0
+            //If the position is empty, move into it.  Otherwise reverse direction
                 if (xs < 0) {
                     if (map.isTile(enemyPos.add(xs * timeSec, 0f), Air.class) ||
                         map.isTile(enemyPos.add(xs * timeSec, 0f), Breakable.class) ||
