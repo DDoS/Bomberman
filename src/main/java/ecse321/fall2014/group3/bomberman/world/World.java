@@ -1,3 +1,6 @@
+/**
+ * @author Phil Douyon
+ */
 package ecse321.fall2014.group3.bomberman.world;
 
 import java.util.Collections;
@@ -60,6 +63,11 @@ public class World extends TickingElement {
     private int lives;
     private final Queue<Vector2i> bombLocations = new LinkedList<>();
 
+    /**
+     * Instantiates a new world.
+     *
+     * @param game the game
+     */
     public World(Game game) {
         super("World", 20);
         this.game = game;
@@ -68,6 +76,10 @@ public class World extends TickingElement {
         lives = 3;
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStart()
+     */
+    //start the world
     @Override
     public void onStart() {
         events.becomePublisher();
@@ -78,6 +90,10 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onTick(long)
+     */
+    //updates the world on every tick
     @Override
     public void onTick(long dt) {
         if (level.isMenu()) {
@@ -87,6 +103,7 @@ public class World extends TickingElement {
         }
     }
 
+    //updates the menu every tick
     private void doMenuTick(long dt) {
         final KeyboardState keyboardState = game.getInput().getKeyboardState();
         final int enterCount = keyboardState.getAndClearPressCount(Key.PLACE);
@@ -144,6 +161,7 @@ public class World extends TickingElement {
         }
     }
 
+    //updates the game every tick
     private void doGameTick(long dt) {
         processGameEvents();
 
@@ -159,9 +177,7 @@ public class World extends TickingElement {
         }
 
         final Session session = game.getSession();
-        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && !level.isBonus()
-                || player.isCollidingWith(Enemy.class)
-                || timer <= 0) {
+        if (player.isCollidingWith(Fire.class) && !player.hasPowerUP(FlamePass.class) && !level.isBonus() || player.isCollidingWith(Enemy.class) || timer <= 0) {
             lives--;
             events.add(new PlayerLostLifeEvent());
             session.setLives(lives);
@@ -270,6 +286,7 @@ public class World extends TickingElement {
         }
     }
 
+    //processes the game events
     private void processGameEvents() {
         final Queue<Event> physicsEvents = game.getPhysics().getEvents();
         while (!physicsEvents.isEmpty()) {
@@ -280,6 +297,7 @@ public class World extends TickingElement {
         }
     }
 
+    //generates the flames
     private void generateFlames(Vector2f position, int blastRadius) {
         for (Direction direction : Direction.values()) {
             for (int i = 0; i <= blastRadius; i++) {
@@ -309,6 +327,7 @@ public class World extends TickingElement {
         }
     }
 
+    //checks if all the enemies are dead
     private boolean enemiesAllDead() {
         for (Entity entity : game.getPhysics().getEntities()) {
             if (entity instanceof Enemy) {
@@ -318,39 +337,77 @@ public class World extends TickingElement {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
+     */
+    //stops the world
     @Override
     public void onStop() {
         events.unsubscribeAll();
     }
 
+    /**
+     * Subscribe to world events.
+     */
     public void subscribeToEvents() {
         events.subscribe();
     }
 
+    /**
+     * Gets the events.
+     *
+     * @return the events
+     */
     public Queue<Event> getEvents() {
         return events;
     }
 
+    /**
+     * Gets the map.
+     *
+     * @return the map
+     */
     public Map getMap() {
         return map;
     }
 
+    /**
+     * Gets the level.
+     *
+     * @return the level
+     */
     public Level getLevel() {
         return level;
     }
 
+    /**
+     * Gets the score.
+     *
+     * @return the score
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Gets the timer.
+     *
+     * @return the timer
+     */
     public int getTimer() {
         return timer;
     }
 
+    /**
+     * Gets the lives.
+     *
+     * @return the lives
+     */
     public int getLives() {
         return lives;
     }
 
+    //generates the menu background
     private void generateMenuBackground() {
         for (int y = 0; y < Interface.VIEW_HEIGHT_TILE; y++) {
             for (int x = 0; x < Interface.VIEW_WIDTH_TILE; x++) {
@@ -360,6 +417,7 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
+    //generates the level
     private void generateLevel(Level level) {
         // Compute the density from the level difficulty
         double density = level.isBonus() ? 0.5 : level.getNumber() / 100d + 0.25;
