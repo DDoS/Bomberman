@@ -57,7 +57,11 @@ public class RegularAI extends AI {
                 }
                 
                 if (inThreshold && random.nextInt(100) < 10) {
-                    return intersection(map, target, enemyPos, timeSec);
+                    if(!target.isWallPass()) {
+                        return intersection(map, target, enemyPos, timeSec);
+                    } else {
+                        return intersectionWP(map, target, enemyPos, timeSec);
+                    }
                 } else {
                     if (target.isWallPass()) {
                         return returnWallPos(map, target, enemyPos, timeSec);
@@ -121,6 +125,49 @@ public class RegularAI extends AI {
                         break;
                     case 3:
                         if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Breakable.class)) {
+                            tar.setVelocity(new Vector2f(-spd, 0f));
+                            return eP.add(-spd * ts, 0f);
+                        }
+                        break;
+                }
+            }
+        }
+        return eP;
+    }
+    
+    //Counts the number of potential pathways at an intersection for an Enemy with wall pass and chooses one
+    private Vector2f intersectionWP(Map map, Enemy tar, Vector2f eP, float ts) {
+        Vector2f v = tar.getVelocity();
+        float xs = v.getX();
+        float ys = v.getY();
+        float spd = tar.getSpeed();
+        int count = getCount(map, eP, v, ts);
+
+        if (count >= 3) {
+            boolean choseDir = false;
+            Random r = new Random();
+            while (!choseDir) {
+                switch (r.nextInt(4)) {
+                    case 0:
+                        if (!map.isTile(eP.add(0f, 1f), .class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                            tar.setVelocity(new Vector2f(0f, spd));
+                            return eP.add(0f, spd * ts);
+                        }
+                        break;
+                    case 1:
+                        if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+                            tar.setVelocity(new Vector2f(spd, 0f));
+                            return eP.add(spd * ts, 0f);
+                        }
+                        break;
+                    case 2:
+                        if (!map.isTile(eP.add(0f, -spd * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                            tar.setVelocity(new Vector2f(0f, -spd));
+                            return eP.add(0f, -spd * ts);
+                        }
+                        break;
+                    case 3:
+                        if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
                             tar.setVelocity(new Vector2f(-spd, 0f));
                             return eP.add(-spd * ts, 0f);
                         }
