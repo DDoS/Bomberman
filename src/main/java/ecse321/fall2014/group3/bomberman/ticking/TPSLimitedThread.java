@@ -33,18 +33,36 @@ public class TPSLimitedThread extends Thread {
     private final Timer timer;
     private volatile boolean running = false;
 
+    /**
+     * Instantiates a new TPS limited thread.
+     *
+     * @param name the name
+     * @param element the element
+     * @param tps the ticks per second
+     */
     public TPSLimitedThread(String name, TickingElement element, int tps) {
         super(name);
         this.element = element;
         timer = new Timer(tps);
     }
 
+    /**
+     * Instantiates a new TPS limited thread.
+     *
+     * @param group the group
+     * @param name the name
+     * @param element the element
+     * @param tps the ticks per second
+     */
     public TPSLimitedThread(ThreadGroup group, String name, TickingElement element, int tps) {
         super(group, name);
         this.element = element;
         timer = new Timer(tps);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Thread#run()
+     */
     @Override
     public void run() {
         running = true;
@@ -67,10 +85,18 @@ public class TPSLimitedThread extends Thread {
         element.onStop();
     }
 
+    /**
+     * Terminate.
+     */
     public void terminate() {
         running = false;
     }
 
+    /**
+     * Checks if is running.
+     *
+     * @return true, if is running
+     */
     public boolean isRunning() {
         return running;
     }

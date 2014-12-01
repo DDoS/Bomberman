@@ -28,9 +28,10 @@ import java.util.Arrays;
 import org.lwjgl.LWJGLUtil;
 
 /**
- * A time class. Calling the {@link #sync()} method at the end of each tick will cause the thread to sleep for the correct time delay between the ticks. {@link #start()} must be called just before the
- * loop to start the timer. {@link #reset()} is used to reset the start time to the current time.
- * <br>
+ * A time class. Calling the {@link #sync()} method at the end of each tick will
+ * cause the thread to sleep for the correct time delay between the ticks.
+ * {@link #start()} must be called just before the loop to start the timer.
+ * {@link #reset()} is used to reset the start time to the current time. <br>
  * Based on LWJGL's implementation of {@link org.lwjgl.opengl.Sync}.
  * <p/>
  * This is a library file from com.flowpowered.commons.ticking
@@ -65,7 +66,7 @@ public class Timer {
     /**
      * Constructs a new timer.
      *
-     * @param tps The target tps
+     * @param tps The target ticks per second
      */
     public Timer(int tps) {
         this.tps = tps;
@@ -74,7 +75,7 @@ public class Timer {
     /**
      * Returns the timer's target TPS.
      *
-     * @return The tps
+     * @return The ticks per second
      */
     public int getTps() {
         return tps;
@@ -95,7 +96,8 @@ public class Timer {
     }
 
     /**
-     * An accurate sync method that will attempt to run at the tps. It should be called once every tick.
+     * An accurate sync method that will attempt to run at the tps. It should be
+     * called once every tick.
      */
     public void sync() {
         if (nextTick < 0) {
