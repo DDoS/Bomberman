@@ -62,6 +62,8 @@ public class SmartAI extends AI {
         }
     }
 
+    //Sets the initial velocity to have the speed defined by the Enemy
+    //Sets the direction of the initial velocity to be the first open direction
     public Vector2f setInitial(Map map, Enemy target, Vector2f enemyPos, float timeSec) {
         float v = Math.abs(target.getSpeed());
         if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
@@ -79,6 +81,7 @@ public class SmartAI extends AI {
         }
     }
 
+    //Counts the number of potential pathways at an intersection and chooses one
     public Vector2f intersection(Map map, Enemy tar, Vector2f eP, float ts) {
         Vector2f v = tar.getVelocity();
         float xs = v.getX();
@@ -121,6 +124,8 @@ public class SmartAI extends AI {
         return eP;
     }
 
+    //For enemies with wall pass enabled
+    //Checks for Air, Fire, and Breakable wall tiles as possible positions
     public Vector2f returnWallPos(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
@@ -168,6 +173,8 @@ public class SmartAI extends AI {
         }
     }
 
+    //For enemies without wall pass
+    //Any tile that is not a wall or a bomb can be passed through
     public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
@@ -207,6 +214,7 @@ public class SmartAI extends AI {
         }
     }
 
+    //Gets the number of directions with open spaces at an intersection
     public int getCount(Map map, Vector2f eP, Vector2f v, float ts) {
         int oSpace = 0;
         float xs = v.getX();
@@ -227,6 +235,8 @@ public class SmartAI extends AI {
         return oSpace;
     }
 
+    //If the player is one tile away
+    //Follows the player based on the direction relative to the enemy
     public Vector2f followPlayer(Map map, Enemy tar, Vector2f eP, Vector2f pP, float ts) {
         float ex = eP.getX();
         float ey = eP.getY();
@@ -258,6 +268,8 @@ public class SmartAI extends AI {
         return eP;
     }
 
+    //If there is nothing between the player and enemy, move in the direction of the player
+    //If there is something between the player and the enemy, implement A* to choose a direction
     public Vector2f aStarSearch(Map map, Enemy tar, Vector2f pP, float ts) {
         Vector2f eP = tar.getPosition();
         float ex = eP.getX();
