@@ -149,7 +149,7 @@ public class RegularAI extends AI {
             while (!choseDir) {
                 switch (r.nextInt(4)) {
                     case 0:
-                        if (!map.isTile(eP.add(0f, 1f), .class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                        if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
                             tar.setVelocity(new Vector2f(0f, spd));
                             return eP.add(0f, spd * ts);
                         }
