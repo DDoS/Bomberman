@@ -1,6 +1,10 @@
+/**
+ * @author Phil Douyon
+ */
 package ecse321.fall2014.group3.bomberman.physics.entity.mob;
 
 import java.util.Map;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.flowpowered.math.vector.Vector2f;
@@ -17,6 +21,9 @@ import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.SpeedUpgrade;
 import ecse321.fall2014.group3.bomberman.world.tile.powerup.WallPass;
 
+/**
+ * The Class Player.
+ */
 public class Player extends Mob {
     private static final Vector2f SIZE = Vector2f.ONE;
     private static final CollisionBox COLLISION_BOX = new CollisionBox(SIZE);
@@ -33,10 +40,18 @@ public class Player extends Mob {
     private volatile Vector2f directionVelocity = Vector2f.ZERO;
     private final Map<Class<? extends PowerUP>, Integer> powerUPs = new ConcurrentHashMap<>();
 
+    /**
+     * Instantiates a new player.
+     *
+     * @param position the position
+     */
     public Player(Vector2f position) {
         super(position, COLLISION_BOX);
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.physics.entity.Entity#setVelocity(Vector2f)
+     */
     @Override
     public void setVelocity(Vector2f velocity) {
         this.velocity = velocity;
@@ -49,26 +64,58 @@ public class Player extends Mob {
         }
     }
 
+    /**
+     * Gets the speed.
+     *
+     * @return the speed
+     */
     public float getSpeed() {
         return (1 + getPowerUPLevel(SpeedUpgrade.class)) * BASE_SPEED;
     }
 
+    /**
+     * Gets the blast radius.
+     *
+     * @return the blast radius
+     */
     public int getBlastRadius() {
         return 1 + getPowerUPLevel(FlameUpgrade.class);
     }
 
+    /**
+     * Gets the bomb placement count.
+     *
+     * @return the bomb placement count
+     */
     public int getBombPlacementCount() {
         return 1 + getPowerUPLevel(BombUpgrade.class);
     }
 
+    /**
+     * Gets the powerUPs.
+     *
+     * @return the powerUPs
+     */
     public Map<Class<? extends PowerUP>, Integer> getPowerUPs() {
         return powerUPs;
     }
 
+    /**
+     * Checks for power up.
+     *
+     * @param powerUP the powerUP
+     * @return true, if successful
+     */
     public boolean hasPowerUP(Class<? extends PowerUP> powerUP) {
         return powerUPs.containsKey(powerUP);
     }
 
+    /**
+     * Gets the power up level.
+     *
+     * @param powerUP the powerUP
+     * @return the powerUP level
+     */
     public int getPowerUPLevel(Class<? extends PowerUP> powerUP) {
         final Integer level = powerUPs.get(powerUP);
         if (level == null) {
@@ -77,6 +124,11 @@ public class Player extends Mob {
         return level;
     }
 
+    /**
+     * Adds the power up.
+     *
+     * @param powerUP the powerUP
+     */
     public void addPowerUP(PowerUP powerUP) {
         Integer level = powerUPs.get(powerUP.getClass());
         if (level == null || !powerUP.canBeUpgraded()) {
@@ -87,10 +139,16 @@ public class Player extends Mob {
         powerUPs.put(powerUP.getClass(), level);
     }
 
+    /**
+     * Clear powerUPs
+     */
     public void clearPowerUPs() {
         powerUPs.clear();
     }
 
+    /**
+     * On death.
+     */
     public void onDeath() {
         powerUPs.remove(Detonator.class);
         powerUPs.remove(BombPass.class);
@@ -98,6 +156,9 @@ public class Player extends Mob {
         powerUPs.remove(FlamePass.class);
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.nterface.SpriteTextured#getSpriteInfo()
+     */
     @Override
     public SpriteInfo getSpriteInfo() {
         switch (direction) {
@@ -114,6 +175,9 @@ public class Player extends Mob {
         }
     }
 
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.nterface.Textured#getModelSize()
+     */
     @Override
     public Vector2f getModelSize() {
         return SIZE;
