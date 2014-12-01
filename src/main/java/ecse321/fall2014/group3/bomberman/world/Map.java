@@ -1,3 +1,6 @@
+/**
+ * @author Phil Douyon
+ */
 package ecse321.fall2014.group3.bomberman.world;
 
 import java.lang.reflect.Constructor;
@@ -13,12 +16,22 @@ import com.flowpowered.math.vector.Vector2i;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.Tile;
 
+/**
+ * The Class Map.
+ */
 public class Map {
-    public static final int HEIGHT = 13, WIDTH = 31;
+
+    /** The Constant Height. */
+    public static final int HEIGHT = 13;
+    /** The Constant Width. */
+    public static final int WIDTH = 31;
     private final Tile tiles[][] = new Tile[HEIGHT][WIDTH];
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private volatile long version = 0;
 
+    /**
+     * Instantiates a new map.
+     */
     public Map() {
         final Lock write = lock.writeLock();
         write.lock();
@@ -33,14 +46,33 @@ public class Map {
         }
     }
 
+    /**
+     * Gets the tile.
+     *
+     * @param x the x position
+     * @param y the y position
+     * @return the tile
+     */
     public Tile getTile(int x, int y) {
         return getTile(new Vector2i(x, y));
     }
 
+    /**
+     * Gets the tile.
+     *
+     * @param pos the vector2f position
+     * @return the tile
+     */
     public Tile getTile(Vector2f pos) {
         return getTile(pos.toInt());
     }
 
+    /**
+     * Gets the tile.
+     *
+     * @param pos the vector2i position
+     * @return the tile
+     */
     public Tile getTile(Vector2i pos) {
         if (outOfBounds(pos)) {
             return null;
@@ -54,6 +86,13 @@ public class Map {
         }
     }
 
+    /**
+     * Gets the tiles.
+     *
+     * @param <T> the generic type
+     * @param type the type
+     * @return the tiles
+     */
     @SuppressWarnings("unchecked")
     public <T extends Tile> List<T> getTiles(Class<T> type) {
         final List<T> tileList = new ArrayList<>();
@@ -74,18 +113,44 @@ public class Map {
         }
     }
 
+    /**
+     * Checks if is tile.
+     *
+     * @param position the position
+     * @param type the type
+     * @return true, if is tile
+     */
     public boolean isTile(Vector2f position, Class<? extends Tile> type) {
         return type.isAssignableFrom(getTile(position).getClass());
     }
 
+    /**
+     * Sets the tile.
+     *
+     * @param x the x position
+     * @param y the y position
+     * @param type the type of tile
+     */
     void setTile(int x, int y, Class<? extends Tile> type) {
         setTile(new Vector2i(x, y), type);
     }
 
+    /**
+     * Sets the tile.
+     *
+     * @param pos the vector2f position
+     * @param type the type of tile
+     */
     void setTile(Vector2f pos, Class<? extends Tile> type) {
         setTile(pos.toInt(), type);
     }
 
+    /**
+     * Sets the tile.
+     *
+     * @param pos the vector2i position
+     * @param type the type of tile
+     */
     void setTile(Vector2i pos, Class<? extends Tile> type) {
         if (outOfBounds(pos)) {
             return;
@@ -97,7 +162,8 @@ public class Map {
             final Constructor<? extends Tile> constructor = type.getDeclaredConstructor(Vector2f.class);
             constructor.setAccessible(true);
             tile = constructor.newInstance(pos.toFloat());
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+        } catch (NoSuchMethodException | InstantiationException
+                | IllegalAccessException | InvocationTargetException ex) {
             throw new IllegalArgumentException("Tile couldn't be created", ex);
         }
         final Lock write = lock.writeLock();
@@ -109,14 +175,23 @@ public class Map {
         }
     }
 
+    /**
+     * Increment version.
+     */
     void incrementVersion() {
         version++;
     }
 
+    /**
+     * Gets the version.
+     *
+     * @return the version
+     */
     public long getVersion() {
         return version;
     }
 
+    //checks for out of bounds
     private boolean outOfBounds(Vector2i pos) {
         return pos.getX() < 0 || pos.getX() >= WIDTH || pos.getY() < 0 || pos.getY() >= HEIGHT;
     }
