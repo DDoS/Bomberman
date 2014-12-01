@@ -20,28 +20,18 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
 /**
- * The SmartAI Class
+ * Represents the Dumb AI.  This Ai moves in one direction until it hits a bomb or a wall and then turns around.  This AI
+ * has a 50% chance of changing direction at an intersection with 2 or more perpendicular paths.  If the Player is within a 1 tile
+ * radius of the Enemy, the AI will change direction towards the player.  If the Player is within a between 1 and 2 tiles away from
+ * the Enemy, the AI will check if the path between the Enemy and the Player is clear.  If the path is clear, the AI will change direction
+ * towards the player.  If there's an obstacle, the AI will implement a path search and choose a direction.
+ * 
+ * The AI sets an initial non-zero velocity to the Enemy. If the enemy has the wall pass ability, check that the next space
+ * is Air, Fire, or a Breakable wall. If the enemy does not have the wall pass ability, check that the next space is Air or Fire.
+ * If the next space is empty, set the new position to the velocity * poll time. If the next space is a wall, set the Enemy velocity
+ * to -velocity and set the new position to -velocity * poll time.
  */
 public class SmartAI extends AI {
-    /**
-    * Override of the method in the AI superclass
-    *
-    * AI moves in one direction until it hits a bomb or wall and then turns around.
-    * At an intersection with at least 2 perpendicular directions, the AI has a 10% chance
-    * of changing direction.
-    *
-    * Sets an initial nonzero velocity to the Enemy.
-    * If the enemy has the wall pass ability, check that the next space is Air, Fire, or a Breakable wall.
-    * If the enemy does not have the wall pass ability, check that the next space is Air or Fire.
-    * If the next space is empty, set the new position to the velocity * poll time.
-    * If the next space is a wall, set the Enemy velocity to -velocity and set the new position to
-    * -velocity * poll time.
-    *
-    * @param Enemy target
-    * @param long dt
-    * @param Map map
-    * @param Player player
-    */
     @Override
     public Vector2f nextPosition(Enemy target, long dt, Map map, Player player) {
         float timeSec = dt / TO_SECS;
@@ -313,6 +303,56 @@ public class SmartAI extends AI {
             tar.setVelocity(new Vector2f(0f, spd));
             return eP.add(0f, spd * ts);
         }
+        
+        if (ex > px && (map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) || map.isTile(eP.add(-spd * ts, 0f), Bomb.class))) {
+            if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, spd));
+                return eP.add(0f, spd * ts);
+            } else if (!map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, -spd));
+                return eP.add(0f, -spd * ts);
+            } else if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(spd, 0f));
+                return eP.add(spd * ts, 0f);
+            }
+        }
+        if (ex < px && (map.isTile(eP.add(1f, 0f), CollidableTile.class) || map.isTile(eP.add(1f, 0f), Bomb.class))) {
+            if (!map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, -spd));
+                return eP.add(0f, -spd * ts);
+            } else if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, spd));
+                return eP.add(0f, spd * ts);
+            } else if (!map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(-spd, 0f));
+                return eP.add(-spd * ts, 0f);
+            }
+        }
+        if (ey > py && (map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) || map.isTile(eP.add(0f, -spd * ts), Bomb.class))) {
+            if (!map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(-spd, 0f));
+                return eP.add(-spd * ts, 0f);
+            } else if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(spd, 0f));
+                return eP.add(spd * ts, 0f);
+            } else if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, spd));
+                return eP.add(0f, spd * ts);
+            }
+        }
+        if (ey < py && (map.isTile(eP.add(0f, 1f), CollidableTile.class) || map.isTile(eP.add(0f, 1f), Bomb.class))) {
+            if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(spd, 0f));
+                return eP.add(spd * ts, 0f);
+            } else if (!map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(-spd, 0f));
+                return eP.add(-spd * ts, 0f);
+            } else if (!map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, -spd));
+                return eP.add(0f, -spd * ts);
+            }
+        }
+        
         return eP;
     }
 }
