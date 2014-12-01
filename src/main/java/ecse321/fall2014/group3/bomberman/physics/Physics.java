@@ -328,8 +328,10 @@ public class Physics extends TickingElement {
             } else if (event instanceof PowerUPCollectedEvent) {
                 player.addPowerUP(((PowerUPCollectedEvent) event).getPowerUP());
             } else if (event instanceof ExitWayOrPowerUPDestroyedEvent) {
-                // TODO: remove all enemies
-
+                entities.clear();
+                entities.add(player);
+                collisionDetection.clear();
+                collisionDetection.add(player);
                 //get highest enemies
                 int[] enemies = currentLevel.getEnemyForLevel();
                 int highestEnemy = 0;
