@@ -59,7 +59,9 @@ public class RegularAI extends AI {
             }
         }
     }
-
+    
+    //Sets the initial velocity to have the speed defined by the Enemy
+    //Sets the direction of the initial velocity to be the first open direction
     public Vector2f setInitial(Map map, Enemy target, Vector2f enemyPos, float timeSec) {
         float v = target.getSpeed();
         if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
@@ -76,7 +78,8 @@ public class RegularAI extends AI {
             return enemyPos.sub(0f, v * timeSec);
         }
     }
-
+    
+    //Counts the number of potential pathways at an intersection and chooses one
     public Vector2f intersection(Map map, Enemy tar, Vector2f eP, float ts) {
         Vector2f v = tar.getVelocity();
         float xs = v.getX();
@@ -119,6 +122,8 @@ public class RegularAI extends AI {
         return eP;
     }
 
+    //For enemies with wall pass enabled
+    //Checks for Air, Fire, and Breakable wall tiles as possible positions
     public Vector2f returnWallPos(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
@@ -166,6 +171,8 @@ public class RegularAI extends AI {
         }
     }
 
+    //For enemies without wall pass
+    //Any tile that is not a wall or a bomb can be passed through
     public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
@@ -205,6 +212,7 @@ public class RegularAI extends AI {
         }
     }
 
+    //Gets the number of directions with open spaces at an intersection
     public int getCount(Map map, Vector2f eP, Vector2f v, float ts) {
         int oSpace = 0;
         float xs = v.getX();
@@ -225,6 +233,7 @@ public class RegularAI extends AI {
         return oSpace;
     }
 
+    //Follows the player based on the direction relative to the enemy
     public Vector2f followPlayer(Map map, Enemy tar, Vector2f eP, Vector2f pP, float ts) {
         float ex = eP.getX();
         float ey = eP.getY();
