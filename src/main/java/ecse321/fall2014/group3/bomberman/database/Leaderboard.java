@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * The class uses methods in @link{ecse321.fall2014.group3.bomberman.database.Database} to store values pertaining to the leaderboard in the database. The methods that
  * return values also use methods from @link{ecse321.fall2014.group3.bomberman.database.Database}
  *
- * @author Marco
+ * @author Marco Manglaviti
  */
 public class Leaderboard {
     private final Database database;

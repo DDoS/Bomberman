@@ -13,7 +13,7 @@ import java.sql.Statement;
  * to update the table fields.
  * All methods for retrieving and updating values in the table are contained in this class
  *
- * @author Marco
+ * @author Marco Manglaviti
  */
 public class Database {
     public static final String USERNAME_KEY = "USERNAME";

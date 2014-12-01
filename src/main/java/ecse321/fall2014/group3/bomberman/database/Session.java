@@ -9,7 +9,7 @@ import ecse321.fall2014.group3.bomberman.world.tile.powerup.PowerUP;
  * current player that has logged in. The class uses methods in @link{ecse321.fall2014.group3.bomberman.database.Database} to retrieve table field values needed for
  * the session creation
  *
- * @author Marco
+ * @author Marco Manglaviti
  */
 public class Session {
     private final Database database;
