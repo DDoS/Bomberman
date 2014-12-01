@@ -29,7 +29,7 @@ public abstract class PowerUP extends CollidableTile {
     /**
      * Can be upgraded.
      *
-     * @return true, if powerUp can be ubgraded
+     * @return true, if powerUp can be upgraded
      */
     public boolean canBeUpgraded() {
         return canUpgrade;
@@ -37,31 +37,22 @@ public abstract class PowerUP extends CollidableTile {
 
     /**
      * Serialize the powerUPS.
-     * Format:
-                0..2: Bomb upgrade level
-                3..5: Flame upgrade level
-                6..8: Speed upgrade level
-                9   : Has bomb pass
-                10  : Has detonator
-                11  : Has flame pass
-                12  : Has mystery
-                13  : Has wall pass
+     * <pre>
+     * Bit format:
+     *     0..2: Bomb upgrade level
+     *     3..5: Flame upgrade level
+     *     6..8: Speed upgrade level
+     *     9   : Has bomb pass
+     *     10  : Has detonator
+     *     11  : Has flame pass
+     *     12  : Has mystery
+     *     13  : Has wall pass
+     * </pre>
      *
      * @param powerUPs the powerUPs
      * @return the int
      */
     public static int serialize(Map<Class<? extends PowerUP>, Integer> powerUPs) {
-        /*
-            Format:
-                0..2: Bomb upgrade level
-                3..5: Flame upgrade level
-                6..8: Speed upgrade level
-                9   : Has bomb pass
-                10  : Has detonator
-                11  : Has flame pass
-                12  : Has mystery
-                13  : Has wall pass
-         */
         int serialized = 0;
         serialized = setLevelBits(serialized, 0, powerUPs.get(BombUpgrade.class));
         serialized = setLevelBits(serialized, 3, powerUPs.get(FlameUpgrade.class));
@@ -82,7 +73,7 @@ public abstract class PowerUP extends CollidableTile {
         return bits;
     }
 
-    ////set the bits for powerUps in its not null
+    //set the bits for powerUps in its not null
     private static int setBitIfNotNull(int bits, int n, Integer i) {
         if (i != null) {
             bits |= 0b1 << n;
