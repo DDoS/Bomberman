@@ -1,6 +1,7 @@
 package ecse321.fall2014.group3.bomberman.physics.ai;
 
 import java.util.Random;
+import java.lang.Math;
 
 import com.flowpowered.math.vector.Vector2f;
 
@@ -8,8 +9,10 @@ import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.world.Map;
+import ecse321.fall2014.group3.bomberman.world.tile.CollidableTile;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
@@ -27,11 +30,14 @@ public class SmartAI extends AI {
         if ((target.getVelocity()).length() == 0) {
             return setInitial(map, target, enemyPos, timeSec);
         } else {
-            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 2f) {
+            if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 1.5f) {
                 return followPlayer(map, target, enemyPos, playPos, timeSec);
+            } else if (enemyPos.distance((double) playPos.getX(), (double) playPos.getY()) <= 2f) {
+                return aStarSearch(map, target, playPos, timeSec);
             } else {
                 float threshold = target.getSpeed() * timeSec;
                 boolean inThreshold = false;
+                boolean atInteger = false;
                 
                 if((target.getVelocity()).getX() == 0) {
                     if(enemyPos.getY() % 1f < threshold) {
@@ -56,8 +62,10 @@ public class SmartAI extends AI {
         }
     }
 
-    public Vector2f setInitial(Map map, Enemy target, Vector2f enemyPos, float timeSec) {
-        float v = target.getSpeed();
+    //Sets the initial velocity to have the speed defined by the Enemy
+    //Sets the direction of the initial velocity to be the first open direction
+    private Vector2f setInitial(Map map, Enemy target, Vector2f enemyPos, float timeSec) {
+        float v = Math.abs(target.getSpeed());
         if (map.isTile(enemyPos.add(1f, 0f), Air.class)) {
             target.setVelocity(new Vector2f(v, 0f));
             return enemyPos.add(v * timeSec, 0f);
@@ -73,7 +81,8 @@ public class SmartAI extends AI {
         }
     }
 
-    public Vector2f intersection(Map map, Enemy tar, Vector2f eP, float ts) {
+    //Counts the number of potential pathways at an intersection and chooses one
+    private Vector2f intersection(Map map, Enemy tar, Vector2f eP, float ts) {
         Vector2f v = tar.getVelocity();
         float xs = v.getX();
         float ys = v.getY();
@@ -115,7 +124,9 @@ public class SmartAI extends AI {
         return eP;
     }
 
-    public Vector2f returnWallPos(Map map, Enemy tar, Vector2f eP, float ts) {
+    //For enemies with wall pass enabled
+    //Checks for Air, Fire, and Breakable wall tiles as possible positions
+    private Vector2f returnWallPos(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
 
@@ -162,20 +173,22 @@ public class SmartAI extends AI {
         }
     }
 
-    public Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
+    //For enemies without wall pass
+    //Any tile that is not a wall or a bomb can be passed through
+    private Vector2f returnPosition(Map map, Enemy tar, Vector2f eP, float ts) {
         float xs = tar.getVelocity().getX();
         float ys = tar.getVelocity().getY();
 
         if (xs == 0f) {
             if (ys < 0) {
-                if (!map.isTile(eP.add(0f, ts * ys), Unbreakable.class) && !map.isTile(eP.add(0f, ts * ys), Breakable.class)) {
+                if (!map.isTile(eP.add(0f, ts * ys), CollidableTile.class) && !map.isTile(eP.add(0f, ts * ys), Bomb.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
                     return eP.add(0f, -ys * ts);
                 }
             } else {
-                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
+                if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
@@ -184,14 +197,14 @@ public class SmartAI extends AI {
             }
         } else {
             if (xs < 0) {
-                if (!map.isTile(eP.add(xs * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(xs * ts, 0f), Breakable.class)) {
+                if (!map.isTile(eP.add(xs * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(xs * ts, 0f), Bomb.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
                     return eP.add(-xs * ts, 0f);
                 }
             } else {
-                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
+                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
@@ -201,7 +214,8 @@ public class SmartAI extends AI {
         }
     }
 
-    public int getCount(Map map, Vector2f eP, Vector2f v, float ts) {
+    //Gets the number of directions with open spaces at an intersection
+    private int getCount(Map map, Vector2f eP, Vector2f v, float ts) {
         int oSpace = 0;
         float xs = v.getX();
         float ys = v.getY();
@@ -221,37 +235,61 @@ public class SmartAI extends AI {
         return oSpace;
     }
 
-    public Vector2f followPlayer(Map map, Enemy tar, Vector2f eP, Vector2f pP, float ts) {
+    //If the player is one tile away
+    //Follows the player based on the direction relative to the enemy
+    private Vector2f followPlayer(Map map, Enemy tar, Vector2f eP, Vector2f pP, float ts) {
         float ex = eP.getX();
         float ey = eP.getY();
         float px = pP.getX();
         float py = pP.getY();
-        float spd = tar.getSpeed();
+        float spd = Math.abs(tar.getSpeed());
 
-        if (ex == px) {
-            if (ey > py) {
-                if (!map.isTile(eP.add(0f, -spd * ts), Unbreakable.class) && !map.isTile(eP.add(0f, -spd * ts), Breakable.class)) {
-                    tar.setVelocity(new Vector2f(0f, -spd));
-                    return eP.add(0f, -spd * ts);
-                }
-            } else {
-                if (!map.isTile(eP.add(0f, 1f), Unbreakable.class) && !map.isTile(eP.add(0f, 1f), Breakable.class)) {
-                    tar.setVelocity(new Vector2f(0f, spd));
-                    return eP.add(0f, spd * ts);
-                }
+        if (Math.abs(ex - px) < spd * ts && ey > py) {
+            if (!map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, -spd));
+                return eP.add(0f, -spd * ts);
             }
-        } else {
-            if (ex > px) {
-                if (!map.isTile(eP.add(-spd * ts, 0f), Unbreakable.class) && !map.isTile(eP.add(-spd * ts, 0f), Breakable.class)) {
-                    tar.setVelocity(new Vector2f(-spd, 0f));
-                    return eP.add(-spd * ts, 0f);
-                }
-            } else {
-                if (!map.isTile(eP.add(1f, 0f), Unbreakable.class) && !map.isTile(eP.add(1f, 0f), Breakable.class)) {
+        } else if (Math.abs(ex - px) < spd * ts && ey < py){
+            if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(0f, spd));
+                return eP.add(0f, spd * ts);
+            }
+        } else if (Math.abs(ey - py) < spd * ts && ex > px) {
+            if (!map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+                tar.setVelocity(new Vector2f(-spd, 0f));
+                return eP.add(-spd * ts, 0f);
+            }
+        } else if (Math.abs(ey - py) < spd * ts && ex < px) {
+                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
                     tar.setVelocity(new Vector2f(spd, 0f));
                     return eP.add(spd * ts, 0f);
                 }
-            }
+        }
+        return eP;
+    }
+
+    //If there is nothing between the player and enemy, move in the direction of the player
+    //If there is something between the player and the enemy, implement A* to choose a direction
+    private Vector2f aStarSearch(Map map, Enemy tar, Vector2f pP, float ts) {
+        Vector2f eP = tar.getPosition();
+        float ex = eP.getX();
+        float ey = eP.getY();
+        float px = pP.getX();
+        float py = pP.getY();
+        float spd = Math.abs(tar.getSpeed());
+        
+        if (ex > px && !map.isTile(eP.add(-spd * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(-spd * ts, 0f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(-spd, 0f));
+            return eP.add(-spd * ts, 0f);
+        } else if (ex < px && !map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(spd, 0f));
+            return eP.add(spd * ts, 0f);
+        } else if (ey > py && !map.isTile(eP.add(0f, -spd * ts), CollidableTile.class) && !map.isTile(eP.add(0f, -spd * ts), Bomb.class)) {
+            tar.setVelocity(new Vector2f(0f, -spd));
+            return eP.add(0f, -spd * ts);
+        } else if (ey < py && !map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+            tar.setVelocity(new Vector2f(0f, spd));
+            return eP.add(0f, spd * ts);
         }
         return eP;
     }
