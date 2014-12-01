@@ -46,7 +46,12 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 import net.royawesome.jlibnoise.NoiseQuality;
 import net.royawesome.jlibnoise.module.source.Perlin;
 
+
 /**
+ * The Class World. This class is responsible for instantiating a new world which contains information and methods regarding the timer, score, and player lives.
+ * More precisely, the class runs on its own thread and pulls information from @link {ecse321.fall2014.group3.bomberman.physics.Physics} for collisions.
+ * Also handles menu and game actions.
+ *  Runs at a target refresh rate of 60 FPS
  *
  */
 public class World extends TickingElement {
@@ -64,7 +69,7 @@ public class World extends TickingElement {
     private final Queue<Vector2i> bombLocations = new LinkedList<>();
 
     /**
-     * Instantiates a new world.
+     * Constructs and Instantiates a new world.
      *
      * @param game the game
      */
@@ -76,8 +81,6 @@ public class World extends TickingElement {
         lives = 3;
     }
 
-
-    //start the world
     @Override
     public void onStart() {
         events.becomePublisher();
@@ -88,7 +91,7 @@ public class World extends TickingElement {
         map.incrementVersion();
     }
 
-    //updates the world on every tick
+
     @Override
     public void onTick(long dt) {
         if (level.isMenu()) {
@@ -334,6 +337,9 @@ public class World extends TickingElement {
 
 
     //stops the world
+    /* (non-Javadoc)
+     * @see ecse321.fall2014.group3.bomberman.ticking.TickingElement#onStop()
+     */
     @Override
     public void onStop() {
         events.unsubscribeAll();

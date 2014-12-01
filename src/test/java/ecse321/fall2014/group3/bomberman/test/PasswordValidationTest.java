@@ -5,7 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Marco
+ *
+ * @author Marco Manglaviti
  */
 public class PasswordValidationTest {
 

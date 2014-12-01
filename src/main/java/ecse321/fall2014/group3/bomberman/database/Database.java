@@ -8,7 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * @author Marco
+ * The main class for the game database. The methods in the class manage the table creation and also the updating of table fields.
+ * More precisely, this class creates the table containing all information needed for account management and gameplay. It also manages the connection information needed
+ * to update the table fields.
+ * All methods for retrieving and updating values in the table are contained in this class
+ *
+ * @author Marco Manglaviti
  */
 public class Database {
     public static final String USERNAME_KEY = "USERNAME";
@@ -20,6 +25,11 @@ public class Database {
     public static final String POWERUPS_KEY = "POWERUPS";
     private final Connection connection;
 
+    /**
+     * Constructs a Database Object
+     *
+     * @param file The local database file
+     */
     public Database(String file) {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -31,10 +41,17 @@ public class Database {
         verifyTable();
     }
 
+    /**
+     * Returns the connection information for use with the database
+     * @return Connection
+     */
     public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Closes the database connection
+     */
     public void disconnect() {
         try {
             connection.close();
@@ -44,6 +61,7 @@ public class Database {
         }
     }
 
+    //Check if the table exists, and creates a new table if it does not exist
     private void verifyTable() {
         try (Statement statement = connection.createStatement()) {
             final String sql = "CREATE TABLE IF NOT EXISTS USERS " +
@@ -62,6 +80,13 @@ public class Database {
         }
     }
 
+    /**
+     * Sets a String value in the Users table in the target column.
+     *
+     * @param username Player Username
+     * @param column Target Column
+     * @param value Value To Be Updated
+     */
     public void setString(String username, String column, String value) {
         if (column.equals(USERNAME_KEY)) {
             final String sql = "INSERT INTO USERS (USERNAME, PASSWORD, REALNAME, SCORE, LEVEL, LIVES, POWERUPS) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -93,6 +118,13 @@ public class Database {
         }
     }
 
+    /**
+     * Sets an integer value in the Users table.
+     *
+     * @param username Player Username
+     * @param column Target Column
+     * @param value Value To Be Updated
+     */
     public void setInt(String username, String column, int value) {
         final String sql = "UPDATE USERS SET " + column + " = ? WHERE USERNAME = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -106,6 +138,13 @@ public class Database {
         }
     }
 
+    /**
+     * Returns a String value from the Users table that was requested
+     *
+     * @param username Player Username
+     * @param column Target Column
+     * @return  Requested String
+     */
     public String getString(String username, String column) {
         final String sql = "SELECT " + column + " FROM USERS WHERE USERNAME = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -122,7 +161,13 @@ public class Database {
         }
         return null;
     }
-
+    /**
+     * Returns an Integer value from the Users table that was requested
+     *
+     * @param username Player Username
+     * @param column Target Column
+     * @return  Requested Integer
+     */
     public int getInt(String username, String column) {
         final String sql = "SELECT " + column + " FROM USERS WHERE USERNAME = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
