@@ -239,14 +239,16 @@ public class SmartAI extends AI {
 
         if (xs == 0f) {
             if (ys < 0) {
-                if (!map.isTile(eP.add(0f, ts * ys), CollidableTile.class) && !map.isTile(eP.add(0f, ts * ys), Bomb.class)) {
+                if (!map.isTile(eP.add(0f, ts * ys), CollidableTile.class) && !map.isTile(eP.add(0f, ts * ys), Bomb.class) ||
+                    map.isTile(eP.add(0f, ts * ys), Fire.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
                     return eP.add(0f, -ys * ts);
                 }
             } else {
-                if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class)) {
+                if (!map.isTile(eP.add(0f, 1f), CollidableTile.class) && !map.isTile(eP.add(0f, 1f), Bomb.class) ||
+                    map.isTile(eP.add(0f, 1f), Fire.class)) {
                     return eP.add(0f, ys * ts);
                 } else {
                     tar.setVelocity(new Vector2f(0f, -ys));
@@ -255,14 +257,16 @@ public class SmartAI extends AI {
             }
         } else {
             if (xs < 0) {
-                if (!map.isTile(eP.add(xs * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(xs * ts, 0f), Bomb.class)) {
+                if (!map.isTile(eP.add(xs * ts, 0f), CollidableTile.class) && !map.isTile(eP.add(xs * ts, 0f), Bomb.class) ||
+                    map.isTile(eP.add(xs * ts, 0f), Fire.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
                     return eP.add(-xs * ts, 0f);
                 }
             } else {
-                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class)) {
+                if (!map.isTile(eP.add(1f, 0f), CollidableTile.class) && !map.isTile(eP.add(1f, 0f), Bomb.class) ||
+                    map.isTile(eP.add(1f, 0f), Fire.class)) {
                     return eP.add(xs * ts, 0f);
                 } else {
                     tar.setVelocity(new Vector2f(-xs, 0f));
