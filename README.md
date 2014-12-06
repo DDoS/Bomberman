@@ -1,6 +1,17 @@
 # Bomberman #
 
-ECSE 321 group project
+McGill ECSE 321 - Intro. to Software Engineering, Fall 2014.
+
+A simple Bomberman implementation by Group 3.
+
+Licensed under [MIT](LICENSE.txt).
+
+##Group 3##
+
+- [Aleksi Sapon](https://github.com/DDoS)
+- [Marco Manglaviti](https://github.com/marcomang)
+- [Philippe Douyon](https://github.com/philippe-d)
+- [Lianna Yang](https://github.com/liannayang)
 
 ## Building ##
 
