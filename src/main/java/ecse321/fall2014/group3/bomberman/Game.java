@@ -60,8 +60,6 @@ import ecse321.fall2014.group3.bomberman.world.World;
  * The game class. This is based on an implementation used in older project of
  * mine: https://github.com/Spoutcraft/Client/blob/master/src/main/java/org/
  * spoutcraft/client/Game.java
- *
- * @author Aleksi
  */
 public class Game {
     // A semaphore with no permits, so that the first acquire() call blocks

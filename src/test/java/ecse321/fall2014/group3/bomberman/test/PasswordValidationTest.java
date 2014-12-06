@@ -27,10 +27,6 @@ import ecse321.fall2014.group3.bomberman.App;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- * @author Marco Manglaviti
- */
 public class PasswordValidationTest {
 
     @Test

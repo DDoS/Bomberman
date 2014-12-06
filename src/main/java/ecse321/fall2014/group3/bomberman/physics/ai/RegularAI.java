@@ -24,18 +24,16 @@
 package ecse321.fall2014.group3.bomberman.physics.ai;
 
 import java.util.Random;
-import java.lang.Math;
 
 import com.flowpowered.math.vector.Vector2f;
 
-import ecse321.fall2014.group3.bomberman.physics.entity.Entity;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.Player;
 import ecse321.fall2014.group3.bomberman.physics.entity.mob.enemy.Enemy;
 import ecse321.fall2014.group3.bomberman.world.Map;
 import ecse321.fall2014.group3.bomberman.world.tile.Air;
-import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
-import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
 import ecse321.fall2014.group3.bomberman.world.tile.CollidableTile;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Bomb;
+import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
 
@@ -48,8 +46,6 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
  * is Air, Fire, or a Breakable wall. If the enemy does not have the wall pass ability, check that the next space is Air or Fire.
  * If the next space is empty, set the new position to the velocity * poll time. If the next space is a wall, set the Enemy velocity
  * to -velocity and set the new position to -velocity * poll time.
- *
- * @author Lianna Yang
  */
 public class RegularAI extends AI {
     @Override

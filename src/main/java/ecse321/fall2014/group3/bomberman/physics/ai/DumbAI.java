@@ -38,8 +38,6 @@ import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
  * is Air, Fire, or a Breakable wall. If the enemy does not have the wall pass ability, check that the next space is Air or Fire.
  * If the next space is empty, set the new position to the velocity * poll time. If the next space is a wall, set the Enemy velocity
  * to -velocity and set the new position to -velocity * poll time.
- * 
- * @author Lianna Yang
  */
 public class DumbAI extends AI {
     @Override

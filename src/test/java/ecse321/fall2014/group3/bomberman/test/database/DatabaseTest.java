@@ -36,9 +36,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-/**
- * @author Marco
- */
 public class DatabaseTest {
     @Rule
     public final TemporaryFolder testFolder = new TemporaryFolder();

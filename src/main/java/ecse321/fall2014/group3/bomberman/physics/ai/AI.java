@@ -31,8 +31,6 @@ import ecse321.fall2014.group3.bomberman.world.Map;
 
 /**
  * The AI superclass.
- *
- * @author Lianna Yang
  */
 public abstract class AI {
     /**

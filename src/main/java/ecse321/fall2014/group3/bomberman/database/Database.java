@@ -35,8 +35,6 @@ import java.sql.Statement;
  * More precisely, this class creates the table containing all information needed for account management and gameplay. It also manages the connection information needed
  * to update the table fields.
  * All methods for retrieving and updating values in the table are contained in this class
- *
- * @author Marco Manglaviti
  */
 public class Database {
     public static final String USERNAME_KEY = "USERNAME";

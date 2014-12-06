@@ -71,8 +71,6 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * ecse321.fall2014.group3.bomberman.physics.Physics} to perform the rendering. More precisely, this class can render tiles that are instances of {@link
  * ecse321.fall2014.group3.bomberman.nterface.SpriteTextured} and entities that are either {@link ecse321.fall2014.group3.bomberman.nterface.SpriteTextured} or {@link
  * ecse321.fall2014.group3.bomberman.nterface.TextTextured}. Runs at a target refresh rate of 60 FPS. Requires OpenGL 2 or newer.
- *
- * @author Aleksi Sapon
  */
 public class Interface extends TickingElement {
     private static final int SPRITE_SIZE = 64;

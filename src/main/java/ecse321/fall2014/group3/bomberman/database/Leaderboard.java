@@ -32,10 +32,8 @@ import java.sql.SQLException;
  * This class manages all the methods and actions related to the game leaderboard. More precisely, the class contains methods for managing user scores, levels and general
  * leaderboard generation
  *
- * The class uses methods in @link{ecse321.fall2014.group3.bomberman.database.Database} to store values pertaining to the leaderboard in the database. The methods that
- * return values also use methods from @link{ecse321.fall2014.group3.bomberman.database.Database}
- *
- * @author Marco Manglaviti
+ * The class uses methods in {@link ecse321.fall2014.group3.bomberman.database.Database} to store values pertaining to the leaderboard in the database. The methods that
+ * return values also use methods from {@link ecse321.fall2014.group3.bomberman.database.Database}
  */
 public class Leaderboard {
     private final Database database;

@@ -21,9 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * @author Phil Douyon
- */
 package ecse321.fall2014.group3.bomberman.world.tile.powerup;
 
 import com.flowpowered.math.vector.Vector2f;
