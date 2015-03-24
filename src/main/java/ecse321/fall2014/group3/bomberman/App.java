@@ -44,7 +44,7 @@ import ecse321.fall2014.group3.bomberman.database.Database;
 import ecse321.fall2014.group3.bomberman.database.Leaderboard;
 import ecse321.fall2014.group3.bomberman.database.Session;
 
-import org.spout.renderer.lwjgl.LWJGLUtil;
+import com.flowpowered.caustic.lwjgl.LWJGLUtil;
 
 /**
  * The Class App.

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
+import com.flowpowered.noise.NoiseQuality;
+import com.flowpowered.noise.module.source.Perlin;
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector2i;
 
@@ -63,9 +65,6 @@ import ecse321.fall2014.group3.bomberman.world.tile.timed.Fire;
 import ecse321.fall2014.group3.bomberman.world.tile.timed.TimedTile;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Breakable;
 import ecse321.fall2014.group3.bomberman.world.tile.wall.Unbreakable;
-import net.royawesome.jlibnoise.NoiseQuality;
-import net.royawesome.jlibnoise.module.source.Perlin;
-
 
 /**
  * The Class World. This class is responsible for instantiating a new world which contains information and methods regarding the timer, score, and player lives.

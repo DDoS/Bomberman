@@ -27,7 +27,7 @@ import com.flowpowered.math.vector.Vector2f;
 
 import com.flowpowered.math.vector.Vector4f;
 
-import org.spout.renderer.api.util.CausticUtil;
+import com.flowpowered.caustic.api.util.CausticUtil;
 
 /**
  * The Class Button.
