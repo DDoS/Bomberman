@@ -6,7 +6,7 @@ A simple Bomberman implementation by Group 3.
 
 Licensed under [MIT](LICENSE.txt).
 
-##Group 3##
+## Group 3 ##
 
 - [Aleksi Sapon](https://github.com/DDoS)
 - [Marco Manglaviti](https://github.com/marcomang)
